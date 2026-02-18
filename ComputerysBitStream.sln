@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputerysBitStream", "ComputerysBitStream\ComputerysBitStream.csproj", "{19A34490-BFEB-44BF-9EA6-1C789DB0DEB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputerysBitStream.Generator", "ComputerysBitStream.Generator\ComputerysBitStream.Generator.csproj", "{57086AD4-A397-4C5E-8B61-8CBB5BCEF0DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19A34490-BFEB-44BF-9EA6-1C789DB0DEB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19A34490-BFEB-44BF-9EA6-1C789DB0DEB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19A34490-BFEB-44BF-9EA6-1C789DB0DEB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19A34490-BFEB-44BF-9EA6-1C789DB0DEB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57086AD4-A397-4C5E-8B61-8CBB5BCEF0DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57086AD4-A397-4C5E-8B61-8CBB5BCEF0DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57086AD4-A397-4C5E-8B61-8CBB5BCEF0DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57086AD4-A397-4C5E-8B61-8CBB5BCEF0DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
