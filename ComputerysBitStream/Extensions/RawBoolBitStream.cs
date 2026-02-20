@@ -1,17 +1,17 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace ComputerysBitStream.Extensions;
+namespace ComputerysBitStream;
 
 [BitStreamType(typeof(bool), BitSizes.BoolSize)]
-internal static class BoolExtensions {
-    [WriteRaw]
+public static class RawBoolBitStream {
+    [BitStreamRaw(BitStreamRawRole.Write)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static void WriteBoolRaw(this ref WriteContext context, bool value) { context.WriteBitRaw(value); }
+    public static void WriteBoolRaw(this ref WriteContext context, bool value) { context.WriteBitRaw(value); }
     
-    [WriteSpanRaw]
+    [BitStreamRaw(BitStreamRawRole.WriteSpan)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static void WriteBoolsRaw(this ref WriteContext context, ReadOnlySpan<bool> values) {
+    public static void WriteBoolsRaw(this ref WriteContext context, ReadOnlySpan<bool> values) {
         const int numberOfValuesInUlong = BitSizes.ULongSize / BitSizes.BoolSize;
         int count = values.Length;
         int processed = 0;
@@ -39,43 +39,43 @@ internal static class BoolExtensions {
         }
     }
     
-    [PeakRaw]
+    [BitStreamRaw(BitStreamRawRole.Peak)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool PeakBoolRaw(this ref ReadContext context) { return context.PeakBitRaw(); }
+    public static bool PeakBoolRaw(this ref ReadContext context) { return context.PeakBitRaw(); }
 
-    [ReadRaw]
+    [BitStreamRaw(BitStreamRawRole.Read)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool ReadBoolRaw(this ref ReadContext context) {
+    public static bool ReadBoolRaw(this ref ReadContext context) {
         bool value = context.PeakBoolRaw();
         context.Position += BitSizes.BoolSize;
         return value;
     }
     
-    [PeakArrayRaw]
+    [BitStreamRaw(BitStreamRawRole.PeakArray)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool[] PeakBoolArrayRaw(this ref ReadContext context, int count) {
+    public static bool[] PeakBoolArrayRaw(this ref ReadContext context, int count) {
         bool[] result = new bool[count];
         for (int i = 0; i < count; i++) { result[i] = context.PeakBoolRaw(); }
         return result;
     }
 
-    [ReadArrayRaw]
+    [BitStreamRaw(BitStreamRawRole.ReadArray)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool[] ReadBoolArrayRaw(this ref ReadContext context, int count) {
+    public static bool[] ReadBoolArrayRaw(this ref ReadContext context, int count) {
         bool[] values = context.PeakBoolArrayRaw(count);
         context.Position += count * BitSizes.BoolSize;
         return values;
     }
     
-    [PeakSpanRaw]
+    [BitStreamRaw(BitStreamRawRole.PeakSpan)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static void PeakBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> result) {
+    public static void PeakBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> result) {
         for (int i = 0; i < count; i++) { result[i] = context.PeakBoolRaw(); }
     }
 
-    [ReadSpanRaw]
+    [BitStreamRaw(BitStreamRawRole.ReadSpan)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static void ReadBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> result) {
+    public static void ReadBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> result) {
         context.PeakBoolSpanRaw(count, ref result);
         context.Position += count * BitSizes.BoolSize;
     }

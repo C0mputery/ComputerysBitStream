@@ -180,5 +180,13 @@ public ref struct ReadContext {
     /// <param name="bits"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool HasSpaceRemainingRaw(int bits) { return GetRemainingCapacity() >= bits; }
+    public bool HasSpaceRemaining(int bits) { return GetRemainingCapacity() >= bits; }
+    
+    /// <summary>
+    /// Checks if there is not enough space for the specified number of bits.
+    /// </summary>
+    /// <param name="bits">The number of bits to check.</param>
+    /// <returns>True if there is not enough space remaining.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool IsInsufficientSpace(int bits) { return GetRemainingCapacity() < bits; }
 }
