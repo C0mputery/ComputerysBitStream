@@ -19,9 +19,7 @@ public static class RawBoolBitStream {
         while (processed + numberOfValuesInUlong <= count) {
             ulong packed = 0;
             for (int i = 0; i < numberOfValuesInUlong; i++) {
-                if (values[processed + i]) {
-                    packed |= (1UL << i);
-                }
+                packed |= (ulong)(values[processed + i] ? 1 : 0) << i;
             }
             context.WriteBitsRaw(packed, BitSizes.ULongSize);
             processed += numberOfValuesInUlong;
@@ -31,9 +29,7 @@ public static class RawBoolBitStream {
         if (remaining > 0) {
             ulong packed = 0;
             for (int i = 0; i < remaining; i++) {
-                if (values[processed + i]) {
-                    packed |= (1UL << i);
-                }
+                packed |= (ulong)(values[processed + i] ? 1 : 0) << i;
             }
             context.WriteBitsRaw(packed, remaining * BitSizes.BoolSize);
         }
@@ -45,38 +41,54 @@ public static class RawBoolBitStream {
 
     [BitStreamRaw(BitStreamRawRole.Read)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool ReadBoolRaw(this ref ReadContext context) {
-        bool value = context.PeakBoolRaw();
-        context.Position += BitSizes.BoolSize;
-        return value;
-    }
+    public static bool ReadBoolRaw(this ref ReadContext context) { return context.ReadBitRaw(); }
     
     [BitStreamRaw(BitStreamRawRole.PeakArray)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool[] PeakBoolArrayRaw(this ref ReadContext context, int count) {
         bool[] result = new bool[count];
-        for (int i = 0; i < count; i++) { result[i] = context.PeakBoolRaw(); }
+        Span<bool> span = result.AsSpan();
+        context.PeakBoolSpanRaw(count, ref span);
         return result;
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadArray)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool[] ReadBoolArrayRaw(this ref ReadContext context, int count) {
-        bool[] values = context.PeakBoolArrayRaw(count);
-        context.Position += count * BitSizes.BoolSize;
-        return values;
+        bool[] result = new bool[count];
+        Span<bool> span = result.AsSpan();
+        context.ReadBoolSpanRaw(count, ref span);
+        return result;
     }
     
     [BitStreamRaw(BitStreamRawRole.PeakSpan)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void PeakBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> result) {
-        for (int i = 0; i < count; i++) { result[i] = context.PeakBoolRaw(); }
+        int originalPosition = context.Position;
+        context.ReadBoolSpanRaw(count, ref result);
+        context.Position = originalPosition;
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadSpan)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ReadBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> result) {
-        context.PeakBoolSpanRaw(count, ref result);
-        context.Position += count * BitSizes.BoolSize;
+        const int numberOfValuesInUlong = BitSizes.ULongSize / BitSizes.BoolSize;
+        int processed = 0;
+
+        while (processed + numberOfValuesInUlong <= count) {
+            ulong packed = context.ReadBitsRaw(BitSizes.ULongSize);
+            for (int i = 0; i < numberOfValuesInUlong; i++) {
+                result[processed + i] = (packed & (1UL << i)) != 0;
+            }
+            processed += numberOfValuesInUlong;
+        }
+
+        int remaining = count - processed;
+        if (remaining > 0) {
+            ulong packed = context.ReadBitsRaw(remaining * BitSizes.BoolSize);
+            for (int i = 0; i < remaining; i++) {
+                result[processed + i] = (packed & (1UL << i)) != 0;
+            }
+        }
     }
 }

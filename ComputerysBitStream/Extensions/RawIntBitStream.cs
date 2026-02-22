@@ -35,38 +35,50 @@ public static class RawIntBitStream {
 
     [BitStreamRaw(BitStreamRawRole.Read)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int ReadIntRaw(this ref ReadContext context) {
-        int value = context.PeakIntRaw();
-        context.Position += BitSizes.IntSize;
-        return value;
-    }
+    public static int ReadIntRaw(this ref ReadContext context) { return (int)context.ReadBitsRaw(BitSizes.IntSize); }
 
     [BitStreamRaw(BitStreamRawRole.PeakArray)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int[] PeakIntArrayRaw(this ref ReadContext context, int count) {
         int[] result = new int[count];
-        for (int i = 0; i < count; i++) { result[i] = context.PeakIntRaw(); }
+        Span<int> span = result.AsSpan();
+        context.PeakIntSpanRaw(count, ref span);
         return result;
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadArray)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int[] ReadIntArrayRaw(this ref ReadContext context, int count) {
-        int[] values = context.PeakIntArrayRaw(count);
-        context.Position += count * BitSizes.IntSize;
-        return values;
+        int[] result = new int[count];
+        Span<int> span = result.AsSpan();
+        context.ReadIntSpanRaw(count, ref span);
+        return result;
     }
     
     [BitStreamRaw(BitStreamRawRole.PeakSpan)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void PeakIntSpanRaw(this ref ReadContext context, int count, ref Span<int> result) {
-        for (int i = 0; i < count; i++) { result[i] = context.PeakIntRaw(); }
+        int originalPosition = context.Position;
+        context.ReadIntSpanRaw(count, ref result);
+        context.Position = originalPosition;
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadSpan)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ReadIntSpanRaw(this ref ReadContext context, int count, ref Span<int> result) {
-        context.PeakIntSpanRaw(count, ref result);
-        context.Position += count * BitSizes.IntSize;
+        const int numberOfValuesInUlong = BitSizes.ULongSize / BitSizes.IntSize;
+        Span<int> targetSpan = result.Slice(0, count);
+        Span<ulong> ulongs = MemoryMarshal.Cast<int, ulong>(targetSpan);
+        int totalUlongs = ulongs.Length;
+
+        context.ReadBitsRaw(totalUlongs * BitSizes.ULongSize, ulongs);
+
+        int remainingInts = count % numberOfValuesInUlong;
+        if (remainingInts != 0) {
+            ulong lastPacked = context.ReadBitsRaw(remainingInts * BitSizes.IntSize);
+            for (int i = 0; i < remainingInts; i++) {
+                result[count - remainingInts + i] = (int)(lastPacked >> (i * BitSizes.IntSize));
+            }
+        }
     }
 }
