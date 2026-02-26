@@ -6,8 +6,6 @@ namespace ComputerysBitStream;
 
 [BitStreamType(typeof(long), BitSizes.LongSize)]
 public static class RawLongExtensions {
-    private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.LongSize;
-    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static ulong AsBits(long value) => (ulong)value;
     

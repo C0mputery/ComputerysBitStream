@@ -6,8 +6,6 @@ namespace ComputerysBitStream;
 
 [BitStreamType(typeof(double), BitSizes.DoubleSize)]
 public static class RawDoubleExtensions {
-    private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.DoubleSize;
-    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static ulong AsBits(double value) => (ulong)BitConverter.DoubleToInt64Bits(value);
 

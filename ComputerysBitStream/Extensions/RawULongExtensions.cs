@@ -1,13 +1,10 @@
 using System;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream;
 
 [BitStreamType(typeof(ulong), BitSizes.ULongSize)]
 public static class RawULongExtensions {
-    private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.ULongSize;
-    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static ulong AsBits(ulong value) => value;
     
