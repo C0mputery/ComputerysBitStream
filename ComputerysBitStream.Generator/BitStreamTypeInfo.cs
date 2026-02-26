@@ -15,7 +15,6 @@ public record struct BitStreamLocation(string FilePath, TextSpan TextSpan, LineP
 
 public record BitStreamTypeInfo(
     string ClassNamespace,
-    string ClassName,
     string TargetTypeFullName,
     string TargetTypeName,
     int Size,

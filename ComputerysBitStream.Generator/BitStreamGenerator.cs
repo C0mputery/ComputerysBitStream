@@ -80,7 +80,6 @@ namespace ComputerysBitStream.Generator {
             
             return new BitStreamTypeInfo(
                 ClassNamespace: classSymbol.ContainingNamespace.ToDisplayString(),
-                ClassName: classSymbol.Name,
                 TargetTypeFullName: targetTypeSymbol.ToDisplayString(),
                 TargetTypeName: GetTargetTypeName(targetTypeSymbol),
                 Size: size,
