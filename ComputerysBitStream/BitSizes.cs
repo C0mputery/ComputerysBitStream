@@ -5,15 +5,15 @@ internal static class BitSizes {
     
     public const int BoolSize = 1;
     public const int ByteSize = sizeof(byte) * BitsPerByte;
-    public const int SByteSize = sizeof(sbyte) * ByteSize;
-    public const int CharSize = sizeof(char) * ByteSize;
-    public const int ShortSize = sizeof(short) * ByteSize;
-    public const int UShortSize = sizeof(ushort) * ByteSize;
-    public const int IntSize = sizeof(int) * ByteSize;
-    public const int UIntSize = sizeof(uint) * ByteSize;
-    public const int LongSize = sizeof(long) * ByteSize;
-    public const int ULongSize = sizeof(ulong) * ByteSize;
-    public const int FloatSize = sizeof(float) * ByteSize;
-    public const int DoubleSize = sizeof(double) * ByteSize;
-    public const int DecimalSize = sizeof(decimal) * ByteSize;
+    public const int SByteSize = sizeof(sbyte) * BitsPerByte;
+    public const int CharSize = sizeof(char) * BitsPerByte;
+    public const int ShortSize = sizeof(short) * BitsPerByte;
+    public const int UShortSize = sizeof(ushort) * BitsPerByte;
+    public const int IntSize = sizeof(int) * BitsPerByte;
+    public const int UIntSize = sizeof(uint) * BitsPerByte;
+    public const int LongSize = sizeof(long) * BitsPerByte;
+    public const int ULongSize = sizeof(ulong) * BitsPerByte;
+    public const int FloatSize = sizeof(float) * BitsPerByte;
+    public const int DoubleSize = sizeof(double) * BitsPerByte;
+    public const int DecimalSize = sizeof(decimal) * BitsPerByte;
 }
