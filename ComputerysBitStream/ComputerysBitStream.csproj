@@ -7,4 +7,7 @@
     <ItemGroup>
         <ProjectReference Include="..\ComputerysBitStream.Generator\ComputerysBitStream.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+    </ItemGroup>
 </Project>
