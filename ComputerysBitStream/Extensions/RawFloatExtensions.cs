@@ -9,16 +9,11 @@ public static class RawFloatExtensions {
     private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.FloatSize;
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static ulong AsBits(float value) {
-        return Unsafe.As<float, uint>(ref value);
-    }
+    private static ulong AsBits(float value) => (uint)BitConverter.SingleToInt32Bits(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static float FromBits(ulong value) {
-        uint temp = (uint)value;
-        return Unsafe.As<uint, float>(ref temp);
-    }
-    
+    private static float FromBits(ulong value) => BitConverter.Int32BitsToSingle((int)(uint)value);
+
     [BitStreamRaw(BitStreamRawRole.Write)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteFloatRaw(this ref WriteContext context, float value) { context.WriteBitsRaw(AsBits(value), BitSizes.FloatSize); }

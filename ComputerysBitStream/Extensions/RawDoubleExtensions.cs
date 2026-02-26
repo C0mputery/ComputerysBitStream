@@ -9,11 +9,11 @@ public static class RawDoubleExtensions {
     private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.DoubleSize;
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static ulong AsBits(double value) => Unsafe.As<double, ulong>(ref value);
+    private static ulong AsBits(double value) => (ulong)BitConverter.DoubleToInt64Bits(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static double FromBits(ulong value) => Unsafe.As<ulong, double>(ref value);
-
+    private static double FromBits(ulong value) => BitConverter.Int64BitsToDouble((long)value);
+    
     [BitStreamRaw(BitStreamRawRole.Write)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteDoubleRaw(this ref WriteContext context, double value) { context.WriteBitsRaw(AsBits(value), BitSizes.DoubleSize); }
