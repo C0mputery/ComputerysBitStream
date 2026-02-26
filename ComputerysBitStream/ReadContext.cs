@@ -33,12 +33,12 @@ public ref struct ReadContext {
     public int GetRemainingCapacity() => Capacity - Position;
     
     /// <summary>
-    /// Peaks the next bit in the buffer, without moving the position.
+    /// Peeks the next bit in the buffer, without moving the position.
     /// Assumes there is enough space remaining, caller must ensure this.
     /// </summary>
     /// <returns>bit</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool PeakBitRaw() {
+    public bool PeekBitRaw() {
         int ulongIndex = Position / BitSizes.ULongSize;
         int bitOffset = Position % BitSizes.ULongSize;
         return (Buffer[ulongIndex] & (1UL << bitOffset)) != 0;
@@ -51,13 +51,13 @@ public ref struct ReadContext {
     /// <returns>bit</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool ReadBitRaw() {
-        bool value = PeakBitRaw();
+        bool value = PeekBitRaw();
         Position++;
         return value;
     }
     
     /// <summary>
-    /// Peaks the next bits in the buffer, without moving the position.
+    /// Peeks the next bits in the buffer, without moving the position.
     /// Assumes there is enough space remaining, caller must ensure this.
     /// </summary>
     /// <param name="count">
@@ -66,7 +66,7 @@ public ref struct ReadContext {
     /// </param>
     /// <returns>bits</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ulong PeakBitsRaw(int count) {
+    public ulong PeekBitsRaw(int count) {
         int ulongIndex = Position / BitSizes.ULongSize;
         int bitOffset = Position % BitSizes.ULongSize;
 
@@ -94,22 +94,22 @@ public ref struct ReadContext {
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ulong ReadBitsRaw(int count) {
-        ulong value = PeakBitsRaw(count);
+        ulong value = PeekBitsRaw(count);
         Position += count;
         return value;
     }
     
     /// <summary>
-    /// Peaks the next bits in the buffer, without moving the position.
+    /// Peeks the next bits in the buffer, without moving the position.
     /// Assumes there is enough space remaining, caller must ensure this.
     /// </summary>
     /// <param name="count">
-    /// The number of bits to peak.
+    /// The number of bits to peek.
     /// Assumes count can fit within the buffer, caller must ensure this.
     /// </param>
     /// <param name="buffer"> output </param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void PeakBitsRaw(int count, Span<ulong> buffer) {
+    public void PeekBitsRaw(int count, Span<ulong> buffer) {
         int fullUlongs = count / BitSizes.ULongSize;
         int remainingBits = count % BitSizes.ULongSize;
         
@@ -154,7 +154,7 @@ public ref struct ReadContext {
     /// <param name="buffer"> output </param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void ReadBitsRaw(int count, Span<ulong> buffer) { 
-        PeakBitsRaw(count, buffer);
+        PeekBitsRaw(count, buffer);
         Position += count;
     }
     

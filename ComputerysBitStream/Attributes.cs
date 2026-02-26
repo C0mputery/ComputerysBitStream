@@ -13,10 +13,10 @@ public class BitStreamRawAttribute(BitStreamRawRole role) : Attribute;
 public enum BitStreamRawRole : int {
     Write,
     WriteSpan,
-    Peak,
+    Peek,
     Read,
-    PeakArray,
+    PeekArray,
     ReadArray,
-    PeakSpan,
+    PeekSpan,
     ReadSpan
 }

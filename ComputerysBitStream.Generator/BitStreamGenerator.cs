@@ -86,11 +86,11 @@ namespace ComputerysBitStream.Generator {
                 Size: size,
                 WriteRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.Write, out string? writeRaw) ? writeRaw : null, 
                 WriteSpanRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.WriteSpan, out string? writeSpanRaw) ? writeSpanRaw : null, 
-                PeakRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.Peak, out string? peakRaw) ? peakRaw : null,
+                PeekRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.Peek, out string? peekRaw) ? peekRaw : null,
                 ReadRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.Read, out string? readRaw) ? readRaw : null,
-                PeakArrayRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.PeakArray, out string? peakArrayRaw) ? peakArrayRaw : null,
+                PeekArrayRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.PeekArray, out string? peekArrayRaw) ? peekArrayRaw : null,
                 ReadArrayRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.ReadArray, out string? readArrayRaw) ? readArrayRaw : null,
-                PeakSpanRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.PeakSpan, out string? peakSpanRaw) ? peakSpanRaw : null,
+                PeekSpanRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.PeekSpan, out string? peekSpanRaw) ? peekSpanRaw : null,
                 ReadSpanRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.ReadSpan, out string? readSpanRaw) ? readSpanRaw : null,
                 Location: classAttributeData.ApplicationSyntaxReference?.GetSyntax(cancel).GetLocation(),
                 DuplicateRoles: duplicates.ToImmutableArray()
@@ -235,25 +235,25 @@ namespace ComputerysBitStream.Generator {
             writer.WriteLine($"public static class {type.TargetTypeName}ReadContextExtensions {{");
             writer.Indent++;
 
-            if (type.PeakRawMethodName != null) {
-                // {Type} Peak{Type}()
+            if (type.PeekRawMethodName != null) {
+                // {Type} Peek{Type}()
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static {type.TargetTypeFullName} Peak{type.TargetTypeName}(this ref ReadContext context) {{");
+                writer.WriteLine($"public static {type.TargetTypeFullName} Peek{type.TargetTypeName}(this ref ReadContext context) {{");
                 writer.Indent++;
                 writer.WriteLine($"if (context.IsInsufficientSpace({type.Size})) {{ return default; }}");
-                writer.WriteLine($"return context.{type.PeakRawMethodName}();");
+                writer.WriteLine($"return context.{type.PeekRawMethodName}();");
                 writer.Indent--;
                 writer.WriteLine("}");
                 writer.WriteLine();
                 
-                // void Peak(out {Type} value)
+                // void Peek(out {Type} value)
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static void Peak(this ref ReadContext context, out {type.TargetTypeFullName} value) => value = context.Peak{type.TargetTypeName}();");
+                writer.WriteLine($"public static void Peek(this ref ReadContext context, out {type.TargetTypeFullName} value) => value = context.Peek{type.TargetTypeName}();");
                 writer.WriteLine();
                 
-                // bool TryPeak{Type}(out {Type} value)
+                // bool TryPeek{Type}(out {Type} value)
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static bool TryPeak{type.TargetTypeName}(this ref ReadContext context, out {type.TargetTypeFullName} value) {{");
+                writer.WriteLine($"public static bool TryPeek{type.TargetTypeName}(this ref ReadContext context, out {type.TargetTypeFullName} value) {{");
                 writer.Indent++;
                 writer.WriteLine($"if (context.IsInsufficientSpace({type.Size})) {{");
                 writer.Indent++;
@@ -261,15 +261,15 @@ namespace ComputerysBitStream.Generator {
                 writer.WriteLine("return false;");
                 writer.Indent--;
                 writer.WriteLine("}");
-                writer.WriteLine($"value = context.{type.PeakRawMethodName}();");
+                writer.WriteLine($"value = context.{type.PeekRawMethodName}();");
                 writer.WriteLine("return true;");
                 writer.Indent--;
                 writer.WriteLine("}");
                 writer.WriteLine();
                 
-                // bool TryPeak(out {Type} value)
+                // bool TryPeek(out {Type} value)
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static bool TryPeak(this ref ReadContext context, out {type.TargetTypeFullName} value) => context.TryPeak{type.TargetTypeName}(out value);");
+                writer.WriteLine($"public static bool TryPeek(this ref ReadContext context, out {type.TargetTypeFullName} value) => context.TryPeek{type.TargetTypeName}(out value);");
                 writer.WriteLine();
             }
 
@@ -311,33 +311,33 @@ namespace ComputerysBitStream.Generator {
                 writer.WriteLine();
             }
             
-            if (type.PeakArrayRawMethodName != null) {
+            if (type.PeekArrayRawMethodName != null) {
                 if (intHandler != null) {
-                    // {Type}[] Peak{Type}s()
+                    // {Type}[] Peek{Type}s()
                     writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                    writer.WriteLine($"public static {type.TargetTypeFullName}[] Peak{type.TargetTypeName}s(this ref ReadContext context) {{");
+                    writer.WriteLine($"public static {type.TargetTypeFullName}[] Peek{type.TargetTypeName}s(this ref ReadContext context) {{");
                     writer.Indent++;
                     writer.WriteLine($"if (context.IsInsufficientSpace({intHandler.Size})) {{ return Array.Empty<{type.TargetTypeFullName}>(); }}");
-                    writer.WriteLine($"int count = context.{intHandler.PeakRawMethodName}();");
+                    writer.WriteLine($"int count = context.{intHandler.PeekRawMethodName}();");
                     writer.WriteLine($"if (count < 0) {{ return Array.Empty<{type.TargetTypeFullName}>(); }}"); // TODO: add some configurable max count.
                     writer.WriteLine($"int bitsNeeded = count * {type.Size} + {intHandler.Size};");
                     writer.WriteLine($"if (context.IsInsufficientSpace(bitsNeeded)) {{ return Array.Empty<{type.TargetTypeFullName}>(); }}");
                     writer.WriteLine($"context.Position += {intHandler.Size};");
-                    writer.WriteLine($"{type.TargetTypeFullName}[] values = context.{type.PeakArrayRawMethodName}(count);");
+                    writer.WriteLine($"{type.TargetTypeFullName}[] values = context.{type.PeekArrayRawMethodName}(count);");
                     writer.WriteLine($"context.Position -= {intHandler.Size};");
                     writer.WriteLine("return values;");
                     writer.Indent--;
                     writer.WriteLine("}");
                     writer.WriteLine();
                     
-                    // void Peak(out {Type}[] values)
+                    // void Peek(out {Type}[] values)
                     writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                    writer.WriteLine($"public static void Peak(this ref ReadContext context, out {type.TargetTypeFullName}[] values) => values = context.Peak{type.TargetTypeName}s();");
+                    writer.WriteLine($"public static void Peek(this ref ReadContext context, out {type.TargetTypeFullName}[] values) => values = context.Peek{type.TargetTypeName}s();");
                     writer.WriteLine();
 
-                    // bool TryPeak{Type}s(out {Type}[] values)
+                    // bool TryPeek{Type}s(out {Type}[] values)
                     writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                    writer.WriteLine($"public static bool TryPeak{type.TargetTypeName}s(this ref ReadContext context, out {type.TargetTypeFullName}[] values) {{");
+                    writer.WriteLine($"public static bool TryPeek{type.TargetTypeName}s(this ref ReadContext context, out {type.TargetTypeFullName}[] values) {{");
                     writer.Indent++;
                     writer.WriteLine($"if (context.IsInsufficientSpace({intHandler.Size})) {{");
                     writer.Indent++;
@@ -345,7 +345,7 @@ namespace ComputerysBitStream.Generator {
                     writer.WriteLine("return false;");
                     writer.Indent--;
                     writer.WriteLine("}");
-                    writer.WriteLine($"int count = context.{intHandler.PeakRawMethodName}();");
+                    writer.WriteLine($"int count = context.{intHandler.PeekRawMethodName}();");
                     writer.WriteLine("if (count < 0) {"); // TODO: add some configurable max count.
                     writer.Indent++;
                     writer.WriteLine($"values = Array.Empty<{type.TargetTypeFullName}>();");
@@ -360,40 +360,40 @@ namespace ComputerysBitStream.Generator {
                     writer.Indent--;
                     writer.WriteLine("}");
                     writer.WriteLine($"context.Position += {intHandler.Size};");
-                    writer.WriteLine($"values = context.{type.PeakArrayRawMethodName}(count);");
+                    writer.WriteLine($"values = context.{type.PeekArrayRawMethodName}(count);");
                     writer.WriteLine($"context.Position -= {intHandler.Size};");
                     writer.WriteLine("return true;");
                     writer.Indent--;
                     writer.WriteLine("}");
                     writer.WriteLine();
                     
-                    // bool TryPeak(out {Type}[] values)
+                    // bool TryPeek(out {Type}[] values)
                     writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                    writer.WriteLine($"public static bool TryPeak(this ref ReadContext context, out {type.TargetTypeFullName}[] values) => context.TryPeak{type.TargetTypeName}s(out values);");
+                    writer.WriteLine($"public static bool TryPeek(this ref ReadContext context, out {type.TargetTypeFullName}[] values) => context.TryPeek{type.TargetTypeName}s(out values);");
                     writer.WriteLine();
                 }
 
-                // {Type}[] Peak{Type}s(int count)
+                // {Type}[] Peek{Type}s(int count)
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static {type.TargetTypeFullName}[] Peak{type.TargetTypeName}s(this ref ReadContext context, int count) {{");
+                writer.WriteLine($"public static {type.TargetTypeFullName}[] Peek{type.TargetTypeName}s(this ref ReadContext context, int count) {{");
                 writer.Indent++;
                 writer.WriteLine($"if (count < 0) {{ return Array.Empty<{type.TargetTypeFullName}>(); }}"); // TODO: add some configurable max count.
                 writer.WriteLine($"int bitsNeeded = count * {type.Size};");
                 writer.WriteLine($"if (context.IsInsufficientSpace(bitsNeeded)) {{ return Array.Empty<{type.TargetTypeFullName}>(); }}");
-                writer.WriteLine($"{type.TargetTypeFullName}[] values = context.{type.PeakArrayRawMethodName}(count);");
+                writer.WriteLine($"{type.TargetTypeFullName}[] values = context.{type.PeekArrayRawMethodName}(count);");
                 writer.WriteLine("return values;");
                 writer.Indent--;
                 writer.WriteLine("}");
                 writer.WriteLine();
                 
-                // void Peak(int count, out {Type}[] values)
+                // void Peek(int count, out {Type}[] values)
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static void Peak(this ref ReadContext context, int count, out {type.TargetTypeFullName}[] values) => values = context.Peak{type.TargetTypeName}s(count);");
+                writer.WriteLine($"public static void Peek(this ref ReadContext context, int count, out {type.TargetTypeFullName}[] values) => values = context.Peek{type.TargetTypeName}s(count);");
                 writer.WriteLine();
                 
-                // bool TryPeak{Type}s(int count, out {Type}[] values)
+                // bool TryPeek{Type}s(int count, out {Type}[] values)
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static bool TryPeak{type.TargetTypeName}s(this ref ReadContext context, int count, out {type.TargetTypeFullName}[] values) {{");
+                writer.WriteLine($"public static bool TryPeek{type.TargetTypeName}s(this ref ReadContext context, int count, out {type.TargetTypeFullName}[] values) {{");
                 writer.Indent++;
                 writer.WriteLine("if (count < 0) {"); // TODO: add some configurable max count.
                 writer.Indent++;
@@ -408,15 +408,15 @@ namespace ComputerysBitStream.Generator {
                 writer.WriteLine("return false;");
                 writer.Indent--;
                 writer.WriteLine("}");
-                writer.WriteLine($"values = context.{type.PeakArrayRawMethodName}(count);");
+                writer.WriteLine($"values = context.{type.PeekArrayRawMethodName}(count);");
                 writer.WriteLine("return true;");
                 writer.Indent--;
                 writer.WriteLine("}");
                 writer.WriteLine();
                 
-                // bool TryPeak(int count, out {Type}[] values)
+                // bool TryPeek(int count, out {Type}[] values)
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static bool TryPeak(this ref ReadContext context, int count, out {type.TargetTypeFullName}[] values) => context.TryPeak{type.TargetTypeName}s(count, out values);");
+                writer.WriteLine($"public static bool TryPeek(this ref ReadContext context, int count, out {type.TargetTypeFullName}[] values) => context.TryPeek{type.TargetTypeName}s(count, out values);");
                 writer.WriteLine();
             }
 
@@ -427,7 +427,7 @@ namespace ComputerysBitStream.Generator {
                     writer.WriteLine($"public static {type.TargetTypeFullName}[] Read{type.TargetTypeName}s(this ref ReadContext context) {{");
                     writer.Indent++;
                     writer.WriteLine($"if (context.IsInsufficientSpace({intHandler.Size})) {{ return Array.Empty<{type.TargetTypeFullName}>(); }}");
-                    writer.WriteLine($"int count = context.{intHandler.PeakRawMethodName}();");
+                    writer.WriteLine($"int count = context.{intHandler.PeekRawMethodName}();");
                     writer.WriteLine($"if (count < 0) {{ return Array.Empty<{type.TargetTypeFullName}>(); }}"); // TODO: add some configurable max count.
                     writer.WriteLine($"int bitsNeeded = count * {type.Size} + {intHandler.Size};");
                     writer.WriteLine($"if (context.IsInsufficientSpace(bitsNeeded)) {{ return Array.Empty<{type.TargetTypeFullName}>(); }}");
@@ -453,7 +453,7 @@ namespace ComputerysBitStream.Generator {
                     writer.WriteLine("return false;");
                     writer.Indent--;
                     writer.WriteLine("}");
-                    writer.WriteLine($"int count = context.{intHandler.PeakRawMethodName}();");
+                    writer.WriteLine($"int count = context.{intHandler.PeekRawMethodName}();");
                     writer.WriteLine("if (count < 0) {"); // TODO: add some configurable max count.
                     writer.Indent++;
                     writer.WriteLine($"values = Array.Empty<{type.TargetTypeFullName}>();");
@@ -527,83 +527,83 @@ namespace ComputerysBitStream.Generator {
                 writer.WriteLine();
             }
 
-            if (type.PeakSpanRawMethodName != null) {
+            if (type.PeekSpanRawMethodName != null) {
                 if (intHandler != null) {
-                    // void Peak{Type}s(ref Span<{Type}> destination)
+                    // void Peek{Type}s(ref Span<{Type}> destination)
                     writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                    writer.WriteLine($"public static void Peak{type.TargetTypeName}s(this ref ReadContext context, ref Span<{type.TargetTypeFullName}> destination) {{");
+                    writer.WriteLine($"public static void Peek{type.TargetTypeName}s(this ref ReadContext context, ref Span<{type.TargetTypeFullName}> destination) {{");
                     writer.Indent++;
                     writer.WriteLine($"if (context.IsInsufficientSpace({intHandler.Size})) {{ return; }}");
-                    writer.WriteLine($"int count = context.{intHandler.PeakRawMethodName}();");
+                    writer.WriteLine($"int count = context.{intHandler.PeekRawMethodName}();");
                     writer.WriteLine("if (0 > count || count > destination.Length) { return; }");
                     writer.WriteLine($"int bitsNeeded = count * {type.Size} + {intHandler.Size};");
                     writer.WriteLine("if (context.IsInsufficientSpace(bitsNeeded)) { return; }");
                     writer.WriteLine($"context.Position += {intHandler.Size};");
-                    writer.WriteLine($"context.{type.PeakSpanRawMethodName}(count, ref destination);");
+                    writer.WriteLine($"context.{type.PeekSpanRawMethodName}(count, ref destination);");
                     writer.WriteLine($"context.Position -= {intHandler.Size};");
                     writer.Indent--;
                     writer.WriteLine("}");
                     writer.WriteLine();
                     
-                    // void Peak(ref Span<{Type}> destination)
+                    // void Peek(ref Span<{Type}> destination)
                     writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                    writer.WriteLine($"public static void Peak(this ref ReadContext context, ref Span<{type.TargetTypeFullName}> destination) => context.Peak{type.TargetTypeName}s(ref destination);");
+                    writer.WriteLine($"public static void Peek(this ref ReadContext context, ref Span<{type.TargetTypeFullName}> destination) => context.Peek{type.TargetTypeName}s(ref destination);");
 
-                    // bool TryPeak{Type}s(ref Span<{Type}> destination)
+                    // bool TryPeek{Type}s(ref Span<{Type}> destination)
                     writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                    writer.WriteLine($"public static bool TryPeak{type.TargetTypeName}s(this ref ReadContext context, ref Span<{type.TargetTypeFullName}> destination) {{");
+                    writer.WriteLine($"public static bool TryPeek{type.TargetTypeName}s(this ref ReadContext context, ref Span<{type.TargetTypeFullName}> destination) {{");
                     writer.Indent++;
                     writer.WriteLine($"if (context.IsInsufficientSpace({intHandler.Size})) {{ return false; }}");
-                    writer.WriteLine($"int count = context.{intHandler.PeakRawMethodName}();");
+                    writer.WriteLine($"int count = context.{intHandler.PeekRawMethodName}();");
                     writer.WriteLine("if (0 > count || count > destination.Length) { return false; }");
                     writer.WriteLine($"int bitsNeeded = count * {type.Size} + {intHandler.Size};");
                     writer.WriteLine("if (context.IsInsufficientSpace(bitsNeeded)) { return false; }");
                     writer.WriteLine($"context.Position += {intHandler.Size};");
-                    writer.WriteLine($"context.{type.PeakSpanRawMethodName}(count, ref destination);");
+                    writer.WriteLine($"context.{type.PeekSpanRawMethodName}(count, ref destination);");
                     writer.WriteLine($"context.Position -= {intHandler.Size};");
                     writer.WriteLine("return true;");
                     writer.Indent--;
                     writer.WriteLine("}");
                     writer.WriteLine();
                     
-                    // bool TryPeak(ref Span<{Type}> destination)
+                    // bool TryPeek(ref Span<{Type}> destination)
                     writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                    writer.WriteLine($"public static bool TryPeak(this ref ReadContext context, ref Span<{type.TargetTypeFullName}> destination) => context.TryPeak{type.TargetTypeName}s(ref destination);");
+                    writer.WriteLine($"public static bool TryPeek(this ref ReadContext context, ref Span<{type.TargetTypeFullName}> destination) => context.TryPeek{type.TargetTypeName}s(ref destination);");
                 }
 
-                // void Peak{Type}s(int count, ref Span<{Type}> destination)
+                // void Peek{Type}s(int count, ref Span<{Type}> destination)
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static void Peak{type.TargetTypeName}s(this ref ReadContext context, int count, ref Span<{type.TargetTypeFullName}> destination) {{");
+                writer.WriteLine($"public static void Peek{type.TargetTypeName}s(this ref ReadContext context, int count, ref Span<{type.TargetTypeFullName}> destination) {{");
                 writer.Indent++;
                 writer.WriteLine("if (0 > count || count > destination.Length) { return; }");
                 writer.WriteLine($"int bitsNeeded = count * {type.Size};");
                 writer.WriteLine($"if (context.IsInsufficientSpace(bitsNeeded)) {{ return; }}");
-                writer.WriteLine($"context.{type.PeakSpanRawMethodName}(count, ref destination);");
+                writer.WriteLine($"context.{type.PeekSpanRawMethodName}(count, ref destination);");
                 writer.Indent--;
                 writer.WriteLine("}");
                 writer.WriteLine();
                 
-                // void Peak(int count, Span<{Type}> destination)
+                // void Peek(int count, Span<{Type}> destination)
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static void Peak(this ref ReadContext context, int count, ref Span<{type.TargetTypeFullName}> destination) => context.Peak{type.TargetTypeName}s(count, ref destination);");
+                writer.WriteLine($"public static void Peek(this ref ReadContext context, int count, ref Span<{type.TargetTypeFullName}> destination) => context.Peek{type.TargetTypeName}s(count, ref destination);");
                 writer.WriteLine();
                 
-                // bool TryPeak{Type}s(int count, ref Span<{Type}> destination)
+                // bool TryPeek{Type}s(int count, ref Span<{Type}> destination)
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static bool TryPeak{type.TargetTypeName}s(this ref ReadContext context, int count, ref Span<{type.TargetTypeFullName}> destination) {{");
+                writer.WriteLine($"public static bool TryPeek{type.TargetTypeName}s(this ref ReadContext context, int count, ref Span<{type.TargetTypeFullName}> destination) {{");
                 writer.Indent++;
                 writer.WriteLine("if (0 > count || count > destination.Length) { return false; }");
                 writer.WriteLine($"int bitsNeeded = count * {type.Size};");
                 writer.WriteLine($"if (context.IsInsufficientSpace(bitsNeeded)) {{ return false; }}");
-                writer.WriteLine($"context.{type.PeakSpanRawMethodName}(count, ref destination);");
+                writer.WriteLine($"context.{type.PeekSpanRawMethodName}(count, ref destination);");
                 writer.WriteLine("return true;");
                 writer.Indent--;
                 writer.WriteLine("}");
                 writer.WriteLine();
                 
-                // bool TryPeak(int count, ref Span<{Type}> destination)
+                // bool TryPeek(int count, ref Span<{Type}> destination)
                 writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
-                writer.WriteLine($"public static bool TryPeak(this ref ReadContext context, int count, ref Span<{type.TargetTypeFullName}> destination) => context.TryPeak{type.TargetTypeName}s(count, ref destination);");
+                writer.WriteLine($"public static bool TryPeek(this ref ReadContext context, int count, ref Span<{type.TargetTypeFullName}> destination) => context.TryPeek{type.TargetTypeName}s(count, ref destination);");
                 writer.WriteLine();
             }
             
@@ -614,7 +614,7 @@ namespace ComputerysBitStream.Generator {
                     writer.WriteLine($"public static void Read{type.TargetTypeName}s(this ref ReadContext context, ref Span<{type.TargetTypeFullName}> destination) {{");
                     writer.Indent++;
                     writer.WriteLine($"if (context.IsInsufficientSpace({intHandler.Size})) {{ return; }}");
-                    writer.WriteLine($"int count = context.{intHandler.PeakRawMethodName}();");
+                    writer.WriteLine($"int count = context.{intHandler.PeekRawMethodName}();");
                     writer.WriteLine("if (0 > count || count > destination.Length) { return; }");
                     writer.WriteLine($"int bitsNeeded = count * {type.Size} + {intHandler.Size};");
                     writer.WriteLine("if (context.IsInsufficientSpace(bitsNeeded)) { return; }");
@@ -633,7 +633,7 @@ namespace ComputerysBitStream.Generator {
                     writer.WriteLine($"public static bool TryRead{type.TargetTypeName}s(this ref ReadContext context, ref Span<{type.TargetTypeFullName}> destination) {{");
                     writer.Indent++;
                     writer.WriteLine($"if (context.IsInsufficientSpace({intHandler.Size})) {{ return false; }}");
-                    writer.WriteLine($"int count = context.{intHandler.PeakRawMethodName}();");
+                    writer.WriteLine($"int count = context.{intHandler.PeekRawMethodName}();");
                     writer.WriteLine("if (0 > count || count > destination.Length) { return false; }");
                     writer.WriteLine($"int bitsNeeded = count * {type.Size} + {intHandler.Size};");
                     writer.WriteLine("if (context.IsInsufficientSpace(bitsNeeded)) { return false; }");
