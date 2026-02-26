@@ -1,8 +1,10 @@
 namespace ComputerysBitStream;
 
 internal static class BitSizes {
+    private const int BitsPerByte = 8;
+    
     public const int BoolSize = 1;
-    public const int ByteSize = 8;
+    public const int ByteSize = sizeof(byte) * BitsPerByte;
     public const int SByteSize = sizeof(sbyte) * ByteSize;
     public const int CharSize = sizeof(char) * ByteSize;
     public const int ShortSize = sizeof(short) * ByteSize;
