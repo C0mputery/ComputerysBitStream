@@ -30,7 +30,7 @@ public ref struct ReadContext {
     /// Remaining capacity in bits.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int GetRemainingCapacity() => Capacity - Position;
+    public readonly int GetRemainingCapacity() => Capacity - Position;
     
     /// <summary>
     /// Peeks the next bit in the buffer, without moving the position.
@@ -38,7 +38,7 @@ public ref struct ReadContext {
     /// </summary>
     /// <returns>bit</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool PeekBitRaw() {
+    public readonly bool PeekBitRaw() {
         int ulongIndex = Position / BitSizes.ULongSize;
         int bitOffset = Position % BitSizes.ULongSize;
         return (Buffer[ulongIndex] & (1UL << bitOffset)) != 0;
@@ -66,7 +66,7 @@ public ref struct ReadContext {
     /// </param>
     /// <returns>bits</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ulong PeekBitsRaw(int count) {
+    public readonly ulong PeekBitsRaw(int count) {
         int ulongIndex = Position / BitSizes.ULongSize;
         int bitOffset = Position % BitSizes.ULongSize;
 
@@ -109,7 +109,7 @@ public ref struct ReadContext {
     /// </param>
     /// <param name="buffer"> output </param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void PeekBitsRaw(int count, Span<ulong> buffer) {
+    public readonly void PeekBitsRaw(int count, Span<ulong> buffer) {
         int fullUlongs = count / BitSizes.ULongSize;
         int remainingBits = count % BitSizes.ULongSize;
         
@@ -180,7 +180,7 @@ public ref struct ReadContext {
     /// <param name="bits"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool HasSpaceRemaining(int bits) { return GetRemainingCapacity() >= bits; }
+    public readonly bool HasSpaceRemaining(int bits) { return GetRemainingCapacity() >= bits; }
     
     /// <summary>
     /// Checks if there is not enough space for the specified number of bits.
@@ -188,5 +188,5 @@ public ref struct ReadContext {
     /// <param name="bits">The number of bits to check.</param>
     /// <returns>True if there is not enough space remaining.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsInsufficientSpace(int bits) { return GetRemainingCapacity() < bits; }
+    public readonly bool IsInsufficientSpace(int bits) { return GetRemainingCapacity() < bits; }
 }

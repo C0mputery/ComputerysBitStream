@@ -24,7 +24,7 @@ public ref struct WriteContext {
     /// Remaining capacity in bits.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int GetRemainingCapacity() => Capacity - Position;
+    public readonly int GetRemainingCapacity() => Capacity - Position;
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public WriteContext(Span<ulong> buffer) {
@@ -164,7 +164,7 @@ public ref struct WriteContext {
     /// This will include garbage bits in the last byte if the total number of bits written is not a multiple of 8.
     /// </summary>
     /// <returns></returns>
-    public Span<byte> ToByte() {
+    public readonly Span<byte> ToByte() {
         int relevantUlongs = (Position + 63) / 64;
         Span<ulong> relevantBuffer = Buffer.Slice(0, relevantUlongs);
         int totalBytes = (Position + 7) / 8;
@@ -178,7 +178,7 @@ public ref struct WriteContext {
     /// <param name="bitsNeeded"> The size of the thing you are writing</param>
     /// <exception cref="InsufficientWriteSpaceException"></exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void ThrowIfNoSpace(string type, int bitsNeeded) {
+    public readonly void ThrowIfNoSpace(string type, int bitsNeeded) {
         int remainingCapacity = GetRemainingCapacity();
         if (remainingCapacity < bitsNeeded) { throw new InsufficientWriteSpaceException(type, bitsNeeded, remainingCapacity); }
     }
