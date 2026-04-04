@@ -25,14 +25,28 @@ public ref struct WriteContext {
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly int GetRemainingCapacity() => Capacity - Position;
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public WriteContext(Span<ulong> buffer) {
         Buffer = buffer;
         Position = 0;
         Capacity = buffer.Length * 64;
     }
-    
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public WriteContext(Span<ulong> buffer, int position) {
+        Buffer = buffer;
+        Position = position;
+        Capacity = buffer.Length * 64;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public WriteContext(Span<ulong> buffer, int position, int capacity) {
+        Buffer = buffer;
+        Position = position;
+        Capacity = capacity;
+    }
+
     /// <summary>
     /// Writes a single bit to the buffer.
     /// Assumes there is enough space in the buffer, caller must ensure this.

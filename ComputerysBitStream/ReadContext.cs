@@ -25,7 +25,21 @@ public ref struct ReadContext {
         Position = 0;
         Capacity = buffer.Length * 64;
     }
-    
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadContext(ReadOnlySpan<ulong> buffer, int position) {
+        Buffer = buffer;
+        Position = position;
+        Capacity = buffer.Length * 64;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadContext(ReadOnlySpan<ulong> buffer, int position, int capacity) {
+        Buffer = buffer;
+        Position = position;
+        Capacity = capacity;
+    }
+
     /// <summary>
     /// Remaining capacity in bits.
     /// </summary>
