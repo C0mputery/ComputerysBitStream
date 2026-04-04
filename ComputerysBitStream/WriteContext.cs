@@ -4,6 +4,12 @@ using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream;
 
+/// <summary>
+/// Represents a writable bit-level buffer context used to write bits into an
+/// underlying <see cref="Span{UInt64}"/> buffer. The context tracks the current
+/// write position in bits and the total bit capacity of the provided buffer.
+/// Assumes extension methods are used to access underlying data.
+/// </summary>
 public ref struct WriteContext {
     /// <summary>
     /// Underlying buffer.
@@ -26,6 +32,12 @@ public ref struct WriteContext {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly int GetRemainingCapacity() => Capacity - Position;
 
+    /// <summary>
+    /// Initializes a new <see cref="WriteContext"/> that uses the provided
+    /// <paramref name="buffer"/> as its storage. The initial <see cref="Position"/>
+    /// is set to 0 and <see cref="Capacity"/> is computed as <c>buffer.Length * 64</c>.
+    /// </summary>
+    /// <param name="buffer">The underlying buffer of 64-bit words used to store bits.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public WriteContext(Span<ulong> buffer) {
         Buffer = buffer;
@@ -33,6 +45,13 @@ public ref struct WriteContext {
         Capacity = buffer.Length * 64;
     }
 
+    /// <summary>
+    /// Initializes a new <see cref="WriteContext"/> that uses the provided
+    /// <paramref name="buffer"/> and sets the initial bit <paramref name="position"/>.
+    /// <see cref="Capacity"/> is computed as <c>buffer.Length * 64</c>.
+    /// </summary>
+    /// <param name="buffer">The underlying buffer of 64-bit words used to store bits.</param>
+    /// <param name="position">The initial bit position within the buffer.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public WriteContext(Span<ulong> buffer, int position) {
         Buffer = buffer;
@@ -40,6 +59,15 @@ public ref struct WriteContext {
         Capacity = buffer.Length * 64;
     }
 
+    /// <summary>
+    /// Initializes a new <see cref="WriteContext"/> that uses the provided
+    /// <paramref name="buffer"/>, initial bit <paramref name="position"/>, and an explicit
+    /// <paramref name="capacity"/> in bits. Use this overload when the effective
+    /// capacity differs from the full buffer length multiplied by 64.
+    /// </summary>
+    /// <param name="buffer">The underlying buffer of 64-bit words used to store bits.</param>
+    /// <param name="position">The initial bit position within the buffer.</param>
+    /// <param name="capacity">The total capacity in bits available for writing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public WriteContext(Span<ulong> buffer, int position, int capacity) {
         Buffer = buffer;

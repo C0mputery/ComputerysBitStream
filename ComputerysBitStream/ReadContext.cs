@@ -3,6 +3,12 @@ using System.Runtime.CompilerServices;
 
 namespace ComputerysBitStream;
 
+/// <summary>
+/// Represents a bit-level read cursor over a <see cref="ReadOnlySpan{UInt64}"/> buffer.
+/// The struct stores the underlying buffer, the current bit position and the total
+/// capacity in bits.
+/// Assumes extension methods are used to access underlying data.
+/// </summary>
 public ref struct ReadContext {
     /// <summary>
     /// Underlying buffer.
@@ -19,6 +25,11 @@ public ref struct ReadContext {
     /// </summary>
     public int Capacity;
 
+    /// <summary>
+    /// Initializes a new <see cref="ReadContext"/> over the specified buffer.
+    /// The initial position is set to zero and the capacity is set to <c>buffer.Length * 64</c>.
+    /// </summary>
+    /// <param name="buffer">The underlying buffer of 64-bit words to read bits from.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadContext(ReadOnlySpan<ulong> buffer) {
         Buffer = buffer;
@@ -26,6 +37,13 @@ public ref struct ReadContext {
         Capacity = buffer.Length * 64;
     }
 
+    /// <summary>
+    /// Initializes a new <see cref="ReadContext"/> over the specified buffer with
+    /// the provided starting bit <paramref name="position"/>.
+    /// The capacity is set to <c>buffer.Length * 64</c>.
+    /// </summary>
+    /// <param name="buffer">The underlying buffer of 64-bit words to read bits from.</param>
+    /// <param name="position">Initial bit position within the buffer.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadContext(ReadOnlySpan<ulong> buffer, int position) {
         Buffer = buffer;
@@ -33,6 +51,14 @@ public ref struct ReadContext {
         Capacity = buffer.Length * 64;
     }
 
+    /// <summary>
+    /// Initializes a new <see cref="ReadContext"/> over the specified buffer with
+    /// the provided starting bit <paramref name="position"/> and explicit <paramref name="capacity"/>.
+    /// Use this overload when only part of the underlying buffer should be considered readable.
+    /// </summary>
+    /// <param name="buffer">The underlying buffer of 64-bit words to read bits from.</param>
+    /// <param name="position">Initial bit position within the buffer.</param>
+    /// <param name="capacity">Total readable capacity in bits.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadContext(ReadOnlySpan<ulong> buffer, int position, int capacity) {
         Buffer = buffer;
