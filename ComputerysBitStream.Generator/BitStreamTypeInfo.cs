@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-
 namespace ComputerysBitStream.Generator;
 
 public record struct BitStreamLocation(string FilePath, TextSpan TextSpan, LinePositionSpan LineSpan) {
