@@ -9,7 +9,10 @@ namespace ComputerysBitStream;
 internal static class BitStreamSourceEmitter {
     private static void WriteLines(this IndentedTextWriter writer, string text) {
         string[] lines = text.Split(["\r\n", "\r", "\n"], StringSplitOptions.None);
-        foreach (string line in lines) { writer.WriteLine(line); }
+        foreach (string line in lines) {
+            if (string.IsNullOrWhiteSpace(line)) { writer.WriteLineNoTabs(""); } 
+            else { writer.WriteLine(line); }
+        }
     }
     
     // TODO: don't hardcode the ComputerysBitStream namespace
