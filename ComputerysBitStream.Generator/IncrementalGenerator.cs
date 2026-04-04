@@ -15,7 +15,7 @@ namespace ComputerysBitStream.Generator {
     [Generator]
     public class IncrementalGenerator : IIncrementalGenerator {
         private static readonly DiagnosticDescriptor DuplicateTypeRule = new DiagnosticDescriptor(
-            id: "BS001",
+            id: "CBSG001",
             title: "Duplicate BitStreamTypeAttribute",
             messageFormat: "The type '{0}' is already handled by another BitStreamTypeAttribute",
             category: "Usage",
@@ -23,7 +23,7 @@ namespace ComputerysBitStream.Generator {
             isEnabledByDefault: true);
 
         private static readonly DiagnosticDescriptor DuplicateRawRoleRule = new DiagnosticDescriptor(
-            id: "BS002",
+            id: "CBSG002",
             title: "Duplicate BitStreamRawAttribute role",
             messageFormat: "The role '{0}' is specified more than once in '{1}' (first: '{2}', again: '{3}')",
             category: "Usage",
