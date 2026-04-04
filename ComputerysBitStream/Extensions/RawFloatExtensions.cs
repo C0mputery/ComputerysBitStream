@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -15,10 +16,12 @@ public static class RawFloatExtensions {
     private static float FromBits(ulong value) => BitConverter.Int32BitsToSingle((int)(uint)value);
 
     [BitStreamRaw(BitStreamRawRole.Write)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteFloatRaw(this ref WriteContext context, float value) { context.WriteBitsRaw(AsBits(value), BitSizes.FloatSize); }
     
     [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteFloatsRaw(this ref WriteContext context, ReadOnlySpan<float> values) {
         ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<float, ulong>(values);
@@ -36,14 +39,17 @@ public static class RawFloatExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.Peek)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float PeekFloatRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitSizes.FloatSize)); }
 
     [BitStreamRaw(BitStreamRawRole.Read)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ReadFloatRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitSizes.FloatSize)); }
 
     [BitStreamRaw(BitStreamRawRole.PeekArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float[] PeekFloatArrayRaw(this ref ReadContext context, int count) {
         float[] result = new float[count];
@@ -53,6 +59,7 @@ public static class RawFloatExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float[] ReadFloatArrayRaw(this ref ReadContext context, int count) {
         float[] result = new float[count];
@@ -62,6 +69,7 @@ public static class RawFloatExtensions {
     }
     
     [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void PeekFloatSpanRaw(this ref ReadContext context, int count, ref Span<float> destination) {
         int originalPosition = context.Position;
@@ -70,6 +78,7 @@ public static class RawFloatExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ReadFloatSpanRaw(this ref ReadContext context, int count, ref Span<float> destination) {
         Span<float> targetSpan = destination.Slice(0, count);

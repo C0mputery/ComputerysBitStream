@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -15,10 +16,12 @@ public static class RawIntExtensions {
     private static int FromBits(ulong value) => (int)(uint)value;
 
     [BitStreamRaw(BitStreamRawRole.Write)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteIntRaw(this ref WriteContext context, int value) { context.WriteBitsRaw(AsBits(value), BitSizes.IntSize); }
     
     [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteIntsRaw(this ref WriteContext context, ReadOnlySpan<int> values) {
         ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<int, ulong>(values);
@@ -36,14 +39,17 @@ public static class RawIntExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.Peek)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int PeekIntRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitSizes.IntSize)); }
 
     [BitStreamRaw(BitStreamRawRole.Read)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int ReadIntRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitSizes.IntSize)); }
 
     [BitStreamRaw(BitStreamRawRole.PeekArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int[] PeekIntArrayRaw(this ref ReadContext context, int count) {
         int[] result = new int[count];
@@ -53,6 +59,7 @@ public static class RawIntExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int[] ReadIntArrayRaw(this ref ReadContext context, int count) {
         int[] result = new int[count];
@@ -62,6 +69,7 @@ public static class RawIntExtensions {
     }
     
     [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void PeekIntSpanRaw(this ref ReadContext context, int count, ref Span<int> destination) {
         int originalPosition = context.Position;
@@ -70,6 +78,7 @@ public static class RawIntExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ReadIntSpanRaw(this ref ReadContext context, int count, ref Span<int> destination) {
         Span<int> targetSpan = destination.Slice(0, count);

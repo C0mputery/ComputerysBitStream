@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -15,10 +16,12 @@ public static class RawShortExtensions {
     private static short FromBits(ulong value) => (short)(ushort)value;
 
     [BitStreamRaw(BitStreamRawRole.Write)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteShortRaw(this ref WriteContext context, short value) { context.WriteBitsRaw(AsBits(value), BitSizes.ShortSize); }
     
     [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteShortsRaw(this ref WriteContext context, ReadOnlySpan<short> values) {
         ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<short, ulong>(values);
@@ -36,14 +39,17 @@ public static class RawShortExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.Peek)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static short PeekShortRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitSizes.ShortSize)); }
 
     [BitStreamRaw(BitStreamRawRole.Read)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static short ReadShortRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitSizes.ShortSize)); }
 
     [BitStreamRaw(BitStreamRawRole.PeekArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static short[] PeekShortArrayRaw(this ref ReadContext context, int count) {
         short[] result = new short[count];
@@ -53,6 +59,7 @@ public static class RawShortExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static short[] ReadShortArrayRaw(this ref ReadContext context, int count) {
         short[] result = new short[count];
@@ -62,6 +69,7 @@ public static class RawShortExtensions {
     }
     
     [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void PeekShortSpanRaw(this ref ReadContext context, int count, ref Span<short> destination) {
         int originalPosition = context.Position;
@@ -70,6 +78,7 @@ public static class RawShortExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ReadShortSpanRaw(this ref ReadContext context, int count, ref Span<short> destination) {
         Span<short> targetSpan = destination.Slice(0, count);

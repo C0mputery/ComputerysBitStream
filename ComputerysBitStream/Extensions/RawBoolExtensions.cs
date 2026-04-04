@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace ComputerysBitStream;
@@ -8,10 +9,12 @@ public static class RawBoolExtensions {
     private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.BoolSize;
     
     [BitStreamRaw(BitStreamRawRole.Write)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteBoolRaw(this ref WriteContext context, bool value) { context.WriteBitRaw(value); }
     
     [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteBoolsRaw(this ref WriteContext context, ReadOnlySpan<bool> values) {
         int count = values.Length;
@@ -37,14 +40,17 @@ public static class RawBoolExtensions {
     }
     
     [BitStreamRaw(BitStreamRawRole.Peek)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool PeekBoolRaw(this ref ReadContext context) { return context.PeekBitRaw(); }
 
     [BitStreamRaw(BitStreamRawRole.Read)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool ReadBoolRaw(this ref ReadContext context) { return context.ReadBitRaw(); }
     
     [BitStreamRaw(BitStreamRawRole.PeekArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool[] PeekBoolArrayRaw(this ref ReadContext context, int count) {
         bool[] result = new bool[count];
@@ -54,6 +60,7 @@ public static class RawBoolExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool[] ReadBoolArrayRaw(this ref ReadContext context, int count) {
         bool[] result = new bool[count];
@@ -63,6 +70,7 @@ public static class RawBoolExtensions {
     }
     
     [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void PeekBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> destination) {
         int originalPosition = context.Position;
@@ -71,6 +79,7 @@ public static class RawBoolExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ReadBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> destination) {
         int processed = 0;

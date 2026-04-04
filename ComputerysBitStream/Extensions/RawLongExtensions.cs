@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -13,10 +14,12 @@ public static class RawLongExtensions {
     private static long FromBits(ulong value) => (long)value;
 
     [BitStreamRaw(BitStreamRawRole.Write)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteLongRaw(this ref WriteContext context, long value) { context.WriteBitsRaw(AsBits(value), BitSizes.LongSize); }
     
     [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteLongsRaw(this ref WriteContext context, ReadOnlySpan<long> values) {
         ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<long, ulong>(values);
@@ -24,14 +27,17 @@ public static class RawLongExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.Peek)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long PeekLongRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitSizes.LongSize)); }
 
     [BitStreamRaw(BitStreamRawRole.Read)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long ReadLongRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitSizes.LongSize)); }
 
     [BitStreamRaw(BitStreamRawRole.PeekArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long[] PeekLongArrayRaw(this ref ReadContext context, int count) {
         long[] result = new long[count];
@@ -41,6 +47,7 @@ public static class RawLongExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long[] ReadLongArrayRaw(this ref ReadContext context, int count) {
         long[] result = new long[count];
@@ -50,6 +57,7 @@ public static class RawLongExtensions {
     }
     
     [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void PeekLongSpanRaw(this ref ReadContext context, int count, ref Span<long> destination) {
         int originalPosition = context.Position;
@@ -58,6 +66,7 @@ public static class RawLongExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ReadLongSpanRaw(this ref ReadContext context, int count, ref Span<long> destination) {
         Span<long> targetSpan = destination.Slice(0, count);

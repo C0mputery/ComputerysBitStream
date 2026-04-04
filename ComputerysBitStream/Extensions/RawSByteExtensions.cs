@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -15,10 +16,12 @@ public static class RawSByteExtensions {
     private static sbyte FromBits(ulong value) => (sbyte)(byte)value;
 
     [BitStreamRaw(BitStreamRawRole.Write)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteSByteRaw(this ref WriteContext context, sbyte value) { context.WriteBitsRaw(AsBits(value), BitSizes.SByteSize); }
     
     [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteSBytesRaw(this ref WriteContext context, ReadOnlySpan<sbyte> values) {
         ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<sbyte, ulong>(values);
@@ -36,14 +39,17 @@ public static class RawSByteExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.Peek)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static sbyte PeekSByteRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitSizes.SByteSize)); }
 
     [BitStreamRaw(BitStreamRawRole.Read)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static sbyte ReadSByteRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitSizes.SByteSize)); }
 
     [BitStreamRaw(BitStreamRawRole.PeekArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static sbyte[] PeekSByteArrayRaw(this ref ReadContext context, int count) {
         sbyte[] result = new sbyte[count];
@@ -53,6 +59,7 @@ public static class RawSByteExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static sbyte[] ReadSByteArrayRaw(this ref ReadContext context, int count) {
         sbyte[] result = new sbyte[count];
@@ -62,6 +69,7 @@ public static class RawSByteExtensions {
     }
     
     [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void PeekSByteSpanRaw(this ref ReadContext context, int count, ref Span<sbyte> destination) {
         int originalPosition = context.Position;
@@ -70,6 +78,7 @@ public static class RawSByteExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ReadSByteSpanRaw(this ref ReadContext context, int count, ref Span<sbyte> destination) {
         Span<sbyte> targetSpan = destination.Slice(0, count);

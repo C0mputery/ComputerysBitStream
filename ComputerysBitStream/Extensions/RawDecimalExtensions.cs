@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -7,6 +8,7 @@ namespace ComputerysBitStream;
 [BitStreamType(typeof(decimal), BitSizes.DecimalSize)]
 public static class RawDecimalExtensions {
     [BitStreamRaw(BitStreamRawRole.Write)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteDecimalRaw(this ref WriteContext context, decimal value) {
         ReadOnlySpan<decimal> dSpan = MemoryMarshal.CreateReadOnlySpan(ref value, 1);
@@ -15,6 +17,7 @@ public static class RawDecimalExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteDecimalsRaw(this ref WriteContext context, ReadOnlySpan<decimal> values) {
         ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<decimal, ulong>(values);
@@ -22,6 +25,7 @@ public static class RawDecimalExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.Peek)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static decimal PeekDecimalRaw(this ref ReadContext context) {
         int originalPosition = context.Position;
@@ -31,6 +35,7 @@ public static class RawDecimalExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.Read)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static decimal ReadDecimalRaw(this ref ReadContext context) {
         decimal value = 0;
@@ -41,6 +46,7 @@ public static class RawDecimalExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.PeekArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static decimal[] PeekDecimalArrayRaw(this ref ReadContext context, int count) {
         decimal[] result = new decimal[count];
@@ -50,6 +56,7 @@ public static class RawDecimalExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static decimal[] ReadDecimalArrayRaw(this ref ReadContext context, int count) {
         decimal[] result = new decimal[count];
@@ -59,6 +66,7 @@ public static class RawDecimalExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void PeekDecimalSpanRaw(this ref ReadContext context, int count, ref Span<decimal> destination) {
         int originalPosition = context.Position;
@@ -67,6 +75,7 @@ public static class RawDecimalExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ReadDecimalSpanRaw(this ref ReadContext context, int count, ref Span<decimal> destination) {
         Span<decimal> targetSpan = destination.Slice(0, count);

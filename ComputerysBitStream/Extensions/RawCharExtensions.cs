@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -15,10 +16,12 @@ public static class RawCharExtensions {
     private static char FromBits(ulong value) => (char)value;
 
     [BitStreamRaw(BitStreamRawRole.Write)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteCharRaw(this ref WriteContext context, char value) { context.WriteBitsRaw(AsBits(value), BitSizes.CharSize); }
     
     [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteCharsRaw(this ref WriteContext context, ReadOnlySpan<char> values) {
         ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<char, ulong>(values);
@@ -36,14 +39,17 @@ public static class RawCharExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.Peek)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char PeekCharRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitSizes.CharSize)); }
 
     [BitStreamRaw(BitStreamRawRole.Read)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char ReadCharRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitSizes.CharSize)); }
 
     [BitStreamRaw(BitStreamRawRole.PeekArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char[] PeekCharArrayRaw(this ref ReadContext context, int count) {
         char[] result = new char[count];
@@ -53,6 +59,7 @@ public static class RawCharExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadArray)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char[] ReadCharArrayRaw(this ref ReadContext context, int count) {
         char[] result = new char[count];
@@ -62,6 +69,7 @@ public static class RawCharExtensions {
     }
     
     [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void PeekCharSpanRaw(this ref ReadContext context, int count, ref Span<char> destination) {
         int originalPosition = context.Position;
@@ -70,6 +78,7 @@ public static class RawCharExtensions {
     }
 
     [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ReadCharSpanRaw(this ref ReadContext context, int count, ref Span<char> destination) {
         Span<char> targetSpan = destination.Slice(0, count);
