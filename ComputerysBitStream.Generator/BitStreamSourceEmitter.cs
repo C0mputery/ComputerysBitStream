@@ -89,6 +89,11 @@ internal static class BitStreamSourceEmitter {
     // 2. void Write({Type} value)
     private static string WriteMethods(BitStreamTypeInfo type) {
         return $$"""
+        /// <summary>
+        /// Writes a <see cref="{{type.TargetTypeFullName}}"/> value to the bit stream.
+        /// </summary>
+        /// <param name="context">The write context.</param>
+        /// <param name="value">The value to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write{{type.TargetTypeName}}(this ref WriteContext context, {{type.TargetTypeFullName}} value) {
             context.ThrowIfNoSpace("{{type.TargetTypeName}}", {{type.Size}});
@@ -96,6 +101,11 @@ internal static class BitStreamSourceEmitter {
             context.{{type.WriteRawMethodName}}(value);
         }
 
+        /// <summary>
+        /// Writes a <see cref="{{type.TargetTypeFullName}}"/> value to the bit stream.
+        /// </summary>
+        /// <param name="context">The write context.</param>
+        /// <param name="value">The value to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(this ref WriteContext context, {{type.TargetTypeFullName}} value) => context.Write{{type.TargetTypeName}}(value);
         """;
@@ -105,6 +115,11 @@ internal static class BitStreamSourceEmitter {
     // 2. void Write(ReadOnlySpan<{Type}> values)
     private static string SpanWriteMethods(BitStreamTypeInfo type, BitStreamTypeInfo intHandler) {
         return $$"""
+        /// <summary>
+        /// Writes a length-prefixed span of <see cref="{{type.TargetTypeFullName}}"/> values to the bit stream.
+        /// </summary>
+        /// <param name="context">The write context.</param>
+        /// <param name="values">The values to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write{{type.TargetTypeName}}s(this ref WriteContext context, ReadOnlySpan<{{type.TargetTypeFullName}}> values) {
             int bitsNeeded = values.Length * {{type.Size}} + {{intHandler.Size}};
@@ -114,6 +129,11 @@ internal static class BitStreamSourceEmitter {
             context.{{type.WriteSpanRawMethodName}}(values);
         }
 
+        /// <summary>
+        /// Writes a length-prefixed span of <see cref="{{type.TargetTypeFullName}}"/> values to the bit stream.
+        /// </summary>
+        /// <param name="context">The write context.</param>
+        /// <param name="values">The values to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(this ref WriteContext context, ReadOnlySpan<{{type.TargetTypeFullName}}> values) => context.Write{{type.TargetTypeName}}s(values);
         """;
@@ -123,6 +143,11 @@ internal static class BitStreamSourceEmitter {
     // 2. void WriteWithoutLength(ReadOnlySpan<{Type}> values)
     private static string SpanWriteWithoutLengthMethods(BitStreamTypeInfo type) {
         return $$"""
+        /// <summary>
+        /// Writes a span of <see cref="{{type.TargetTypeFullName}}"/> values to the bit stream without a length prefix.
+        /// </summary>
+        /// <param name="context">The write context.</param>
+        /// <param name="values">The values to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write{{type.TargetTypeName}}sWithoutLength(this ref WriteContext context, ReadOnlySpan<{{type.TargetTypeFullName}}> values) {
             int totalSize = values.Length * {{type.Size}};
@@ -131,6 +156,11 @@ internal static class BitStreamSourceEmitter {
             context.{{type.WriteSpanRawMethodName}}(values);
         }
 
+        /// <summary>
+        /// Writes a span of <see cref="{{type.TargetTypeFullName}}"/> values to the bit stream.
+        /// </summary>
+        /// <param name="context">The write context.</param>
+        /// <param name="values">The values to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WithoutLength(this ref WriteContext context, ReadOnlySpan<{{type.TargetTypeFullName}}> values) => context.Write{{type.TargetTypeName}}s(values);
         """;
@@ -142,6 +172,11 @@ internal static class BitStreamSourceEmitter {
     // 4. bool TryPeek(out {Type} value)
     private static string PeekMethods(BitStreamTypeInfo type) {
         return $$"""
+        /// <summary>
+        /// Peeks at a <see cref="{{type.TargetTypeFullName}}"/> value at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <returns>The value at the current position, or the default value if there is insufficient data.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static {{type.TargetTypeFullName}} Peek{{type.TargetTypeName}}(this ref ReadContext context) {
             if (context.IsInsufficientSpace({{type.Size}})) { return default; }
@@ -149,9 +184,20 @@ internal static class BitStreamSourceEmitter {
             return context.{{type.PeekRawMethodName}}();
         }
 
+        /// <summary>
+        /// Peeks at a <see cref="{{type.TargetTypeFullName}}"/> value at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="value">When this method returns, contains the value at the current position, or the default value if there is insufficient data.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Peek(this ref ReadContext context, out {{type.TargetTypeFullName}} value) => value = context.Peek{{type.TargetTypeName}}();
 
+        /// <summary>
+        /// Attempts to peek at a <see cref="{{type.TargetTypeFullName}}"/> value at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="value">When this method returns, contains the value at the current position if successful; otherwise, the default value.</param>
+        /// <returns><see langword="true"/> if the value could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryPeek{{type.TargetTypeName}}(this ref ReadContext context, out {{type.TargetTypeFullName}} value) {
             if (context.IsInsufficientSpace({{type.Size}})) {
@@ -163,6 +209,12 @@ internal static class BitStreamSourceEmitter {
             return true;
         }
 
+        /// <summary>
+        /// Attempts to peek at a <see cref="{{type.TargetTypeFullName}}"/> value at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="value">When this method returns, contains the value at the current position if successful; otherwise, the default value.</param>
+        /// <returns><see langword="true"/> if the value could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryPeek(this ref ReadContext context, out {{type.TargetTypeFullName}} value) => context.TryPeek{{type.TargetTypeName}}(out value);
         """;
@@ -174,6 +226,11 @@ internal static class BitStreamSourceEmitter {
     // 4. bool TryRead(out {Type} value)
     private static string ReadMethods(BitStreamTypeInfo type) {
         return $$"""
+        /// <summary>
+        /// Reads a <see cref="{{type.TargetTypeFullName}}"/> value from the current position and advances the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <returns>The value at the current position, or the default value if there is insufficient data.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static {{type.TargetTypeFullName}} Read{{type.TargetTypeName}}(this ref ReadContext context) {
             if (context.IsInsufficientSpace({{type.Size}})) { return default; }
@@ -181,9 +238,20 @@ internal static class BitStreamSourceEmitter {
             return context.{{type.ReadRawMethodName}}();
         }
 
+        /// <summary>
+        /// Reads a <see cref="{{type.TargetTypeFullName}}"/> value from the current position and advances the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="value">When this method returns, contains the value at the current position, or the default value if there is insufficient data.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Read(this ref ReadContext context, out {{type.TargetTypeFullName}} value) => value = context.Read{{type.TargetTypeName}}();
 
+        /// <summary>
+        /// Attempts to read a <see cref="{{type.TargetTypeFullName}}"/> value from the current position and advance the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="value">When this method returns, contains the value at the current position if successful; otherwise, the default value.</param>
+        /// <returns><see langword="true"/> if the value could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryRead{{type.TargetTypeName}}(this ref ReadContext context, out {{type.TargetTypeFullName}} value) {
             if (context.IsInsufficientSpace({{type.Size}})) {
@@ -195,6 +263,12 @@ internal static class BitStreamSourceEmitter {
             return true;
         }
 
+        /// <summary>
+        /// Attempts to read a <see cref="{{type.TargetTypeFullName}}"/> value from the current position and advance the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="value">When this method returns, contains the value at the current position if successful; otherwise, the default value.</param>
+        /// <returns><see langword="true"/> if the value could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryRead(this ref ReadContext context, out {{type.TargetTypeFullName}} value) => context.TryRead{{type.TargetTypeName}}(out value);
         """;
@@ -206,6 +280,11 @@ internal static class BitStreamSourceEmitter {
     // 4. bool TryPeek(out {Type}[] values)
     private static string PeekArrayMethods(BitStreamTypeInfo type, BitStreamTypeInfo intHandler) {
         return $$"""
+        /// <summary>
+        /// Peeks at a length-prefixed array of <see cref="{{type.TargetTypeFullName}}"/> values at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <returns>An array of values, or an empty array if there is insufficient data or the encoded length is invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static {{type.TargetTypeFullName}}[] Peek{{type.TargetTypeName}}s(this ref ReadContext context) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
@@ -223,9 +302,20 @@ internal static class BitStreamSourceEmitter {
             return values;
         }
 
+        /// <summary>
+        /// Peeks at a length-prefixed array of <see cref="{{type.TargetTypeFullName}}"/> values at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="values">When this method returns, contains the values at the current position, or an empty array if there is insufficient data or the encoded length is invalid.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Peek(this ref ReadContext context, out {{type.TargetTypeFullName}}[] values) => values = context.Peek{{type.TargetTypeName}}s();
 
+        /// <summary>
+        /// Attempts to peek at a length-prefixed array of <see cref="{{type.TargetTypeFullName}}"/> values at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="values">When this method returns, contains the values at the current position if successful; otherwise, an empty array.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryPeek{{type.TargetTypeName}}s(this ref ReadContext context, out {{type.TargetTypeFullName}}[] values) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) {
@@ -252,6 +342,12 @@ internal static class BitStreamSourceEmitter {
             return true;
         }
 
+        /// <summary>
+        /// Attempts to peek at a length-prefixed array of <see cref="{{type.TargetTypeFullName}}"/> values at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="values">When this method returns, contains the values at the current position if successful; otherwise, an empty array.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryPeek(this ref ReadContext context, out {{type.TargetTypeFullName}}[] values) => context.TryPeek{{type.TargetTypeName}}s(out values);
         """;
@@ -263,6 +359,12 @@ internal static class BitStreamSourceEmitter {
     // 4. bool TryPeek(int count, out {Type}[] values)
     private static string PeekArrayMethodsWithoutLengthMethods(BitStreamTypeInfo type) {
         return $$"""
+        /// <summary>
+        /// Peeks at an array of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to peek.</param>
+        /// <returns>An array of values, or an empty array if there is insufficient data or <paramref name="count"/> is invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static {{type.TargetTypeFullName}}[] Peek{{type.TargetTypeName}}s(this ref ReadContext context, int count) {
             if (count < 0) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
@@ -274,9 +376,22 @@ internal static class BitStreamSourceEmitter {
             return values;
         }
 
+        /// <summary>
+        /// Peeks at an array of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to peek.</param>
+        /// <param name="values">When this method returns, contains the values at the current position, or an empty array if there is insufficient data or <paramref name="count"/> is invalid.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Peek(this ref ReadContext context, int count, out {{type.TargetTypeFullName}}[] values) => values = context.Peek{{type.TargetTypeName}}s(count);
 
+        /// <summary>
+        /// Attempts to peek at an array of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to peek.</param>
+        /// <param name="values">When this method returns, contains the values at the current position if successful; otherwise, an empty array.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryPeek{{type.TargetTypeName}}s(this ref ReadContext context, int count, out {{type.TargetTypeFullName}}[] values) {
             if (count < 0) {
@@ -294,6 +409,13 @@ internal static class BitStreamSourceEmitter {
             return true;
         }
 
+        /// <summary>
+        /// Attempts to peek at an array of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length at the current position without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to peek.</param>
+        /// <param name="values">When this method returns, contains the values at the current position if successful; otherwise, an empty array.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryPeek(this ref ReadContext context, int count, out {{type.TargetTypeFullName}}[] values) => context.TryPeek{{type.TargetTypeName}}s(count, out values);
         """;
@@ -305,6 +427,11 @@ internal static class BitStreamSourceEmitter {
     // 4. bool TryRead(out {Type}[] values)
     private static string ReadArrayMethods(BitStreamTypeInfo type, BitStreamTypeInfo intHandler) {
         return $$"""
+        /// <summary>
+        /// Reads a length-prefixed array of <see cref="{{type.TargetTypeFullName}}"/> values from the current position and advances the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <returns>An array of values, or an empty array if there is insufficient data or the encoded length is invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static {{type.TargetTypeFullName}}[] Read{{type.TargetTypeName}}s(this ref ReadContext context) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
@@ -320,9 +447,20 @@ internal static class BitStreamSourceEmitter {
             return values;
         }
 
+        /// <summary>
+        /// Reads a length-prefixed array of <see cref="{{type.TargetTypeFullName}}"/> values from the current position and advances the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="values">When this method returns, contains the values at the current position, or an empty array if there is insufficient data or the encoded length is invalid.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Read(this ref ReadContext context, out {{type.TargetTypeFullName}}[] values) => values = context.Read{{type.TargetTypeName}}s();
 
+        /// <summary>
+        /// Attempts to read a length-prefixed array of <see cref="{{type.TargetTypeFullName}}"/> values from the current position and advance the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="values">When this method returns, contains the values at the current position if successful; otherwise, an empty array.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryRead{{type.TargetTypeName}}s(this ref ReadContext context, out {{type.TargetTypeFullName}}[] values) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) {
@@ -347,6 +485,12 @@ internal static class BitStreamSourceEmitter {
             return true;
         }
 
+        /// <summary>
+        /// Attempts to read a length-prefixed array of <see cref="{{type.TargetTypeFullName}}"/> values from the current position and advance the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="values">When this method returns, contains the values at the current position if successful; otherwise, an empty array.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryRead(this ref ReadContext context, out {{type.TargetTypeFullName}}[] values) => context.TryRead{{type.TargetTypeName}}s(out values);
         """;
@@ -358,6 +502,12 @@ internal static class BitStreamSourceEmitter {
     // 4. bool TryRead(int count, out {Type}[] values)
     private static string ReadArrayWithoutLengthMethods(BitStreamTypeInfo type) {
         return $$"""
+        /// <summary>
+        /// Reads an array of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length from the current position and advances the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to read.</param>
+        /// <returns>An array of values, or an empty array if there is insufficient data or <paramref name="count"/> is invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static {{type.TargetTypeFullName}}[] Read{{type.TargetTypeName}}s(this ref ReadContext context, int count) {
             if (count < 0) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
@@ -369,9 +519,22 @@ internal static class BitStreamSourceEmitter {
             return values;
         }
 
+        /// <summary>
+        /// Reads an array of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length from the current position and advances the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to read.</param>
+        /// <param name="values">When this method returns, contains the values at the current position, or an empty array if there is insufficient data or <paramref name="count"/> is invalid.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Read(this ref ReadContext context, int count, out {{type.TargetTypeFullName}}[] values) => values = context.Read{{type.TargetTypeName}}s(count);
 
+        /// <summary>
+        /// Attempts to read an array of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length from the current position and advance the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to read.</param>
+        /// <param name="values">When this method returns, contains the values at the current position if successful; otherwise, an empty array.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryRead{{type.TargetTypeName}}s(this ref ReadContext context, int count, out {{type.TargetTypeFullName}}[] values) {
             if (count < 0) {
@@ -389,6 +552,13 @@ internal static class BitStreamSourceEmitter {
             return true;
         }
 
+        /// <summary>
+        /// Attempts to read an array of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length from the current position and advance the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to read.</param>
+        /// <param name="values">When this method returns, contains the values at the current position if successful; otherwise, an empty array.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryRead(this ref ReadContext context, int count, out {{type.TargetTypeFullName}}[] values) => context.TryRead{{type.TargetTypeName}}s(count, out values);
         """;
@@ -400,6 +570,11 @@ internal static class BitStreamSourceEmitter {
     // 4. bool TryPeek(ref Span<{Type}> destination)
     private static string PeekSpanMethods(BitStreamTypeInfo type, BitStreamTypeInfo intHandler) {
         return $$"""
+        /// <summary>
+        /// Peeks at a length-prefixed sequence of <see cref="{{type.TargetTypeFullName}}"/> values into the specified destination span without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Peek{{type.TargetTypeName}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return; }
@@ -414,9 +589,20 @@ internal static class BitStreamSourceEmitter {
             context.Position -= {{intHandler.Size}};
         }
 
+        /// <summary>
+        /// Peeks at a length-prefixed sequence of <see cref="{{type.TargetTypeFullName}}"/> values into the specified destination span without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Peek(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) => context.Peek{{type.TargetTypeName}}s(ref destination);
 
+        /// <summary>
+        /// Attempts to peek at a length-prefixed sequence of <see cref="{{type.TargetTypeFullName}}"/> values into the specified destination span without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="destination">The span that receives the values.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryPeek{{type.TargetTypeName}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return false; }
@@ -434,6 +620,12 @@ internal static class BitStreamSourceEmitter {
             return true;
         }
 
+        /// <summary>
+        /// Attempts to peek at a length-prefixed sequence of <see cref="{{type.TargetTypeFullName}}"/> values into the specified destination span without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="destination">The span that receives the values.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryPeek(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) => context.TryPeek{{type.TargetTypeName}}s(ref destination);
         """;
@@ -445,6 +637,12 @@ internal static class BitStreamSourceEmitter {
     // 4. bool TryPeek(int count, ref Span<{Type}> destination)
     private static string PeekSpanMethodsWithoutLengthMethods(BitStreamTypeInfo type) {
         return $$"""
+        /// <summary>
+        /// Peeks at a sequence of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length into the destination span without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to peek.</param>
+        /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Peek{{type.TargetTypeName}}s(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (0 > count || count > destination.Length) { return; }
@@ -455,9 +653,22 @@ internal static class BitStreamSourceEmitter {
             context.{{type.PeekSpanRawMethodName}}(count, ref destination);
         }
 
+        /// <summary>
+        /// Peeks at a sequence of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length into the destination span without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to peek.</param>
+        /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Peek(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullName}}> destination) => context.Peek{{type.TargetTypeName}}s(count, ref destination);
 
+        /// <summary>
+        /// Attempts to peek at a sequence of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length into the destination span without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to peek.</param>
+        /// <param name="destination">The span that receives the values.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryPeek{{type.TargetTypeName}}s(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (0 > count || count > destination.Length) { return false; }
@@ -469,6 +680,13 @@ internal static class BitStreamSourceEmitter {
             return true;
         }
 
+        /// <summary>
+        /// Attempts to peek at a sequence of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length into the destination span without advancing the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to peek.</param>
+        /// <param name="destination">The span that receives the values.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryPeek(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullName}}> destination) => context.TryPeek{{type.TargetTypeName}}s(count, ref destination);
         """;
@@ -479,6 +697,11 @@ internal static class BitStreamSourceEmitter {
     // 4. bool TryRead(ref Span<{Type}> destination)
     private static string ReadSpanMethods(BitStreamTypeInfo type, BitStreamTypeInfo intHandler) {
         return $$"""
+        /// <summary>
+        /// Reads a length-prefixed sequence of <see cref="{{type.TargetTypeFullName}}"/> values into the specified destination span and advances the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Read{{type.TargetTypeName}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return; }
@@ -493,9 +716,20 @@ internal static class BitStreamSourceEmitter {
             context.{{type.ReadSpanRawMethodName}}(count, ref destination);
         }
 
+        /// <summary>
+        /// Reads a length-prefixed sequence of <see cref="{{type.TargetTypeFullName}}"/> values into the specified destination span and advances the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Read(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) => context.Read{{type.TargetTypeName}}s(ref destination);
 
+        /// <summary>
+        /// Attempts to read a length-prefixed sequence of <see cref="{{type.TargetTypeFullName}}"/> values into the specified destination span and advance the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="destination">The span that receives the values.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryRead{{type.TargetTypeName}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return false; }
@@ -511,6 +745,12 @@ internal static class BitStreamSourceEmitter {
             return true;
         }
 
+        /// <summary>
+        /// Attempts to read a length-prefixed sequence of <see cref="{{type.TargetTypeFullName}}"/> values into the specified destination span and advance the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="destination">The span that receives the values.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryRead(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) => context.TryRead{{type.TargetTypeName}}s(ref destination);
         """;
@@ -522,6 +762,12 @@ internal static class BitStreamSourceEmitter {
     // 4. bool TryRead(int count, ref Span<{Type}> destination)
     private static string ReadSpanMethodsWithoutLengthMethods(BitStreamTypeInfo type) {
         return $$"""
+        /// <summary>
+        /// Reads a sequence of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length into the destination span and advances the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to read.</param>
+        /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Read{{type.TargetTypeName}}s(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (0 > count || count > destination.Length) { return; }
@@ -532,9 +778,22 @@ internal static class BitStreamSourceEmitter {
             context.{{type.ReadSpanRawMethodName}}(count, ref destination);
         }
 
+        /// <summary>
+        /// Reads a sequence of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length into the destination span and advances the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to read.</param>
+        /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Read(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullName}}> destination) => context.Read{{type.TargetTypeName}}s(count, ref destination);
 
+        /// <summary>
+        /// Attempts to read a sequence of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length into the destination span and advance the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to read.</param>
+        /// <param name="destination">The span that receives the values.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryRead{{type.TargetTypeName}}s(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (0 > count || count > destination.Length) { return false; }
@@ -546,6 +805,13 @@ internal static class BitStreamSourceEmitter {
             return true;
         }
 
+        /// <summary>
+        /// Attempts to read a sequence of <see cref="{{type.TargetTypeFullName}}"/> values of the specified length into the destination span and advance the bit stream.
+        /// </summary>
+        /// <param name="context">The read context.</param>
+        /// <param name="count">The number of values to read.</param>
+        /// <param name="destination">The span that receives the values.</param>
+        /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryRead(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullName}}> destination) => context.TryRead{{type.TargetTypeName}}s(count, ref destination);
         """;
