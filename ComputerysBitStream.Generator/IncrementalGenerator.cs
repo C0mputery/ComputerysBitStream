@@ -14,7 +14,7 @@ namespace ComputerysBitStream.Generator {
         private static readonly string ClassAttribute = typeof(BitStreamTypeAttribute).FullName!;
 
         public void Initialize(IncrementalGeneratorInitializationContext context) {
-            IncrementalValuesProvider<BitStreamTypeInfo> pipeline = 
+            IncrementalValuesProvider<BitStreamTypeInfo> handlers = 
                 context.SyntaxProvider.ForAttributeWithMetadataName(
                         fullyQualifiedMetadataName: ClassAttribute,
                         predicate: (node, _) => node is ClassDeclarationSyntax,
@@ -22,45 +22,47 @@ namespace ComputerysBitStream.Generator {
                 .Where(info => info is not null)
                 .Select((info, _) => info!);
 
-            IncrementalValueProvider<ImmutableArray<BitStreamTypeInfo>> collected = pipeline.Collect();
-            
-            context.RegisterSourceOutput(collected, (sourceContext, handlers) => {
-                Dictionary<string, BitStreamTypeInfo> handlersByTarget = new();
-                foreach (BitStreamTypeInfo handler in handlers) {
-                    foreach (DuplicateRawRoleInfo duplicate in handler.DuplicateRoles) {
-                        Location? location = null;
-                        if (duplicate.Location.HasValue) {
-                            location = Location.Create(duplicate.Location.Value.FilePath, duplicate.Location.Value.TextSpan, duplicate.Location.Value.LineSpan);
-                        }
-                        sourceContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.DuplicateRawRoleRule, location, duplicate.Role, duplicate.ClassName, duplicate.FirstMethod, duplicate.SecondMethod));
-                    }
+            IncrementalValueProvider<ImmutableArray<BitStreamTypeInfo>> collectedHandlers = handlers.Collect();
+            IncrementalValueProvider<ValidationResult> validation = collectedHandlers.Select((allHandlers, _) => ValidateHandlers(allHandlers));
 
-                    if (handlersByTarget.ContainsKey(handler.TargetTypeFullName)) {
-                        Location? location = null;
-                        BitStreamLocation? bitStreamLocation = handler.Location;
-                        if (bitStreamLocation.HasValue) {   
-                            location = Location.Create(bitStreamLocation.Value.FilePath, bitStreamLocation.Value.TextSpan, bitStreamLocation.Value.LineSpan);
-                        }
-                        
-                        Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptors.DuplicateTypeRule, location, handler.TargetTypeFullName);
-                        sourceContext.ReportDiagnostic(diagnostic);
-                    } else {
-                        handlersByTarget[handler.TargetTypeFullName] = handler;
-                    }
-                }
-            });
-            
-            IncrementalValueProvider<BitStreamTypeInfo?> intHandlerProvider = pipeline
+            IncrementalValuesProvider<Diagnostic> diagnostics = validation.SelectMany((result, _) => result.Diagnostics);
+            context.RegisterSourceOutput(diagnostics, (sourceContext, diagnostic) => sourceContext.ReportDiagnostic(diagnostic));
+
+            IncrementalValuesProvider<BitStreamTypeInfo> uniqueHandlers = validation.SelectMany((result, _) => result.UniqueHandlers);
+
+            IncrementalValueProvider<BitStreamTypeInfo?> intHandlerProvider = uniqueHandlers
                 .Where(info => info.TargetTypeFullName == SyntaxFacts.GetText(SyntaxKind.IntKeyword))
                 .Collect()
-                .Select((handlers, _) => handlers.Length > 0 ? (BitStreamTypeInfo?)handlers[0] : null);
+                .Select((bitStreamTypeInfos, _) => bitStreamTypeInfos.Length > 0 ? (BitStreamTypeInfo?)bitStreamTypeInfos[0] : null);
             
-            IncrementalValuesProvider<(BitStreamTypeInfo handler, BitStreamTypeInfo? intHandler)> combined = pipeline.Combine(intHandlerProvider);
+            IncrementalValuesProvider<(BitStreamTypeInfo handler, BitStreamTypeInfo? intHandler)> combined = uniqueHandlers.Combine(intHandlerProvider);
             
             context.RegisterSourceOutput(combined, (sourceContext, pair) => {
                 string source = BitStreamSourceEmitter.EmitSource(pair.handler, pair.intHandler);
                 sourceContext.AddSource($"{pair.handler.TargetTypeName}ContextExtensions.g.cs", SourceText.From(source, Encoding.UTF8));
             });
+        }
+
+        private static ValidationResult ValidateHandlers(ImmutableArray<BitStreamTypeInfo> handlers) {
+            Dictionary<string, BitStreamTypeInfo> firstByTarget = new Dictionary<string, BitStreamTypeInfo>();
+            ImmutableArray<Diagnostic>.Builder diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
+            ImmutableArray<BitStreamTypeInfo>.Builder uniqueHandlers = ImmutableArray.CreateBuilder<BitStreamTypeInfo>();
+
+            foreach (BitStreamTypeInfo handler in handlers) {
+                foreach (DuplicateRawRoleInfo duplicate in handler.DuplicateRoles) {
+                    diagnostics.Add(DiagnosticDescriptors.CreateDuplicateRawRole(duplicate));
+                }
+
+                if (firstByTarget.ContainsKey(handler.TargetTypeFullName)) {
+                    diagnostics.Add(DiagnosticDescriptors.CreateDuplicateType(handler));
+                    continue;
+                }
+
+                firstByTarget[handler.TargetTypeFullName] = handler;
+                uniqueHandlers.Add(handler);
+            }
+
+            return new ValidationResult(uniqueHandlers.ToImmutable(), diagnostics.ToImmutable());
         }
 
         private static BitStreamTypeInfo? Transform(GeneratorAttributeSyntaxContext context, CancellationToken cancel) {
@@ -147,6 +149,11 @@ namespace ComputerysBitStream.Generator {
             typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameOnly,
             genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
             miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes
+        );
+
+        private readonly record struct ValidationResult(
+            ImmutableArray<BitStreamTypeInfo> UniqueHandlers,
+            ImmutableArray<Diagnostic> Diagnostics
         );
     }
 }

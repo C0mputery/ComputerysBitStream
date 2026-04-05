@@ -2,7 +2,13 @@ using Microsoft.CodeAnalysis;
 
 namespace ComputerysBitStream.Generator;
 
-internal class DiagnosticDescriptors {
+internal static class DiagnosticDescriptors {
+    private static Location? ToLocation(BitStreamLocation? location) {
+        if (!location.HasValue) { return null; }
+        BitStreamLocation value = location.Value;
+        return Location.Create(value.FilePath, value.TextSpan, value.LineSpan);
+    }
+    
     internal static readonly DiagnosticDescriptor DuplicateTypeRule = new DiagnosticDescriptor(
         id: "CBSG001",
         title: "Duplicate BitStreamTypeAttribute",
@@ -10,7 +16,10 @@ internal class DiagnosticDescriptors {
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
-
+    internal static Diagnostic CreateDuplicateType(BitStreamTypeInfo typeInfo) {
+        return Diagnostic.Create(DuplicateTypeRule, ToLocation(typeInfo.Location), typeInfo.TargetTypeFullName);
+    }
+    
     internal static readonly DiagnosticDescriptor DuplicateRawRoleRule = new DiagnosticDescriptor(
         id: "CBSG002",
         title: "Duplicate BitStreamRawAttribute role",
@@ -18,4 +27,13 @@ internal class DiagnosticDescriptors {
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
+    internal static Diagnostic CreateDuplicateRawRole(DuplicateRawRoleInfo duplicate) {
+        return Diagnostic.Create(
+            DuplicateRawRoleRule,
+            ToLocation(duplicate.Location),
+            duplicate.Role,
+            duplicate.ClassName,
+            duplicate.FirstMethod,
+            duplicate.SecondMethod);
+    }
 }
