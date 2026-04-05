@@ -1,5 +1,6 @@
 using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ComputerysBitStream.Generator;
@@ -22,14 +23,10 @@ internal static class BitStreamSourceEmitter {
         using StringWriter stringWriter = new StringWriter();
         using IndentedTextWriter writer = new IndentedTextWriter(stringWriter, new string(' ', 4));
         
-        StringBuilder additionalUsings = new StringBuilder();
-        if (type.ClassNamespace != "ComputerysBitStream") { additionalUsings.AppendLine($"using {type.ClassNamespace};"); }
-        if (hasIntHandler && intHandler!.ClassNamespace != type.ClassNamespace && intHandler.ClassNamespace != "ComputerysBitStream") { additionalUsings.AppendLine($"using {intHandler.ClassNamespace};"); }
-        
         writer.WriteLines($$"""
         using System;
         using System.Runtime.CompilerServices;
-        {{additionalUsings.ToString().TrimEnd()}}
+        {{BuildAdditionalUsings(type, intHandler)}}
         
         namespace ComputerysBitStream {
         """);
@@ -87,6 +84,21 @@ internal static class BitStreamSourceEmitter {
         
         return stringWriter.ToString();
     }
+    
+    private static string BuildAdditionalUsings(BitStreamTypeInfo type, BitStreamTypeInfo? intHandler) { 
+        string generatedNamespace = nameof(ComputerysBitStream);
+        
+        HashSet<string> namespaces = new HashSet<string>(StringComparer.Ordinal);
+        if (type.ClassNamespace != generatedNamespace) { namespaces.Add(type.ClassNamespace); }
+        if (intHandler is not null && intHandler.ClassNamespace != generatedNamespace) { namespaces.Add(intHandler.ClassNamespace); }
+        
+        if (namespaces.Count == 0) { return string.Empty; }
+        
+        StringBuilder builder = new StringBuilder();
+        foreach (string ns in namespaces) { builder.Append("using ").Append(ns).AppendLine(";"); }
+        return builder.ToString().TrimEnd();
+    }
+    
     
     // 1. void Write{Type}({Type} value)
     // 2. void Write({Type} value)
