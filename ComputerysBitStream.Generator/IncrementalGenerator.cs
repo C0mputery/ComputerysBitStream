@@ -80,7 +80,7 @@ namespace ComputerysBitStream.Generator {
             Dictionary<BitStreamRawRole, string> methodsByRole = new Dictionary<BitStreamRawRole, string>();
             ImmutableArray<DuplicateRawRoleInfo>.Builder duplicates = ImmutableArray.CreateBuilder<DuplicateRawRoleInfo>();
             foreach (IMethodSymbol? member in members) {
-                AttributeData? attribute = member.GetAttributes().FirstOrDefault(ad => ad.AttributeClass?.Name == "BitStreamRawAttribute");
+                AttributeData? attribute = member.GetAttributes().FirstOrDefault(ad => ad.AttributeClass?.Name == nameof(BitStreamRawAttribute));
                 if (attribute?.ConstructorArguments.Length > 0 && attribute.ConstructorArguments[0].Value is int roleValue) {
                     BitStreamRawRole role = (BitStreamRawRole)roleValue;
                     if (methodsByRole.TryGetValue(role, out string? firstMethod)) {
