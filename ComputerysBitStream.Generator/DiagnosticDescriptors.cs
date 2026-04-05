@@ -3,12 +3,6 @@ using Microsoft.CodeAnalysis;
 namespace ComputerysBitStream.Generator;
 
 internal static class DiagnosticDescriptors {
-    private static Location? ToLocation(BitStreamLocation? location) {
-        if (!location.HasValue) { return null; }
-        BitStreamLocation value = location.Value;
-        return Location.Create(value.FilePath, value.TextSpan, value.LineSpan);
-    }
-    
     internal static readonly DiagnosticDescriptor DuplicateTypeRule = new DiagnosticDescriptor(
         id: "CBSG001",
         title: "Duplicate BitStreamTypeAttribute",
@@ -17,7 +11,7 @@ internal static class DiagnosticDescriptors {
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
     internal static Diagnostic CreateDuplicateType(BitStreamTypeInfo typeInfo) {
-        return Diagnostic.Create(DuplicateTypeRule, ToLocation(typeInfo.Location), typeInfo.TargetTypeFullName);
+        return Diagnostic.Create(DuplicateTypeRule, typeInfo.Location?.ToLocation(), typeInfo.TargetTypeFullName);
     }
     
     internal static readonly DiagnosticDescriptor DuplicateRawRoleRule = new DiagnosticDescriptor(
@@ -30,7 +24,7 @@ internal static class DiagnosticDescriptors {
     internal static Diagnostic CreateDuplicateRawRole(DuplicateRawRoleInfo duplicate) {
         return Diagnostic.Create(
             DuplicateRawRoleRule,
-            ToLocation(duplicate.Location),
+            duplicate.Location?.ToLocation(),
             duplicate.Role,
             duplicate.ClassName,
             duplicate.FirstMethod,
@@ -47,7 +41,7 @@ internal static class DiagnosticDescriptors {
     internal static Diagnostic CreateNonPublicRawMethod(NonPublicRawMethodInfo nonPublicRawMethod) {
         return Diagnostic.Create(
             NonPublicRawMethodRule,
-            ToLocation(nonPublicRawMethod.Location),
+            nonPublicRawMethod.Location?.ToLocation(),
             nonPublicRawMethod.MethodName,
             nonPublicRawMethod.ClassName,
             nonPublicRawMethod.Role,

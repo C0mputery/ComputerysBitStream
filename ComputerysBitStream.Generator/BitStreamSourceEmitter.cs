@@ -20,8 +20,8 @@ internal static class BitStreamSourceEmitter {
         bool hasIntHandlerWrite = false;
         bool hasIntHandlerPeek = false;
         if (intHandler != null) { 
-            hasIntHandlerWrite = intHandler!.WriteRawMethodName != null;
-            hasIntHandlerPeek = intHandler!.PeekRawMethodName != null;
+            hasIntHandlerWrite = intHandler!.RawMethods.WriteRawMethodName != null;
+            hasIntHandlerPeek = intHandler!.RawMethods.PeekRawMethodName != null;
         }
         
         using StringWriter stringWriter = new StringWriter();
@@ -37,8 +37,10 @@ internal static class BitStreamSourceEmitter {
         
         writer.Indent++;
         
-        bool hasWriteRawMethod = type.WriteRawMethodName != null;
-        bool hasWriteSpanRawMethod = type.WriteSpanRawMethodName != null;
+        RawRoleBindings rawMethods  = type.RawMethods;
+
+        bool hasWriteRawMethod = rawMethods.WriteRawMethodName != null;
+        bool hasWriteSpanRawMethod = rawMethods.WriteSpanRawMethodName != null;
         if (hasWriteRawMethod || hasWriteSpanRawMethod) {
             writer.WriteLine($"public static class {type.TargetTypeName}WriteContextExtensions {{");
             writer.Indent++;
@@ -51,12 +53,12 @@ internal static class BitStreamSourceEmitter {
             writer.WriteLine("}");
         }
 
-        bool hasPeekRawMethod = type.PeekRawMethodName != null;
-        bool hasReadRawMethod = type.ReadRawMethodName != null;
-        bool hasPeekArrayRawMethod = type.PeekArrayRawMethodName != null;
-        bool hasReadArrayRawMethod = type.ReadArrayRawMethodName != null;
-        bool hasPeekSpanRawMethod = type.PeekSpanRawMethodName != null;
-        bool hasReadSpanRawMethod = type.ReadSpanRawMethodName != null;
+        bool hasPeekRawMethod = rawMethods.PeekRawMethodName != null;
+        bool hasReadRawMethod = rawMethods.ReadRawMethodName != null;
+        bool hasPeekArrayRawMethod = rawMethods.PeekArrayRawMethodName != null;
+        bool hasReadArrayRawMethod = rawMethods.ReadArrayRawMethodName != null;
+        bool hasPeekSpanRawMethod = rawMethods.PeekSpanRawMethodName != null;
+        bool hasReadSpanRawMethod = rawMethods.ReadSpanRawMethodName != null;
         if (hasPeekRawMethod || hasReadRawMethod || hasPeekArrayRawMethod || hasReadArrayRawMethod || hasPeekSpanRawMethod || hasReadSpanRawMethod) {
             writer.WriteLine($"public static class {type.TargetTypeName}ReadContextExtensions {{");
             writer.Indent++;
@@ -117,7 +119,7 @@ internal static class BitStreamSourceEmitter {
         public static void Write{{type.TargetTypeName}}(this ref WriteContext context, {{type.TargetTypeFullName}} value) {
             context.ThrowIfNoSpace("{{type.TargetTypeName}}", {{type.Size}});
             
-            context.{{type.WriteRawMethodName}}(value);
+            context.{{type.RawMethods.WriteRawMethodName}}(value);
         }
 
         /// <summary>
@@ -144,8 +146,8 @@ internal static class BitStreamSourceEmitter {
             int bitsNeeded = values.Length * {{type.Size}} + {{intHandler.Size}};
             context.ThrowIfNoSpace("{{type.TargetTypeName}} array", bitsNeeded);
             
-            context.{{intHandler.WriteRawMethodName}}(values.Length);
-            context.{{type.WriteSpanRawMethodName}}(values);
+            context.{{intHandler.RawMethods.WriteRawMethodName}}(values.Length);
+            context.{{type.RawMethods.WriteSpanRawMethodName}}(values);
         }
 
         /// <summary>
@@ -172,7 +174,7 @@ internal static class BitStreamSourceEmitter {
             int totalSize = values.Length * {{type.Size}};
             context.ThrowIfNoSpace("{{type.TargetTypeName}} span", totalSize);
             
-            context.{{type.WriteSpanRawMethodName}}(values);
+            context.{{type.RawMethods.WriteSpanRawMethodName}}(values);
         }
 
         /// <summary>
@@ -200,7 +202,7 @@ internal static class BitStreamSourceEmitter {
         public static {{type.TargetTypeFullName}} Peek{{type.TargetTypeName}}(this ref ReadContext context) {
             if (context.IsInsufficientSpace({{type.Size}})) { return default; }
             
-            return context.{{type.PeekRawMethodName}}();
+            return context.{{type.RawMethods.PeekRawMethodName}}();
         }
 
         /// <summary>
@@ -224,7 +226,7 @@ internal static class BitStreamSourceEmitter {
                 return false;
             }
             
-            value = context.{{type.PeekRawMethodName}}();
+            value = context.{{type.RawMethods.PeekRawMethodName}}();
             return true;
         }
 
@@ -254,7 +256,7 @@ internal static class BitStreamSourceEmitter {
         public static {{type.TargetTypeFullName}} Read{{type.TargetTypeName}}(this ref ReadContext context) {
             if (context.IsInsufficientSpace({{type.Size}})) { return default; }
             
-            return context.{{type.ReadRawMethodName}}();
+            return context.{{type.RawMethods.ReadRawMethodName}}();
         }
 
         /// <summary>
@@ -278,7 +280,7 @@ internal static class BitStreamSourceEmitter {
                 return false;
             }
             
-            value = context.{{type.ReadRawMethodName}}();
+            value = context.{{type.RawMethods.ReadRawMethodName}}();
             return true;
         }
 
@@ -308,14 +310,14 @@ internal static class BitStreamSourceEmitter {
         public static {{type.TargetTypeFullName}}[] Peek{{type.TargetTypeName}}s(this ref ReadContext context) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
             
-            int count = context.{{intHandler.PeekRawMethodName}}();
+            int count = context.{{intHandler.RawMethods.PeekRawMethodName}}();
             if (count < 0) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
             
             int bitsNeeded = count * {{type.Size}} + {{intHandler.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
             
             context.Position += {{intHandler.Size}};
-            {{type.TargetTypeFullName}}[] values = context.{{type.PeekArrayRawMethodName}}(count);
+            {{type.TargetTypeFullName}}[] values = context.{{type.RawMethods.PeekArrayRawMethodName}}(count);
             context.Position -= {{intHandler.Size}};
             
             return values;
@@ -342,7 +344,7 @@ internal static class BitStreamSourceEmitter {
                 return false;
             }
             
-            int count = context.{{intHandler.PeekRawMethodName}}();
+            int count = context.{{intHandler.RawMethods.PeekRawMethodName}}();
             if (count < 0) {
                 values = Array.Empty<{{type.TargetTypeFullName}}>();
                 return false;
@@ -355,7 +357,7 @@ internal static class BitStreamSourceEmitter {
             }
             
             context.Position += {{intHandler.Size}};
-            values = context.{{type.PeekArrayRawMethodName}}(count);
+            values = context.{{type.RawMethods.PeekArrayRawMethodName}}(count);
             context.Position -= {{intHandler.Size}};
             
             return true;
@@ -391,7 +393,7 @@ internal static class BitStreamSourceEmitter {
             int bitsNeeded = count * {{type.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
 
-            {{type.TargetTypeFullName}}[] values = context.{{type.PeekArrayRawMethodName}}(count);
+            {{type.TargetTypeFullName}}[] values = context.{{type.RawMethods.PeekArrayRawMethodName}}(count);
             return values;
         }
 
@@ -424,7 +426,7 @@ internal static class BitStreamSourceEmitter {
                 return false;
             }
 
-            values = context.{{type.PeekArrayRawMethodName}}(count);
+            values = context.{{type.RawMethods.PeekArrayRawMethodName}}(count);
             return true;
         }
 
@@ -455,14 +457,14 @@ internal static class BitStreamSourceEmitter {
         public static {{type.TargetTypeFullName}}[] Read{{type.TargetTypeName}}s(this ref ReadContext context) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
 
-            int count = context.{{intHandler.PeekRawMethodName}}();
+            int count = context.{{intHandler.RawMethods.PeekRawMethodName}}();
             if (count < 0) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
             
             int bitsNeeded = count * {{type.Size}} + {{intHandler.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
             
             context.Position += {{intHandler.Size}};
-            {{type.TargetTypeFullName}}[] values = context.{{type.ReadArrayRawMethodName}}(count);
+            {{type.TargetTypeFullName}}[] values = context.{{type.RawMethods.ReadArrayRawMethodName}}(count);
             return values;
         }
 
@@ -487,7 +489,7 @@ internal static class BitStreamSourceEmitter {
                 return false;
             }
 
-            int count = context.{{intHandler.PeekRawMethodName}}();
+            int count = context.{{intHandler.RawMethods.PeekRawMethodName}}();
             if (count < 0) {
                 values = Array.Empty<{{type.TargetTypeFullName}}>();
                 return false;
@@ -500,7 +502,7 @@ internal static class BitStreamSourceEmitter {
             }
             
             context.Position += {{intHandler.Size}};
-            values = context.{{type.ReadArrayRawMethodName}}(count);
+            values = context.{{type.RawMethods.ReadArrayRawMethodName}}(count);
             return true;
         }
 
@@ -534,7 +536,7 @@ internal static class BitStreamSourceEmitter {
             int bitsNeeded = count * {{type.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return Array.Empty<{{type.TargetTypeFullName}}>(); }
 
-            {{type.TargetTypeFullName}}[] values = context.{{type.ReadArrayRawMethodName}}(count);
+            {{type.TargetTypeFullName}}[] values = context.{{type.RawMethods.ReadArrayRawMethodName}}(count);
             return values;
         }
 
@@ -567,7 +569,7 @@ internal static class BitStreamSourceEmitter {
                 return false;
             }
 
-            values = context.{{type.ReadArrayRawMethodName}}(count);
+            values = context.{{type.RawMethods.ReadArrayRawMethodName}}(count);
             return true;
         }
 
@@ -598,13 +600,13 @@ internal static class BitStreamSourceEmitter {
         public static void Peek{{type.TargetTypeName}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return; }
             
-            int count = context.{{intHandler.PeekRawMethodName}}();
+            int count = context.{{intHandler.RawMethods.PeekRawMethodName}}();
             if (0 > count || count > destination.Length) { return; }
             int bitsNeeded = count * {{type.Size}} + {{intHandler.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return; }
             
             context.Position += {{intHandler.Size}};
-            context.{{type.PeekSpanRawMethodName}}(count, ref destination);
+            context.{{type.RawMethods.PeekSpanRawMethodName}}(count, ref destination);
             context.Position -= {{intHandler.Size}};
         }
 
@@ -626,14 +628,14 @@ internal static class BitStreamSourceEmitter {
         public static bool TryPeek{{type.TargetTypeName}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return false; }
             
-            int count = context.{{intHandler.PeekRawMethodName}}();
+            int count = context.{{intHandler.RawMethods.PeekRawMethodName}}();
             if (0 > count || count > destination.Length) { return false; }
             
             int bitsNeeded = count * {{type.Size}} + {{intHandler.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return false; }
             
             context.Position += {{intHandler.Size}};
-            context.{{type.PeekSpanRawMethodName}}(count, ref destination);
+            context.{{type.RawMethods.PeekSpanRawMethodName}}(count, ref destination);
             context.Position -= {{intHandler.Size}};
             
             return true;
@@ -669,7 +671,7 @@ internal static class BitStreamSourceEmitter {
             int bitsNeeded = count * {{type.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return; }
             
-            context.{{type.PeekSpanRawMethodName}}(count, ref destination);
+            context.{{type.RawMethods.PeekSpanRawMethodName}}(count, ref destination);
         }
 
         /// <summary>
@@ -694,7 +696,7 @@ internal static class BitStreamSourceEmitter {
             
             int bitsNeeded = count * {{type.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return false; }
-            context.{{type.PeekSpanRawMethodName}}(count, ref destination);
+            context.{{type.RawMethods.PeekSpanRawMethodName}}(count, ref destination);
             
             return true;
         }
@@ -725,14 +727,14 @@ internal static class BitStreamSourceEmitter {
         public static void Read{{type.TargetTypeName}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return; }
             
-            int count = context.{{intHandler.PeekRawMethodName}}();
+            int count = context.{{intHandler.RawMethods.PeekRawMethodName}}();
             if (0 > count || count > destination.Length) { return; }
             
             int bitsNeeded = count * {{type.Size}} + {{intHandler.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return; }
             
             context.Position += {{intHandler.Size}};
-            context.{{type.ReadSpanRawMethodName}}(count, ref destination);
+            context.{{type.RawMethods.ReadSpanRawMethodName}}(count, ref destination);
         }
 
         /// <summary>
@@ -753,14 +755,14 @@ internal static class BitStreamSourceEmitter {
         public static bool TryRead{{type.TargetTypeName}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return false; }
             
-            int count = context.{{intHandler.PeekRawMethodName}}();
+            int count = context.{{intHandler.RawMethods.PeekRawMethodName}}();
             if (0 > count || count > destination.Length) { return false; }
             
             int bitsNeeded = count * {{type.Size}} + {{intHandler.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return false; }
             
             context.Position += {{intHandler.Size}};
-            context.{{type.ReadSpanRawMethodName}}(count, ref destination);
+            context.{{type.RawMethods.ReadSpanRawMethodName}}(count, ref destination);
             return true;
         }
 
@@ -794,7 +796,7 @@ internal static class BitStreamSourceEmitter {
             int bitsNeeded = count * {{type.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return; }
 
-            context.{{type.ReadSpanRawMethodName}}(count, ref destination);
+            context.{{type.RawMethods.ReadSpanRawMethodName}}(count, ref destination);
         }
 
         /// <summary>
@@ -820,7 +822,7 @@ internal static class BitStreamSourceEmitter {
             int bitsNeeded = count * {{type.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return false; }
 
-            context.{{type.ReadSpanRawMethodName}}(count, ref destination);
+            context.{{type.RawMethods.ReadSpanRawMethodName}}(count, ref destination);
             return true;
         }
 
