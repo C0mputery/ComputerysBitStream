@@ -118,19 +118,35 @@ namespace ComputerysBitStream.Generator {
         private static string GetTargetTypeName(ITypeSymbol symbol) {
             return symbol.SpecialType switch {
                 SpecialType.System_Boolean => "Bool",
-                SpecialType.System_Byte => "Byte",
-                SpecialType.System_SByte => "SByte",
-                SpecialType.System_Int16 => "Short",
-                SpecialType.System_UInt16 => "UShort",
-                SpecialType.System_Int32 => "Int",
-                SpecialType.System_UInt32 => "UInt",
-                SpecialType.System_Int64 => "Long",
-                SpecialType.System_UInt64 => "ULong",
-                SpecialType.System_Single => "Float",
-                SpecialType.System_Double => "Double",
-                SpecialType.System_String => "String",
-                _ => symbol.Name
+                SpecialType.System_Byte    => "Byte",
+                SpecialType.System_SByte   => "SByte",
+                SpecialType.System_Int16   => "Short",
+                SpecialType.System_UInt16  => "UShort",
+                SpecialType.System_Int32   => "Int",
+                SpecialType.System_UInt32  => "UInt",
+                SpecialType.System_Int64   => "Long",
+                SpecialType.System_UInt64  => "ULong",
+                SpecialType.System_Single  => "Float",
+                SpecialType.System_Double  => "Double",
+                SpecialType.System_Decimal => "Decimal",
+                SpecialType.System_String  => "String",
+                SpecialType.System_Char    => "Char",
+                
+                // doupt these will ever get hit but trying to make this compleate
+                SpecialType.System_DateTime => "DateTime",
+                SpecialType.System_IntPtr  => "NInt",
+                SpecialType.System_UIntPtr => "NUInt",
+                SpecialType.System_Object  => "Object",
+                SpecialType.System_Void    => "Void",
+                
+                _ => symbol.ToDisplayString(CSharpDefaultFormat)
             };
         }
+        
+        private static readonly SymbolDisplayFormat CSharpDefaultFormat = new SymbolDisplayFormat(
+            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameOnly,
+            genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+            miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes
+        );
     }
 }
