@@ -16,7 +16,6 @@ internal static class BitStreamSourceEmitter {
         }
     }
     
-    // TODO: don't hardcode the ComputerysBitStream namespace
     internal static string EmitSource(BitStreamTypeInfo type, BitStreamTypeInfo? intHandler) {
         bool hasIntHandler = intHandler != null;
         
