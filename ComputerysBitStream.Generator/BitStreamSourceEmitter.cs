@@ -17,7 +17,12 @@ internal static class BitStreamSourceEmitter {
     }
     
     internal static string EmitSource(BitStreamTypeInfo type, BitStreamTypeInfo? intHandler) {
-        bool hasIntHandler = intHandler != null;
+        bool hasIntHandlerWrite = false;
+        bool hasIntHandlerPeek = false;
+        if (intHandler != null) { 
+            hasIntHandlerWrite = intHandler!.WriteRawMethodName != null;
+            hasIntHandlerPeek = intHandler!.PeekRawMethodName != null;
+        }
         
         using StringWriter stringWriter = new StringWriter();
         using IndentedTextWriter writer = new IndentedTextWriter(stringWriter, new string(' ', 4));
@@ -39,7 +44,7 @@ internal static class BitStreamSourceEmitter {
             writer.Indent++;
             if (hasWriteRawMethod) { writer.WriteLines(WriteMethods(type)); }
             if (hasWriteSpanRawMethod) {
-                if (hasIntHandler) { writer.WriteLines(SpanWriteMethods(type, intHandler!)); }
+                if (hasIntHandlerWrite) { writer.WriteLines(SpanWriteMethods(type, intHandler!)); }
                 writer.WriteLines(SpanWriteWithoutLengthMethods(type));
             }
             writer.Indent--;
@@ -58,19 +63,19 @@ internal static class BitStreamSourceEmitter {
             if (hasPeekRawMethod) { writer.WriteLines(PeekMethods(type)); }
             if (hasReadRawMethod) { writer.WriteLines(ReadMethods(type)); }
             if (hasPeekArrayRawMethod) {
-                if (hasIntHandler) { writer.WriteLines(PeekArrayMethods(type, intHandler!)); }
+                if (hasIntHandlerPeek) { writer.WriteLines(PeekArrayMethods(type, intHandler!)); }
                 writer.WriteLines(PeekArrayMethodsWithoutLengthMethods(type));
             }
             if (hasReadArrayRawMethod) {
-                if (hasIntHandler) { writer.WriteLines(ReadArrayMethods(type, intHandler!)); }
+                if (hasIntHandlerPeek) { writer.WriteLines(ReadArrayMethods(type, intHandler!)); }
                 writer.WriteLines(ReadArrayWithoutLengthMethods(type));
             }
             if (hasPeekSpanRawMethod) {
-                if (hasIntHandler) { writer.WriteLines(PeekSpanMethods(type, intHandler!)); }
+                if (hasIntHandlerPeek) { writer.WriteLines(PeekSpanMethods(type, intHandler!)); }
                 writer.WriteLines(PeekSpanMethodsWithoutLengthMethods(type));
             }
             if (hasReadSpanRawMethod) {
-                if (hasIntHandler) { writer.WriteLines(ReadSpanMethods(type, intHandler!)); }
+                if (hasIntHandlerPeek) { writer.WriteLines(ReadSpanMethods(type, intHandler!)); }
                 writer.WriteLines(ReadSpanMethodsWithoutLengthMethods(type));
             }
             writer.Indent--;
