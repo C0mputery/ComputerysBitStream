@@ -181,7 +181,7 @@ internal static class BitStreamSourceEmitter {
         /// <param name="context">The write context.</param>
         /// <param name="values">The values to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WithoutLength(this ref WriteContext context, ReadOnlySpan<{{type.TargetTypeFullName}}> values) => context.Write{{type.TargetTypeName}}s(values);
+        public static void WithoutLength(this ref WriteContext context, ReadOnlySpan<{{type.TargetTypeFullName}}> values) => context.Write{{type.TargetTypeName}}sWithoutLength(values);
         """;
     }
     
