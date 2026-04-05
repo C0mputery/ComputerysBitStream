@@ -47,4 +47,31 @@ internal static class DiagnosticDescriptors {
             nonPublicRawMethod.Role,
             nonPublicRawMethod.Accessibility);
     }
+
+    private static readonly DiagnosticDescriptor InvalidTargetTypeNameRule = new DiagnosticDescriptor(
+        id: "CBSG004",
+        title: "Invalid TargetTypeName",
+        messageFormat: "The BitStreamTypeAttribute on '{0}' specifies an empty TargetTypeName",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+    internal static Diagnostic CreateInvalidTargetTypeName(BitStreamTypeInfo typeInfo) {
+        return Diagnostic.Create(InvalidTargetTypeNameRule, typeInfo.Location?.ToLocation(), typeInfo.ClassName);
+    }
+
+    private static readonly DiagnosticDescriptor DuplicateTargetTypeNameRule = new DiagnosticDescriptor(
+        id: "CBSG005",
+        title: "Duplicate TargetTypeName",
+        messageFormat: "The TargetTypeName '{0}' from '{1}' conflicts with '{2}'; generated method names must be unique",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+    internal static Diagnostic CreateDuplicateTargetTypeName(BitStreamTypeInfo firstTypeInfo, BitStreamTypeInfo duplicateTypeInfo) {
+        return Diagnostic.Create(
+            DuplicateTargetTypeNameRule,
+            duplicateTypeInfo.Location?.ToLocation(),
+            duplicateTypeInfo.TargetTypeName,
+            duplicateTypeInfo.ClassName,
+            firstTypeInfo.ClassName);
+    }
 }

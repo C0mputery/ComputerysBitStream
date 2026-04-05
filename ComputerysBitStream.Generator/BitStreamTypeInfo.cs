@@ -7,8 +7,10 @@ namespace ComputerysBitStream.Generator;
 
 internal record BitStreamTypeInfo(
     string ClassNamespace,
+    string ClassName,
     string TargetTypeFullName,
     string TargetTypeName,
+    bool HasInvalidCustomTargetTypeName,
     int Size,
     RawRoleBindings RawMethods,
     SourceLocationInfo? Location,

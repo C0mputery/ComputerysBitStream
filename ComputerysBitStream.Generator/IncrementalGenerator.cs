@@ -44,7 +44,8 @@ namespace ComputerysBitStream.Generator {
         }
 
         private static ValidationResult ValidateHandlers(ImmutableArray<BitStreamTypeInfo> handlers) {
-            Dictionary<string, BitStreamTypeInfo> firstByTarget = new Dictionary<string, BitStreamTypeInfo>();
+            Dictionary<string, BitStreamTypeInfo> firstByTargetType = new Dictionary<string, BitStreamTypeInfo>();
+            Dictionary<string, BitStreamTypeInfo> firstByTargetTypeName = new Dictionary<string, BitStreamTypeInfo>();
             ImmutableArray<Diagnostic>.Builder diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
             ImmutableArray<BitStreamTypeInfo>.Builder uniqueHandlers = ImmutableArray.CreateBuilder<BitStreamTypeInfo>();
 
@@ -56,12 +57,23 @@ namespace ComputerysBitStream.Generator {
                     diagnostics.Add(DiagnosticDescriptors.CreateNonPublicRawMethod(nonPublicRawMethod));
                 }
 
-                if (firstByTarget.ContainsKey(handler.TargetTypeFullName)) {
+                if (handler.HasInvalidCustomTargetTypeName) {
+                    diagnostics.Add(DiagnosticDescriptors.CreateInvalidTargetTypeName(handler));
+                    continue;
+                }
+
+                if (firstByTargetType.ContainsKey(handler.TargetTypeFullName)) {
                     diagnostics.Add(DiagnosticDescriptors.CreateDuplicateType(handler));
                     continue;
                 }
 
-                firstByTarget[handler.TargetTypeFullName] = handler;
+                if (firstByTargetTypeName.TryGetValue(handler.TargetTypeName, out BitStreamTypeInfo firstByName)) {
+                    diagnostics.Add(DiagnosticDescriptors.CreateDuplicateTargetTypeName(firstByName, handler));
+                    continue;
+                }
+
+                firstByTargetType[handler.TargetTypeFullName] = handler;
+                firstByTargetTypeName[handler.TargetTypeName] = handler;
                 uniqueHandlers.Add(handler);
             }
 
@@ -77,13 +89,28 @@ namespace ComputerysBitStream.Generator {
             if (context.TargetSymbol is not INamedTypeSymbol classSymbol) { return null; }
 
             AttributeData? classAttributeData = context.Attributes.FirstOrDefault(); 
-            if (classAttributeData == null || classAttributeData.ConstructorArguments.Length == 0) { return null; }
+            if (classAttributeData == null || classAttributeData.ConstructorArguments.Length < 2) { return null; }
 
             TypedConstant typeArgument = classAttributeData.ConstructorArguments[0];
             if (typeArgument.Value is not INamedTypeSymbol targetTypeSymbol) { return null; }
             
             TypedConstant sizeArgument = classAttributeData.ConstructorArguments[1];
             if (sizeArgument.Value is not int size) { return null; }
+
+            bool hasInvalidCustomTargetTypeName = false;
+            string targetTypeName = TargetTypeNameUtility.GetTargetTypeName(targetTypeSymbol);
+            if (classAttributeData.ConstructorArguments.Length > 2) {
+                TypedConstant targetTypeNameArgument = classAttributeData.ConstructorArguments[2];
+                if (targetTypeNameArgument.Value is string customTargetTypeName) {
+                    if (string.IsNullOrWhiteSpace(customTargetTypeName)) {
+                        hasInvalidCustomTargetTypeName = true;
+                    } else {
+                        targetTypeName = customTargetTypeName;
+                    }
+                } else {
+                    hasInvalidCustomTargetTypeName = true;
+                }
+            }
             
             List<IMethodSymbol> members = classSymbol.GetMembers().OfType<IMethodSymbol>().ToList();
             
@@ -121,8 +148,10 @@ namespace ComputerysBitStream.Generator {
             
             return new BitStreamTypeInfo(
                 ClassNamespace: classSymbol.ContainingNamespace.ToDisplayString(),
+                ClassName: classSymbol.Name,
                 TargetTypeFullName: targetTypeSymbol.ToDisplayString(),
-                TargetTypeName: TargetTypeNameUtility.GetTargetTypeName(targetTypeSymbol),
+                TargetTypeName: targetTypeName,
+                HasInvalidCustomTargetTypeName: hasInvalidCustomTargetTypeName,
                 Size: size,
                 RawMethods: new RawRoleBindings(methodsByRole),
                 Location: classAttributeData.ApplicationSyntaxReference?.GetSyntax(cancel).GetLocation(),
