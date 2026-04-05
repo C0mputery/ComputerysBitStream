@@ -67,6 +67,11 @@ namespace ComputerysBitStream.Generator {
 
             return new ValidationResult(uniqueHandlers.ToImmutable(), diagnostics.ToImmutable());
         }
+        
+        private readonly record struct ValidationResult(
+            ImmutableArray<BitStreamTypeInfo> UniqueHandlers,
+            ImmutableArray<Diagnostic> Diagnostics
+        );
 
         private static BitStreamTypeInfo? Transform(GeneratorAttributeSyntaxContext context, CancellationToken cancel) {
             if (context.TargetSymbol is not INamedTypeSymbol classSymbol) { return null; }
@@ -117,7 +122,7 @@ namespace ComputerysBitStream.Generator {
             return new BitStreamTypeInfo(
                 ClassNamespace: classSymbol.ContainingNamespace.ToDisplayString(),
                 TargetTypeFullName: targetTypeSymbol.ToDisplayString(),
-                TargetTypeName: GetTargetTypeName(targetTypeSymbol),
+                TargetTypeName: TargetTypeNameUtility.GetTargetTypeName(targetTypeSymbol),
                 Size: size,
                 RawMethods: new RawRoleBindings(methodsByRole),
                 Location: classAttributeData.ApplicationSyntaxReference?.GetSyntax(cancel).GetLocation(),
@@ -125,44 +130,5 @@ namespace ComputerysBitStream.Generator {
                 NonPublicRawMethods: nonPublicRawMethods.ToImmutableArray()
                 );
         }
-        
-        private static string GetTargetTypeName(ITypeSymbol symbol) {
-            return symbol.SpecialType switch {
-                SpecialType.System_Boolean => "Bool",
-                SpecialType.System_Byte    => "Byte",
-                SpecialType.System_SByte   => "SByte",
-                SpecialType.System_Int16   => "Short",
-                SpecialType.System_UInt16  => "UShort",
-                SpecialType.System_Int32   => "Int",
-                SpecialType.System_UInt32  => "UInt",
-                SpecialType.System_Int64   => "Long",
-                SpecialType.System_UInt64  => "ULong",
-                SpecialType.System_Single  => "Float",
-                SpecialType.System_Double  => "Double",
-                SpecialType.System_Decimal => "Decimal",
-                SpecialType.System_String  => "String",
-                SpecialType.System_Char    => "Char",
-                
-                // doupt these will ever get hit but trying to make this compleate
-                SpecialType.System_DateTime => "DateTime",
-                SpecialType.System_IntPtr  => "NInt",
-                SpecialType.System_UIntPtr => "NUInt",
-                SpecialType.System_Object  => "Object",
-                SpecialType.System_Void    => "Void",
-                
-                _ => symbol.ToDisplayString(CSharpDefaultFormat)
-            };
-        }
-        
-        private static readonly SymbolDisplayFormat CSharpDefaultFormat = new SymbolDisplayFormat(
-            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameOnly,
-            genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
-            miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes
-        );
-
-        private readonly record struct ValidationResult(
-            ImmutableArray<BitStreamTypeInfo> UniqueHandlers,
-            ImmutableArray<Diagnostic> Diagnostics
-        );
     }
 }
