@@ -52,6 +52,9 @@ namespace ComputerysBitStream.Generator {
                 foreach (DuplicateRawRoleInfo duplicate in handler.DuplicateRoles) {
                     diagnostics.Add(DiagnosticDescriptors.CreateDuplicateRawRole(duplicate));
                 }
+                foreach (NonPublicRawMethodInfo nonPublicRawMethod in handler.NonPublicRawMethods) {
+                    diagnostics.Add(DiagnosticDescriptors.CreateNonPublicRawMethod(nonPublicRawMethod));
+                }
 
                 if (firstByTarget.ContainsKey(handler.TargetTypeFullName)) {
                     diagnostics.Add(DiagnosticDescriptors.CreateDuplicateType(handler));
@@ -81,10 +84,22 @@ namespace ComputerysBitStream.Generator {
             
             Dictionary<BitStreamRawRole, string> methodsByRole = new Dictionary<BitStreamRawRole, string>();
             ImmutableArray<DuplicateRawRoleInfo>.Builder duplicates = ImmutableArray.CreateBuilder<DuplicateRawRoleInfo>();
+            ImmutableArray<NonPublicRawMethodInfo>.Builder nonPublicRawMethods = ImmutableArray.CreateBuilder<NonPublicRawMethodInfo>();
             foreach (IMethodSymbol? member in members) {
                 AttributeData? attribute = member.GetAttributes().FirstOrDefault(ad => ad.AttributeClass?.Name == nameof(BitStreamRawAttribute));
                 if (attribute?.ConstructorArguments.Length > 0 && attribute.ConstructorArguments[0].Value is int roleValue) {
                     BitStreamRawRole role = (BitStreamRawRole)roleValue;
+
+                    if (member.DeclaredAccessibility != Accessibility.Public) {
+                        nonPublicRawMethods.Add(new NonPublicRawMethodInfo(
+                            Role: role.ToString(),
+                            ClassName: classSymbol.Name,
+                            MethodName: member.Name,
+                            Accessibility: member.DeclaredAccessibility.ToString(),
+                            Location: attribute.ApplicationSyntaxReference?.GetSyntax(cancel).GetLocation()
+                        ));
+                    }
+
                     if (methodsByRole.TryGetValue(role, out string? firstMethod)) {
                         duplicates.Add(new DuplicateRawRoleInfo(
                             Role: role.ToString(),
@@ -113,7 +128,8 @@ namespace ComputerysBitStream.Generator {
                 PeekSpanRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.PeekSpan, out string? peekSpanRaw) ? peekSpanRaw : null,
                 ReadSpanRawMethodName: methodsByRole.TryGetValue(BitStreamRawRole.ReadSpan, out string? readSpanRaw) ? readSpanRaw : null,
                 Location: classAttributeData.ApplicationSyntaxReference?.GetSyntax(cancel).GetLocation(),
-                DuplicateRoles: duplicates.ToImmutableArray()
+                DuplicateRoles: duplicates.ToImmutableArray(),
+                NonPublicRawMethods: nonPublicRawMethods.ToImmutableArray()
                 );
         }
         

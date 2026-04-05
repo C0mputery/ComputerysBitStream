@@ -51,7 +51,9 @@ internal record BitStreamTypeInfo(
     string? PeekSpanRawMethodName,
     string? ReadSpanRawMethodName,
     BitStreamLocation? Location,
-    EquatableArray<DuplicateRawRoleInfo> DuplicateRoles
+    EquatableArray<DuplicateRawRoleInfo> DuplicateRoles,
+    EquatableArray<NonPublicRawMethodInfo> NonPublicRawMethods
 );
 
 internal record struct DuplicateRawRoleInfo(string Role, string ClassName, string FirstMethod, string SecondMethod, BitStreamLocation? Location);
+internal record struct NonPublicRawMethodInfo(string Role, string ClassName, string MethodName, string Accessibility, BitStreamLocation? Location);

@@ -36,4 +36,21 @@ internal static class DiagnosticDescriptors {
             duplicate.FirstMethod,
             duplicate.SecondMethod);
     }
+
+    internal static readonly DiagnosticDescriptor NonPublicRawMethodRule = new DiagnosticDescriptor(
+        id: "CBSG003",
+        title: "BitStreamRawAttribute method must be public",
+        messageFormat: "The method '{0}' in '{1}' is marked as role '{2}' but has '{3}' accessibility; BitStreamRaw methods must be public",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+    internal static Diagnostic CreateNonPublicRawMethod(NonPublicRawMethodInfo nonPublicRawMethod) {
+        return Diagnostic.Create(
+            NonPublicRawMethodRule,
+            ToLocation(nonPublicRawMethod.Location),
+            nonPublicRawMethod.MethodName,
+            nonPublicRawMethod.ClassName,
+            nonPublicRawMethod.Role,
+            nonPublicRawMethod.Accessibility);
+    }
 }
