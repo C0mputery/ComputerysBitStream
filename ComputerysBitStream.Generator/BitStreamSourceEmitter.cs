@@ -8,6 +8,8 @@ using ComputerysBitStream.Generator;
 namespace ComputerysBitStream;
 
 internal static class BitStreamSourceEmitter {
+    private static readonly string GeneratedNamespace = nameof(ComputerysBitStream);
+    
     private static void WriteLines(this IndentedTextWriter writer, string text) {
         string[] lines = text.Split(["\r\n", "\r", "\n"], StringSplitOptions.None);
         foreach (string line in lines) {
@@ -32,7 +34,7 @@ internal static class BitStreamSourceEmitter {
         using System.Runtime.CompilerServices;
         {{BuildAdditionalUsings(type, intHandler)}}
         
-        namespace ComputerysBitStream {
+        namespace {{GeneratedNamespace}} {
         """);
         
         writer.Indent++;
@@ -92,11 +94,9 @@ internal static class BitStreamSourceEmitter {
     }
     
     private static string BuildAdditionalUsings(BitStreamTypeInfo type, BitStreamTypeInfo? intHandler) { 
-        string generatedNamespace = nameof(ComputerysBitStream);
-        
         HashSet<string> namespaces = new HashSet<string>(StringComparer.Ordinal);
-        if (type.ClassNamespace != generatedNamespace) { namespaces.Add(type.ClassNamespace); }
-        if (intHandler is not null && intHandler.ClassNamespace != generatedNamespace) { namespaces.Add(intHandler.ClassNamespace); }
+        if (type.ClassNamespace != GeneratedNamespace) { namespaces.Add(type.ClassNamespace); }
+        if (intHandler is not null && intHandler.ClassNamespace != GeneratedNamespace) { namespaces.Add(intHandler.ClassNamespace); }
         
         if (namespaces.Count == 0) { return string.Empty; }
         
