@@ -30,18 +30,55 @@ namespace ComputerysBitStream.Generator {
             isEnabledByDefault: true);
         
         private static readonly string ClassAttribute = typeof(BitStreamTypeAttribute).FullName!;
-        private static readonly string MemberAttribute = typeof(BitStreamRawAttribute).FullName!;
 
         public void Initialize(IncrementalGeneratorInitializationContext context) {
-            IncrementalValuesProvider<BitStreamTypeInfo?> pipeline = 
+            IncrementalValuesProvider<BitStreamTypeInfo> pipeline = 
                 context.SyntaxProvider.ForAttributeWithMetadataName(
                         fullyQualifiedMetadataName: ClassAttribute,
                         predicate: (node, _) => node is ClassDeclarationSyntax,
                         transform: Transform)
-                .Where(info => info is not null);
+                .Where(info => info is not null)
+                .Select((info, _) => info!);
 
-            IncrementalValueProvider<ImmutableArray<BitStreamTypeInfo>> collected = pipeline.Collect()!;
-            context.RegisterSourceOutput(collected, RegisterSourceOutputAction);
+            IncrementalValueProvider<ImmutableArray<BitStreamTypeInfo>> collected = pipeline.Collect();
+            
+            context.RegisterSourceOutput(collected, (sourceContext, handlers) => {
+                Dictionary<string, BitStreamTypeInfo> handlersByTarget = new();
+                foreach (BitStreamTypeInfo handler in handlers) {
+                    foreach (DuplicateRawRoleInfo duplicate in handler.DuplicateRoles) {
+                        Location? location = null;
+                        if (duplicate.Location.HasValue) {
+                            location = Location.Create(duplicate.Location.Value.FilePath, duplicate.Location.Value.TextSpan, duplicate.Location.Value.LineSpan);
+                        }
+                        sourceContext.ReportDiagnostic(Diagnostic.Create(DuplicateRawRoleRule, location, duplicate.Role, duplicate.ClassName, duplicate.FirstMethod, duplicate.SecondMethod));
+                    }
+
+                    if (handlersByTarget.ContainsKey(handler.TargetTypeFullName)) {
+                        Location? location = null;
+                        BitStreamLocation? bitStreamLocation = handler.Location;
+                        if (bitStreamLocation.HasValue) {   
+                            location = Location.Create(bitStreamLocation.Value.FilePath, bitStreamLocation.Value.TextSpan, bitStreamLocation.Value.LineSpan);
+                        }
+                        
+                        Diagnostic diagnostic = Diagnostic.Create(DuplicateTypeRule, location, handler.TargetTypeFullName);
+                        sourceContext.ReportDiagnostic(diagnostic);
+                    } else {
+                        handlersByTarget[handler.TargetTypeFullName] = handler;
+                    }
+                }
+            });
+            
+            IncrementalValueProvider<BitStreamTypeInfo?> intHandlerProvider = pipeline
+                .Where(info => info.TargetTypeFullName == SyntaxFacts.GetText(SyntaxKind.IntKeyword))
+                .Collect()
+                .Select((handlers, _) => handlers.Length > 0 ? (BitStreamTypeInfo?)handlers[0] : null);
+            
+            IncrementalValuesProvider<(BitStreamTypeInfo handler, BitStreamTypeInfo? intHandler)> combined = pipeline.Combine(intHandlerProvider);
+            
+            context.RegisterSourceOutput(combined, (sourceContext, pair) => {
+                string source = BitStreamSourceEmitter.EmitSource(pair.handler, pair.intHandler);
+                sourceContext.AddSource($"{pair.handler.TargetTypeName}ContextExtensions.g.cs", SourceText.From(source, Encoding.UTF8));
+            });
         }
 
         private static BitStreamTypeInfo? Transform(GeneratorAttributeSyntaxContext context, CancellationToken cancel) {
@@ -59,9 +96,9 @@ namespace ComputerysBitStream.Generator {
             List<IMethodSymbol> members = classSymbol.GetMembers().OfType<IMethodSymbol>().ToList();
             
             Dictionary<BitStreamRawRole, string> methodsByRole = new Dictionary<BitStreamRawRole, string>();
-            List<DuplicateRawRoleInfo> duplicates = [];
+            ImmutableArray<DuplicateRawRoleInfo>.Builder duplicates = ImmutableArray.CreateBuilder<DuplicateRawRoleInfo>();
             foreach (IMethodSymbol? member in members) {
-                AttributeData? attribute = member.GetAttributes().FirstOrDefault(ad => ad.AttributeClass?.ToDisplayString() == MemberAttribute);
+                AttributeData? attribute = member.GetAttributes().FirstOrDefault(ad => ad.AttributeClass?.Name == "BitStreamRawAttribute");
                 if (attribute?.ConstructorArguments.Length > 0 && attribute.ConstructorArguments[0].Value is int roleValue) {
                     BitStreamRawRole role = (BitStreamRawRole)roleValue;
                     if (methodsByRole.TryGetValue(role, out string? firstMethod)) {
@@ -112,38 +149,6 @@ namespace ComputerysBitStream.Generator {
                 SpecialType.System_String => "String",
                 _ => symbol.Name
             };
-        }
-
-        private static void RegisterSourceOutputAction(SourceProductionContext context, ImmutableArray<BitStreamTypeInfo> handlers) {
-            Dictionary<string, BitStreamTypeInfo> handlersByTarget = new();
-            foreach (BitStreamTypeInfo handler in handlers) {
-                foreach (DuplicateRawRoleInfo duplicate in handler.DuplicateRoles) {
-                    Location? location = null;
-                    if (duplicate.Location.HasValue) {
-                        location = Location.Create(duplicate.Location.Value.FilePath, duplicate.Location.Value.TextSpan, duplicate.Location.Value.LineSpan);
-                    }
-                    context.ReportDiagnostic(Diagnostic.Create(DuplicateRawRoleRule, location, duplicate.Role, duplicate.ClassName, duplicate.FirstMethod, duplicate.SecondMethod));
-                }
-
-                if (handlersByTarget.ContainsKey(handler.TargetTypeFullName)) {
-                    Location? location = null;
-                    BitStreamLocation? bitStreamLocation = handler.Location;
-                    if (bitStreamLocation.HasValue) {   
-                        location = Location.Create(bitStreamLocation.Value.FilePath, bitStreamLocation.Value.TextSpan, bitStreamLocation.Value.LineSpan);
-                    }
-                    
-                    Diagnostic diagnostic = Diagnostic.Create(DuplicateTypeRule, location, handler.TargetTypeFullName);
-                    context.ReportDiagnostic(diagnostic);
-                } else {
-                    handlersByTarget[handler.TargetTypeFullName] = handler;
-                }
-            }
-            
-            handlersByTarget.TryGetValue(SyntaxFacts.GetText(SyntaxKind.IntKeyword), out BitStreamTypeInfo? intHandler);
-            foreach (BitStreamTypeInfo handler in handlersByTarget.Values) {
-                string source = BitStreamSourceEmitter.EmitSource(handler, intHandler);
-                context.AddSource($"{handler.TargetTypeName}ContextExtensions.g.cs", SourceText.From(source, Encoding.UTF8));
-            }
         }
     }
 }
