@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.CodeDom.Compiler;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,22 +11,6 @@ using Microsoft.CodeAnalysis.Text;
 namespace ComputerysBitStream.Generator {
     [Generator]
     public class IncrementalGenerator : IIncrementalGenerator {
-        private static readonly DiagnosticDescriptor DuplicateTypeRule = new DiagnosticDescriptor(
-            id: "CBSG001",
-            title: "Duplicate BitStreamTypeAttribute",
-            messageFormat: "The type '{0}' is already handled by another BitStreamTypeAttribute",
-            category: "Usage",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
-
-        private static readonly DiagnosticDescriptor DuplicateRawRoleRule = new DiagnosticDescriptor(
-            id: "CBSG002",
-            title: "Duplicate BitStreamRawAttribute role",
-            messageFormat: "The role '{0}' is specified more than once in '{1}' (first: '{2}', again: '{3}')",
-            category: "Usage",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
-        
         private static readonly string ClassAttribute = typeof(BitStreamTypeAttribute).FullName!;
 
         public void Initialize(IncrementalGeneratorInitializationContext context) {
@@ -50,7 +32,7 @@ namespace ComputerysBitStream.Generator {
                         if (duplicate.Location.HasValue) {
                             location = Location.Create(duplicate.Location.Value.FilePath, duplicate.Location.Value.TextSpan, duplicate.Location.Value.LineSpan);
                         }
-                        sourceContext.ReportDiagnostic(Diagnostic.Create(DuplicateRawRoleRule, location, duplicate.Role, duplicate.ClassName, duplicate.FirstMethod, duplicate.SecondMethod));
+                        sourceContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.DuplicateRawRoleRule, location, duplicate.Role, duplicate.ClassName, duplicate.FirstMethod, duplicate.SecondMethod));
                     }
 
                     if (handlersByTarget.ContainsKey(handler.TargetTypeFullName)) {
@@ -60,7 +42,7 @@ namespace ComputerysBitStream.Generator {
                             location = Location.Create(bitStreamLocation.Value.FilePath, bitStreamLocation.Value.TextSpan, bitStreamLocation.Value.LineSpan);
                         }
                         
-                        Diagnostic diagnostic = Diagnostic.Create(DuplicateTypeRule, location, handler.TargetTypeFullName);
+                        Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptors.DuplicateTypeRule, location, handler.TargetTypeFullName);
                         sourceContext.ReportDiagnostic(diagnostic);
                     } else {
                         handlersByTarget[handler.TargetTypeFullName] = handler;
