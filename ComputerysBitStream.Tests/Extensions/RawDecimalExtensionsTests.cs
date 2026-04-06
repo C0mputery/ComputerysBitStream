@@ -1,11 +1,14 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawDecimalExtensionsTests {
-    [Fact]
-    public void WriteAndReadDecimalRaw_ShouldReturnIdenticalValue() {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(7)]
+    public void WriteAndReadDecimalRaw_ShouldReturnIdenticalValue(int initialOffset) {
         decimal valueToWrite = 12345.6789m;
 
         RawRoundTripTestHarness<decimal>.AssertSingleValueRoundTrip(
+            initialOffset,
             valueToWrite,
             (writeCtx, value) => writeCtx.WriteDecimalRaw(value),
             readCtx => readCtx.PeekDecimalRaw(),
@@ -14,7 +17,7 @@ public class RawDecimalExtensionsTests {
 
     [Theory]
     [InlineData(0)]
-    [InlineData(7)] // Unaligned offset to test bit shifting
+    [InlineData(7)]
     public void WriteAndReadDecimalSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         decimal[] values = [1.1m, -2.2m, decimal.MaxValue, decimal.MinValue, 0m];
 

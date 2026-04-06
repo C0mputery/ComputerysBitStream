@@ -1,11 +1,14 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawBoolExtensionsTests {
-    [Fact]
-    public void WriteAndReadBoolRaw_ShouldReturnIdenticalValue() {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(7)]
+    public void WriteAndReadBoolRaw_ShouldReturnIdenticalValue(int initialOffset) {
         bool valueToWrite = true;
 
         RawRoundTripTestHarness<bool>.AssertSingleValueRoundTrip(
+            initialOffset,
             valueToWrite,
             (writeCtx, value) => writeCtx.WriteBoolRaw(value),
             readCtx => readCtx.PeekBoolRaw(),
@@ -14,7 +17,7 @@ public class RawBoolExtensionsTests {
 
     [Theory]
     [InlineData(0)]
-    [InlineData(7)] // Unaligned offset to test bit shifting
+    [InlineData(7)]
     public void WriteAndReadBoolSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         bool[] values = [true, false, true, true, false];
 

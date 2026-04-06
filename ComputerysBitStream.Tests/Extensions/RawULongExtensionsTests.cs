@@ -1,11 +1,14 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawULongExtensionsTests {
-    [Fact]
-    public void WriteAndReadULongRaw_ShouldReturnIdenticalValue() {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(7)]
+    public void WriteAndReadULongRaw_ShouldReturnIdenticalValue(int initialOffset) {
         ulong valueToWrite = 9123456789012345678UL;
 
         RawRoundTripTestHarness<ulong>.AssertSingleValueRoundTrip(
+            initialOffset,
             valueToWrite,
             (writeCtx, value) => writeCtx.WriteULongRaw(value),
             readCtx => readCtx.PeekULongRaw(),
@@ -14,7 +17,7 @@ public class RawULongExtensionsTests {
 
     [Theory]
     [InlineData(0)]
-    [InlineData(7)] // Unaligned offset to test bit shifting
+    [InlineData(7)]
     public void WriteAndReadULongSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         ulong[] values = [1UL, 2UL, ulong.MaxValue, ulong.MinValue];
 

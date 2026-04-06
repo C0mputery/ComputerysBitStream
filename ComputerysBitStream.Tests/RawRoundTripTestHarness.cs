@@ -1,13 +1,13 @@
 namespace ComputerysBitStream.Tests;
 
 internal static class RawRoundTripTestHarness<T> {
-    public static void AssertSingleValueRoundTrip(T valueToWrite, Action<WriteContext, T> writeValue, Func<ReadContext, T> peekValue, Func<ReadContext, T> readValue) {
+    public static void AssertSingleValueRoundTrip(int initialOffset, T valueToWrite, Action<WriteContext, T> writeValue, Func<ReadContext, T> peekValue, Func<ReadContext, T> readValue) {
         ulong[] buffer = new ulong[16];
-        WriteContext writeCtx = new(buffer);
+        WriteContext writeCtx = new(buffer, initialOffset);
 
         writeValue(writeCtx, valueToWrite);
 
-        ReadContext readCtx = new(buffer);
+        ReadContext readCtx = new(buffer, initialOffset);
         T peekedValue = peekValue(readCtx);
         T readBackValue = readValue(readCtx);
 

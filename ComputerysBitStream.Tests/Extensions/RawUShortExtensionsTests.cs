@@ -1,11 +1,14 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawUShortExtensionsTests {
-    [Fact]
-    public void WriteAndReadUShortRaw_ShouldReturnIdenticalValue() {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(7)]
+    public void WriteAndReadUShortRaw_ShouldReturnIdenticalValue(int initialOffset) {
         ushort valueToWrite = 40000;
 
         RawRoundTripTestHarness<ushort>.AssertSingleValueRoundTrip(
+            initialOffset,
             valueToWrite,
             (writeCtx, value) => writeCtx.WriteUShortRaw(value),
             readCtx => readCtx.PeekUShortRaw(),
@@ -14,7 +17,7 @@ public class RawUShortExtensionsTests {
 
     [Theory]
     [InlineData(0)]
-    [InlineData(7)] // Unaligned offset to test bit shifting
+    [InlineData(7)]
     public void WriteAndReadUShortSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         ushort[] values = [1, 2, ushort.MaxValue, ushort.MinValue];
 

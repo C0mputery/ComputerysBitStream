@@ -1,11 +1,14 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawDoubleExtensionsTests {
-    [Fact]
-    public void WriteAndReadDoubleRaw_ShouldReturnIdenticalValue() {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(7)]
+    public void WriteAndReadDoubleRaw_ShouldReturnIdenticalValue(int initialOffset) {
         double valueToWrite = -123.456;
 
         RawRoundTripTestHarness<double>.AssertSingleValueRoundTrip(
+            initialOffset,
             valueToWrite,
             (writeCtx, value) => writeCtx.WriteDoubleRaw(value),
             readCtx => readCtx.PeekDoubleRaw(),
@@ -14,7 +17,7 @@ public class RawDoubleExtensionsTests {
 
     [Theory]
     [InlineData(0)]
-    [InlineData(7)] // Unaligned offset to test bit shifting
+    [InlineData(7)]
     public void WriteAndReadDoubleSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         double[] values = [1.1, -2.2, double.MaxValue, double.MinValue, double.NaN];
 

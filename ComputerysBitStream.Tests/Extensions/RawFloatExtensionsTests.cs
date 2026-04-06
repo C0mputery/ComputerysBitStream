@@ -1,11 +1,14 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawFloatExtensionsTests {
-    [Fact]
-    public void WriteAndReadFloatRaw_ShouldReturnIdenticalValue() {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(7)]
+    public void WriteAndReadFloatRaw_ShouldReturnIdenticalValue(int initialOffset) {
         float valueToWrite = 12.34f;
 
         RawRoundTripTestHarness<float>.AssertSingleValueRoundTrip(
+            initialOffset,
             valueToWrite,
             (writeCtx, value) => writeCtx.WriteFloatRaw(value),
             readCtx => readCtx.PeekFloatRaw(),
@@ -14,7 +17,7 @@ public class RawFloatExtensionsTests {
 
     [Theory]
     [InlineData(0)]
-    [InlineData(7)] // Unaligned offset to test bit shifting
+    [InlineData(7)]
     public void WriteAndReadFloatSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         float[] values = [1.1f, -2.2f, float.MaxValue, float.MinValue, float.NaN];
 

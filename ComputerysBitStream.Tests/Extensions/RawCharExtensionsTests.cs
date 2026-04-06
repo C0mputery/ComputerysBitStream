@@ -1,11 +1,14 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawCharExtensionsTests {
-    [Fact]
-    public void WriteAndReadCharRaw_ShouldReturnIdenticalValue() {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(7)]
+    public void WriteAndReadCharRaw_ShouldReturnIdenticalValue(int initialOffset) {
         char valueToWrite = 'Z';
 
         RawRoundTripTestHarness<char>.AssertSingleValueRoundTrip(
+            initialOffset,
             valueToWrite,
             (writeCtx, value) => writeCtx.WriteCharRaw(value),
             readCtx => readCtx.PeekCharRaw(),
@@ -14,7 +17,7 @@ public class RawCharExtensionsTests {
 
     [Theory]
     [InlineData(0)]
-    [InlineData(7)] // Unaligned offset to test bit shifting
+    [InlineData(7)]
     public void WriteAndReadCharSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         char[] values = ['a', 'b', '1', '\\', '\n'];
 
