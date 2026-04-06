@@ -4,8 +4,8 @@ using Xunit;
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawUIntExtensionsTests : ExtensionTestSuite<uint> {
-    protected override uint SingleValue => 42u;
-    protected override uint[] SpanValues => [42u, 100u, 42u, 42u, 100u];
+    protected override uint Value => 42u;
+    protected override uint[] Values => [42u, 100u, 42u, 42u, 100u];
 
     protected override void WriteRaw(WriteContext context, uint value) => context.WriteUIntRaw(value);
     protected override uint PeekRaw(ReadContext context) => context.PeekUIntRaw();

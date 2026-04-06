@@ -4,8 +4,8 @@ using Xunit;
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class DecimalExtensionsTests : ExtensionTestSuite<decimal> {
-    protected override decimal SingleValue => 1.23m;
-    protected override decimal[] SpanValues => [1.23m, 4.56m, 1.23m, 1.23m, 4.56m];
+    protected override decimal Value => 1.23m;
+    protected override decimal[] Values => [1.23m, 4.56m, 1.23m, 1.23m, 4.56m];
 
     protected override void WriteRaw(WriteContext context, decimal value) => context.WriteDecimalRaw(value);
     protected override decimal PeekRaw(ReadContext context) => context.PeekDecimalRaw();

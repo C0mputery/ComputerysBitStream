@@ -4,8 +4,8 @@ using Xunit;
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class DoubleExtensionsTests : ExtensionTestSuite<double> {
-    protected override double SingleValue => 1.23;
-    protected override double[] SpanValues => [1.23, 4.56, 1.23, 1.23, 4.56];
+    protected override double Value => 1.23;
+    protected override double[] Values => [1.23, 4.56, 1.23, 1.23, 4.56];
 
     protected override void WriteRaw(WriteContext context, double value) => context.WriteDoubleRaw(value);
     protected override double PeekRaw(ReadContext context) => context.PeekDoubleRaw();

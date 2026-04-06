@@ -5,8 +5,8 @@ public class BitOffsetRange : TheoryData<int> {
 }
 
 public abstract class ExtensionTestSuite<T> {
-    protected abstract T SingleValue { get; }
-    protected abstract T[] SpanValues { get; }
+    protected abstract T Value { get; }
+    protected abstract T[] Values { get; }
 
     protected abstract void WriteRaw(WriteContext context, T value);
     protected abstract T PeekRaw(ReadContext context);
@@ -75,139 +75,139 @@ public abstract class ExtensionTestSuite<T> {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSingle_Raw_ShouldReturnIdenticalValue(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, SingleValue, WriteRaw, PeekRaw, ReadRaw);
+        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, Value, WriteRaw, PeekRaw, ReadRaw);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSingle_ShouldReturnIdenticalValue(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, SingleValue, Write, Peek, Read);
+        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, Value, Write, Peek, Read);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSingle_Alias_ShouldReturnIdenticalValue(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, SingleValue, WriteAlias, PeekAlias, ReadAlias);
+        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, Value, WriteAlias, PeekAlias, ReadAlias);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSingle_Try_ShouldReturnIdenticalValue(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, SingleValue, Write, TryPeek, TryRead);
+        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, Value, Write, TryPeek, TryRead);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSingle_TryAlias_ShouldReturnIdenticalValue(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, SingleValue, Write, TryPeekAlias, TryReadAlias);
+        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, Value, Write, TryPeekAlias, TryReadAlias);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSpanWithoutLength_Raw_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, SpanValues, WriteSpanRaw, PeekSpanRaw, ReadSpanRaw);
+        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, Values, WriteSpanRaw, PeekSpanRaw, ReadSpanRaw);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSpanWithoutLength_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, SpanValues, WriteSpanWithoutLength, PeekSpanWithoutLength, ReadSpanWithoutLength);
+        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, Values, WriteSpanWithoutLength, PeekSpanWithoutLength, ReadSpanWithoutLength);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSpanWithoutLength_Alias_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, SpanValues, WriteSpanWithoutLengthAlias, PeekSpanWithoutLengthAlias, ReadSpanWithoutLengthAlias);
+        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, Values, WriteSpanWithoutLengthAlias, PeekSpanWithoutLengthAlias, ReadSpanWithoutLengthAlias);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSpanWithoutLength_Try_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, SpanValues, WriteSpanWithoutLength, TryPeekSpanWithoutLength, TryReadSpanWithoutLength);
+        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, Values, WriteSpanWithoutLength, TryPeekSpanWithoutLength, TryReadSpanWithoutLength);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSpanWithoutLength_TryAlias_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, SpanValues, WriteSpanWithoutLength, TryPeekSpanWithoutLengthAlias, TryReadSpanWithoutLengthAlias);
+        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, Values, WriteSpanWithoutLength, TryPeekSpanWithoutLengthAlias, TryReadSpanWithoutLengthAlias);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArrayWithoutLength_Raw_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, SpanValues, WriteArrayRaw, PeekArrayRaw, ReadArrayRaw);
+        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, Values, WriteArrayRaw, PeekArrayRaw, ReadArrayRaw);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArrayWithoutLength_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, SpanValues, WriteArrayWithoutLength, PeekArrayWithoutLength, ReadArrayWithoutLength);
+        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, Values, WriteArrayWithoutLength, PeekArrayWithoutLength, ReadArrayWithoutLength);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArrayWithoutLength_Alias_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, SpanValues, WriteArrayWithoutLengthAlias, PeekArrayWithoutLengthAlias, ReadArrayWithoutLengthAlias);
+        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, Values, WriteArrayWithoutLengthAlias, PeekArrayWithoutLengthAlias, ReadArrayWithoutLengthAlias);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArrayWithoutLength_Try_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, SpanValues, WriteArrayWithoutLength, TryPeekArrayWithoutLength, TryReadArrayWithoutLength);
+        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, Values, WriteArrayWithoutLength, TryPeekArrayWithoutLength, TryReadArrayWithoutLength);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArrayWithoutLength_TryAlias_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, SpanValues, WriteArrayWithoutLength, TryPeekArrayWithoutLengthAlias, TryReadArrayWithoutLengthAlias);
+        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, Values, WriteArrayWithoutLength, TryPeekArrayWithoutLengthAlias, TryReadArrayWithoutLengthAlias);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndRead_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, SpanValues, WriteSpan, PeekSpanWithLength, ReadSpanWithLength);
+        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, Values, WriteSpan, PeekSpanWithLength, ReadSpanWithLength);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndRead_Alias_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, SpanValues, WriteSpanAlias, PeekSpanWithLengthAlias, ReadSpanWithLengthAlias);
+        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, Values, WriteSpanAlias, PeekSpanWithLengthAlias, ReadSpanWithLengthAlias);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndRead_Try_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, SpanValues, WriteSpan, TryPeekSpanWithLength, TryReadSpanWithLength);
+        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, Values, WriteSpan, TryPeekSpanWithLength, TryReadSpanWithLength);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndRead_TryAlias_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, SpanValues, WriteSpan, TryPeekSpanWithLengthAlias, TryReadSpanWithLengthAlias);
+        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, Values, WriteSpan, TryPeekSpanWithLengthAlias, TryReadSpanWithLengthAlias);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArray_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, SpanValues, WriteArray, PeekArrayWithLength, ReadArrayWithLength);
+        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, Values, WriteArray, PeekArrayWithLength, ReadArrayWithLength);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArray_Alias_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, SpanValues, WriteArrayAlias, PeekArrayWithLengthAlias, ReadArrayWithLengthAlias);
+        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, Values, WriteArrayAlias, PeekArrayWithLengthAlias, ReadArrayWithLengthAlias);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArray_Try_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, SpanValues, WriteArray, TryPeekArrayWithLength, TryReadArrayWithLength);
+        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, Values, WriteArray, TryPeekArrayWithLength, TryReadArrayWithLength);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArray_TryAlias_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, SpanValues, WriteArray, TryPeekArrayWithLengthAlias, TryReadArrayWithLengthAlias);
+        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, Values, WriteArray, TryPeekArrayWithLengthAlias, TryReadArrayWithLengthAlias);
     }
 
     private static int MeasureBitsNeeded(Action<WriteContext> writeOperation) {
@@ -232,8 +232,8 @@ public abstract class ExtensionTestSuite<T> {
     }
 
     private void AssertSingleWriteOutOfBoundsThrowsAndDoesNotAdvance(Action<WriteContext, T> writeOperation) {
-        int bitsNeeded = MeasureBitsNeeded(context => writeOperation(context, SingleValue));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(bitsNeeded, context => writeOperation(context, SingleValue));
+        int bitsNeeded = MeasureBitsNeeded(context => writeOperation(context, Value));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(bitsNeeded, context => writeOperation(context, Value));
     }
 
     private ReadContext CreateTruncatedReadContext(Action<WriteContext> writeOperation) {
@@ -293,7 +293,7 @@ public abstract class ExtensionTestSuite<T> {
 
     [Fact]
     public void ReadSingle_WhenOutOfBounds_ShouldReturnDefaultAndNotAdvance() {
-        ReadContext context = CreateTruncatedReadContext(writeContext => Write(writeContext, SingleValue));
+        ReadContext context = CreateTruncatedReadContext(writeContext => Write(writeContext, Value));
         int originalPosition = context.Position;
 
         Assert.Equal(default, Peek(context));
@@ -305,55 +305,49 @@ public abstract class ExtensionTestSuite<T> {
 
     [Fact]
     public void WriteSpanAndArray_WhenOutOfBounds_ShouldThrow() {
-        int spanWithoutLengthBits = MeasureBitsNeeded(context => WriteSpanWithoutLength(context, SpanValues));
-        int spanWithLengthBits = MeasureBitsNeeded(context => WriteSpan(context, SpanValues));
-        int arrayWithoutLengthBits = MeasureBitsNeeded(context => WriteArrayWithoutLength(context, SpanValues));
-        int arrayWithLengthBits = MeasureBitsNeeded(context => WriteArray(context, SpanValues));
+        int spanWithoutLengthBits = MeasureBitsNeeded(context => WriteSpanWithoutLength(context, Values));
+        int spanWithLengthBits = MeasureBitsNeeded(context => WriteSpan(context, Values));
+        int arrayWithoutLengthBits = MeasureBitsNeeded(context => WriteArrayWithoutLength(context, Values));
+        int arrayWithLengthBits = MeasureBitsNeeded(context => WriteArray(context, Values));
 
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithoutLengthBits, context => WriteSpanWithoutLength(context, SpanValues));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithoutLengthBits, context => WriteSpanWithoutLengthAlias(context, SpanValues));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithLengthBits, context => WriteSpan(context, SpanValues));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithLengthBits, context => WriteSpanAlias(context, SpanValues));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithoutLengthBits, context => WriteArrayWithoutLength(context, SpanValues));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithoutLengthBits, context => WriteArrayWithoutLengthAlias(context, SpanValues));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithLengthBits, context => WriteArray(context, SpanValues));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithLengthBits, context => WriteArrayAlias(context, SpanValues));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithoutLengthBits, context => WriteSpanWithoutLength(context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithoutLengthBits, context => WriteSpanWithoutLengthAlias(context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithLengthBits, context => WriteSpan(context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithLengthBits, context => WriteSpanAlias(context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithoutLengthBits, context => WriteArrayWithoutLength(context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithoutLengthBits, context => WriteArrayWithoutLengthAlias(context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithLengthBits, context => WriteArray(context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithLengthBits, context => WriteArrayAlias(context, Values));
     }
 
     [Fact]
     public void ReadArray_WhenOutOfBounds_ShouldReturnEmptyAndNotAdvance() {
-        ReadContext context = CreateTruncatedReadContext(writeContext => WriteArray(writeContext, SpanValues));
+        ReadContext context = CreateTruncatedReadContext(writeContext => WriteArray(writeContext, Values));
 
         AssertReadArrayOutOfBoundsAndPositionUnchanged(context, PeekArrayWithLength, ReadArrayWithLength, PeekArrayWithLengthAlias, ReadArrayWithLengthAlias);
     }
 
     [Fact]
     public void ReadFixedLengthArray_WhenOutOfBounds_ShouldReturnEmptyAndNotAdvance() {
-        ReadContext context = CreateTruncatedReadContext(writeContext => WriteArrayWithoutLength(writeContext, SpanValues));
-        int count = SpanValues.Length;
+        ReadContext context = CreateTruncatedReadContext(writeContext => WriteArrayWithoutLength(writeContext, Values));
+        int count = Values.Length;
 
-        AssertReadArrayOutOfBoundsAndPositionUnchanged(
-            context,
-            count,
-            PeekArrayWithoutLength,
-            ReadArrayWithoutLength,
-            PeekArrayWithoutLengthAlias,
-            ReadArrayWithoutLengthAlias);
+        AssertReadArrayOutOfBoundsAndPositionUnchanged(context, count, PeekArrayWithoutLength, ReadArrayWithoutLength, PeekArrayWithoutLengthAlias, ReadArrayWithoutLengthAlias);
     }
 
     [Fact]
     public void ReadSpan_WhenOutOfBounds_ShouldLeaveDestinationUnchangedAndNotAdvance() {
-        ReadContext context = CreateTruncatedReadContext(writeContext => WriteSpan(writeContext, SpanValues));
+        ReadContext context = CreateTruncatedReadContext(writeContext => WriteSpan(writeContext, Values));
 
-        AssertReadSpanOutOfBoundsAndPositionUnchanged(context, SpanValues, PeekSpanWithLength, ReadSpanWithLength, PeekSpanWithLengthAlias, ReadSpanWithLengthAlias);
+        AssertReadSpanOutOfBoundsAndPositionUnchanged(context, Values, PeekSpanWithLength, ReadSpanWithLength, PeekSpanWithLengthAlias, ReadSpanWithLengthAlias);
     }
 
     [Fact]
     public void ReadFixedLengthSpan_WhenOutOfBounds_ShouldLeaveDestinationUnchangedAndNotAdvance() {
-        ReadContext context = CreateTruncatedReadContext(writeContext => WriteSpanWithoutLength(writeContext, SpanValues));
-        int count = SpanValues.Length;
+        ReadContext context = CreateTruncatedReadContext(writeContext => WriteSpanWithoutLength(writeContext, Values));
+        int count = Values.Length;
 
-        AssertReadSpanOutOfBoundsAndPositionUnchanged(context, SpanValues, count, PeekSpanWithoutLength, ReadSpanWithoutLength, PeekSpanWithoutLengthAlias, ReadSpanWithoutLengthAlias);
+        AssertReadSpanOutOfBoundsAndPositionUnchanged(context, Values, count, PeekSpanWithoutLength, ReadSpanWithoutLength, PeekSpanWithoutLengthAlias, ReadSpanWithoutLengthAlias);
     }
 
     private delegate void SpanReadOperation(ReadContext context, ref Span<T> destination);

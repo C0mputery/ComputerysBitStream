@@ -4,8 +4,8 @@ using Xunit;
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class CharExtensionsTests : ExtensionTestSuite<char> {
-    protected override char SingleValue => 'a';
-    protected override char[] SpanValues => ['a', 'b', 'a', 'a', 'b'];
+    protected override char Value => 'a';
+    protected override char[] Values => ['a', 'b', 'a', 'a', 'b'];
 
     protected override void WriteRaw(WriteContext context, char value) => context.WriteCharRaw(value);
     protected override char PeekRaw(ReadContext context) => context.PeekCharRaw();

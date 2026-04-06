@@ -1,8 +1,8 @@
 ﻿namespace ComputerysBitStream.Tests.Extensions;
 
 public class BoolExtensionsTests : ExtensionTestSuite<bool> {
-    protected override bool SingleValue => true;
-    protected override bool[] SpanValues => [true, false, true, true, false];
+    protected override bool Value => true;
+    protected override bool[] Values => [true, false, true, true, false];
 
     protected override void WriteRaw(WriteContext context, bool value) => context.WriteBoolRaw(value);
     protected override bool PeekRaw(ReadContext context) => context.PeekBoolRaw();

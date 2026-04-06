@@ -4,8 +4,8 @@ using Xunit;
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawLongExtensionsTests : ExtensionTestSuite<long> {
-    protected override long SingleValue => 42L;
-    protected override long[] SpanValues => [42L, -42L, 42L, 42L, -42L];
+    protected override long Value => 42L;
+    protected override long[] Values => [42L, -42L, 42L, 42L, -42L];
 
     protected override void WriteRaw(WriteContext context, long value) => context.WriteLongRaw(value);
     protected override long PeekRaw(ReadContext context) => context.PeekLongRaw();

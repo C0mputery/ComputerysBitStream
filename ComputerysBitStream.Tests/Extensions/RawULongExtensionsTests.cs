@@ -4,8 +4,8 @@ using Xunit;
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawULongExtensionsTests : ExtensionTestSuite<ulong> {
-    protected override ulong SingleValue => 42ul;
-    protected override ulong[] SpanValues => [42ul, 100ul, 42ul, 42ul, 100ul];
+    protected override ulong Value => 42ul;
+    protected override ulong[] Values => [42ul, 100ul, 42ul, 42ul, 100ul];
 
     protected override void WriteRaw(WriteContext context, ulong value) => context.WriteULongRaw(value);
     protected override ulong PeekRaw(ReadContext context) => context.PeekULongRaw();

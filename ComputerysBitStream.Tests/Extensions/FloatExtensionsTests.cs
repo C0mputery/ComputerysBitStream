@@ -4,8 +4,8 @@ using Xunit;
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class FloatExtensionsTests : ExtensionTestSuite<float> {
-    protected override float SingleValue => 1.23f;
-    protected override float[] SpanValues => [1.23f, 4.56f, 1.23f, 1.23f, 4.56f];
+    protected override float Value => 1.23f;
+    protected override float[] Values => [1.23f, 4.56f, 1.23f, 1.23f, 4.56f];
 
     protected override void WriteRaw(WriteContext context, float value) => context.WriteFloatRaw(value);
     protected override float PeekRaw(ReadContext context) => context.PeekFloatRaw();

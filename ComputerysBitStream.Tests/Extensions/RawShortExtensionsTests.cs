@@ -4,8 +4,8 @@ using Xunit;
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawShortExtensionsTests : ExtensionTestSuite<short> {
-    protected override short SingleValue => 42;
-    protected override short[] SpanValues => [42, -42, 42, 42, -42];
+    protected override short Value => 42;
+    protected override short[] Values => [42, -42, 42, 42, -42];
 
     protected override void WriteRaw(WriteContext context, short value) => context.WriteShortRaw(value);
     protected override short PeekRaw(ReadContext context) => context.PeekShortRaw();
