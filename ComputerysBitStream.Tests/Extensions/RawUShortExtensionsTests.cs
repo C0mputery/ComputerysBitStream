@@ -4,8 +4,8 @@ using Xunit;
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawUShortExtensionsTests : ExtensionTestSuite<ushort> {
-    protected override ushort SingleValue => (ushort)42;
-    protected override ushort[] SpanValues => [(ushort)42, (ushort)100, (ushort)42, (ushort)42, (ushort)100];
+    protected override ushort SingleValue => 42;
+    protected override ushort[] SpanValues => [42, 100, 42, 42, 100];
 
     protected override void WriteRaw(WriteContext context, ushort value) => context.WriteUShortRaw(value);
     protected override ushort PeekRaw(ReadContext context) => context.PeekUShortRaw();

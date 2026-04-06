@@ -4,8 +4,8 @@ using Xunit;
 namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawSByteExtensionsTests : ExtensionTestSuite<sbyte> {
-    protected override sbyte SingleValue => (sbyte)42;
-    protected override sbyte[] SpanValues => [(sbyte)42, (sbyte)-42, (sbyte)42, (sbyte)42, (sbyte)-42];
+    protected override sbyte SingleValue => 42;
+    protected override sbyte[] SpanValues => [42, -42, 42, 42, -42];
 
     protected override void WriteRaw(WriteContext context, sbyte value) => context.WriteSByteRaw(value);
     protected override sbyte PeekRaw(ReadContext context) => context.PeekSByteRaw();
