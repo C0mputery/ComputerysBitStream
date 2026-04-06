@@ -206,7 +206,7 @@ public ref struct WriteContext {
     /// This will include garbage bits in the last byte if the total number of bits written is not a multiple of 8.
     /// </summary>
     /// <returns></returns>
-    public readonly Span<byte> ToByte() {
+    public readonly Span<byte> ToBytes() {
         int relevantUlongs = (Position + 63) / 64;
         Span<ulong> relevantBuffer = Buffer.Slice(0, relevantUlongs);
         int totalBytes = (Position + 7) / 8;
