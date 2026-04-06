@@ -1,4 +1,4 @@
-namespace ComputerysBitStream.Tests.Extensions;
+namespace ComputerysBitStream.Tests.RawExtensions;
 
 public class RawCharExtensionsTests {
     [Theory]
