@@ -2,8 +2,7 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawUIntExtensionsTests {
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadUIntRaw_ShouldReturnIdenticalValue(int initialOffset) {
         uint valueToWrite = 4000000000U;
 
@@ -16,8 +15,7 @@ public class RawUIntExtensionsTests {
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadUIntSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         uint[] values = [1u, 2u, uint.MaxValue, uint.MinValue];
 

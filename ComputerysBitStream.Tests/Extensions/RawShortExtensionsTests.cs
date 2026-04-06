@@ -2,8 +2,7 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawShortExtensionsTests {
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadShortRaw_ShouldReturnIdenticalValue(int initialOffset) {
         short valueToWrite = -12345;
 
@@ -16,8 +15,7 @@ public class RawShortExtensionsTests {
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadShortSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         short[] values = [1, -2, short.MaxValue, short.MinValue, 0];
 

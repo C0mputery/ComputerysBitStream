@@ -2,8 +2,7 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawIntExtensionsTests {
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadIntRaw_ShouldReturnIdenticalValue(int initialOffset) {
         int valueToWrite = -123456789;
 
@@ -16,8 +15,7 @@ public class RawIntExtensionsTests {
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadIntSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         int[] values = [1, 2, -3, int.MaxValue, int.MinValue];
 

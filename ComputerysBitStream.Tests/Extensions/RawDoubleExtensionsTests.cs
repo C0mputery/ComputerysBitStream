@@ -2,8 +2,7 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawDoubleExtensionsTests {
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadDoubleRaw_ShouldReturnIdenticalValue(int initialOffset) {
         double valueToWrite = -123.456;
 
@@ -16,8 +15,7 @@ public class RawDoubleExtensionsTests {
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadDoubleSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         double[] values = [1.1, -2.2, double.MaxValue, double.MinValue, double.NaN];
 

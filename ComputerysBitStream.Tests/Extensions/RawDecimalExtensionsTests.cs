@@ -2,8 +2,7 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawDecimalExtensionsTests {
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadDecimalRaw_ShouldReturnIdenticalValue(int initialOffset) {
         decimal valueToWrite = 12345.6789m;
 
@@ -16,8 +15,7 @@ public class RawDecimalExtensionsTests {
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadDecimalSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         decimal[] values = [1.1m, -2.2m, decimal.MaxValue, decimal.MinValue, 0m];
 

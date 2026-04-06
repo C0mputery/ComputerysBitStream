@@ -2,8 +2,7 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawByteExtensionsTests {
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadByteRaw_ShouldReturnIdenticalValue(int initialOffset) {
         byte valueToWrite = 200;
 
@@ -16,8 +15,7 @@ public class RawByteExtensionsTests {
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadByteSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         byte[] values = [1, 2, 255, 128, 0];
 

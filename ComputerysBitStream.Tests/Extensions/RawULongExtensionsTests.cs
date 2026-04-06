@@ -2,8 +2,7 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawULongExtensionsTests {
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadULongRaw_ShouldReturnIdenticalValue(int initialOffset) {
         ulong valueToWrite = 9123456789012345678UL;
 
@@ -16,8 +15,7 @@ public class RawULongExtensionsTests {
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadULongSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         ulong[] values = [1UL, 2UL, ulong.MaxValue, ulong.MinValue];
 

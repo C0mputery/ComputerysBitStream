@@ -2,8 +2,7 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawFloatExtensionsTests {
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadFloatRaw_ShouldReturnIdenticalValue(int initialOffset) {
         float valueToWrite = 12.34f;
 
@@ -16,8 +15,7 @@ public class RawFloatExtensionsTests {
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadFloatSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         float[] values = [1.1f, -2.2f, float.MaxValue, float.MinValue, float.NaN];
 

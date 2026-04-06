@@ -2,8 +2,7 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawCharExtensionsTests {
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadCharRaw_ShouldReturnIdenticalValue(int initialOffset) {
         char valueToWrite = 'Z';
 
@@ -16,8 +15,7 @@ public class RawCharExtensionsTests {
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadCharSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         char[] values = ['a', 'b', '1', '\\', '\n'];
 

@@ -2,8 +2,7 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 public class RawBoolExtensionsTests {
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadBoolRaw_ShouldReturnIdenticalValue(int initialOffset) {
         bool valueToWrite = true;
 
@@ -16,8 +15,7 @@ public class RawBoolExtensionsTests {
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(7)]
+    [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadBoolSpanRaw_ShouldReturnIdenticalSpan(int initialOffset) {
         bool[] values = [true, false, true, true, false];
 
