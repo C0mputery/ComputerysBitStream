@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace ComputerysBitStream;
 
 [BitStreamType(typeof(char), BitSizes.CharSize)]
-public static class RawCharExtensions {
+public static class CharExtensions {
     private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.CharSize;
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

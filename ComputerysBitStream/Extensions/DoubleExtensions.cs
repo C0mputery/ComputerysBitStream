@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace ComputerysBitStream;
 
 [BitStreamType(typeof(double), BitSizes.DoubleSize)]
-public static class RawDoubleExtensions {
+public static class DoubleExtensions {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static ulong AsBits(double value) => (ulong)BitConverter.DoubleToInt64Bits(value);
 

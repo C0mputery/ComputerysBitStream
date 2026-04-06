@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace ComputerysBitStream;
 
 [BitStreamType(typeof(bool), BitSizes.BoolSize)]
-public static class RawBoolExtensions {
+public static class BoolExtensions {
     private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.BoolSize;
     
     [BitStreamRaw(BitStreamRawRole.Write)]

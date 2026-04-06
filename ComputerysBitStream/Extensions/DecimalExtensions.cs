@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace ComputerysBitStream;
 
 [BitStreamType(typeof(decimal), BitSizes.DecimalSize)]
-public static class RawDecimalExtensions {
+public static class DecimalExtensions {
     [BitStreamRaw(BitStreamRawRole.Write)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

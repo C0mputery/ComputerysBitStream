@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace ComputerysBitStream;
 
 [BitStreamType(typeof(float), BitSizes.FloatSize)]
-public static class RawFloatExtensions {
+public static class FloatExtensions {
     private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.FloatSize;
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
