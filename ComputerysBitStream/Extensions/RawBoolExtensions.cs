@@ -3,16 +3,17 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(bool), BitHelper.BoolSize)]
-    public static class BoolExtensions {
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [BitStreamRawType(typeof(bool), BitHelper.BoolSize)]
+    public static class RawBoolExtensions {
         private const int NumberOfValuesInUlong = BitHelper.ULongSize / BitHelper.BoolSize;
     
-        [BitStreamRaw(BitStreamRawRole.Write)]
+        [BitStreamRawMethod(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBoolRaw(this ref WriteContext context, bool value) { context.WriteBitRaw(value); }
     
-        [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.WriteSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBoolsRaw(this ref WriteContext context, ReadOnlySpan<bool> values) {
@@ -38,17 +39,17 @@ namespace ComputerysBitStream {
             }
         }
     
-        [BitStreamRaw(BitStreamRawRole.Peek)]
+        [BitStreamRawMethod(BitStreamRawRole.Peek)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool PeekBoolRaw(this ref ReadContext context) { return context.PeekBitRaw(); }
 
-        [BitStreamRaw(BitStreamRawRole.Read)]
+        [BitStreamRawMethod(BitStreamRawRole.Read)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ReadBoolRaw(this ref ReadContext context) { return context.ReadBitRaw(); }
     
-        [BitStreamRaw(BitStreamRawRole.PeekArray)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool[] PeekBoolArrayRaw(this ref ReadContext context, int count) {
@@ -58,7 +59,7 @@ namespace ComputerysBitStream {
             return result;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadArray)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool[] ReadBoolArrayRaw(this ref ReadContext context, int count) {
@@ -68,7 +69,7 @@ namespace ComputerysBitStream {
             return result;
         }
     
-        [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> destination) {
@@ -77,7 +78,7 @@ namespace ComputerysBitStream {
             context.Position = originalPosition;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> destination) {

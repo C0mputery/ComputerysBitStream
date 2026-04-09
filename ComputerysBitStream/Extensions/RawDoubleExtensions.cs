@@ -4,20 +4,21 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(double), BitHelper.DoubleSize)]
-    public static class DoubleExtensions {
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [BitStreamRawType(typeof(double), BitHelper.DoubleSize)]
+    public static class RawDoubleExtensions {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong AsBits(double value) => (ulong)BitConverter.DoubleToInt64Bits(value);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static double FromBits(ulong value) => BitConverter.Int64BitsToDouble((long)value);
     
-        [BitStreamRaw(BitStreamRawRole.Write)]
+        [BitStreamRawMethod(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteDoubleRaw(this ref WriteContext context, double value) { context.WriteBitsRaw(AsBits(value), BitHelper.DoubleSize); }
     
-        [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.WriteSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteDoublesRaw(this ref WriteContext context, ReadOnlySpan<double> values) {
@@ -25,17 +26,17 @@ namespace ComputerysBitStream {
             context.WriteBitsRaw(ulongs, ulongs.Length * BitHelper.ULongSize);
         }
 
-        [BitStreamRaw(BitStreamRawRole.Peek)]
+        [BitStreamRawMethod(BitStreamRawRole.Peek)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double PeekDoubleRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitHelper.DoubleSize)); }
 
-        [BitStreamRaw(BitStreamRawRole.Read)]
+        [BitStreamRawMethod(BitStreamRawRole.Read)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double ReadDoubleRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitHelper.DoubleSize)); }
 
-        [BitStreamRaw(BitStreamRawRole.PeekArray)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double[] PeekDoubleArrayRaw(this ref ReadContext context, int count) {
@@ -45,7 +46,7 @@ namespace ComputerysBitStream {
             return result;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadArray)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double[] ReadDoubleArrayRaw(this ref ReadContext context, int count) {
@@ -55,7 +56,7 @@ namespace ComputerysBitStream {
             return result;
         }
     
-        [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekDoubleSpanRaw(this ref ReadContext context, int count, ref Span<double> destination) {
@@ -64,7 +65,7 @@ namespace ComputerysBitStream {
             context.Position = originalPosition;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadDoubleSpanRaw(this ref ReadContext context, int count, ref Span<double> destination) {

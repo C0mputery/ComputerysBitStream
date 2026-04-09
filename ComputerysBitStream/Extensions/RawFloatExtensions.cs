@@ -4,8 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(float), BitHelper.FloatSize)]
-    public static class FloatExtensions {
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [BitStreamRawType(typeof(float), BitHelper.FloatSize)]
+    public static class RawFloatExtensions {
         private const int NumberOfValuesInUlong = BitHelper.ULongSize / BitHelper.FloatSize;
     
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -14,12 +15,12 @@ namespace ComputerysBitStream {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float FromBits(ulong value) => BitConverter.Int32BitsToSingle((int)(uint)value);
 
-        [BitStreamRaw(BitStreamRawRole.Write)]
+        [BitStreamRawMethod(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteFloatRaw(this ref WriteContext context, float value) { context.WriteBitsRaw(AsBits(value), BitHelper.FloatSize); }
     
-        [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.WriteSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteFloatsRaw(this ref WriteContext context, ReadOnlySpan<float> values) {
@@ -37,17 +38,17 @@ namespace ComputerysBitStream {
             }
         }
 
-        [BitStreamRaw(BitStreamRawRole.Peek)]
+        [BitStreamRawMethod(BitStreamRawRole.Peek)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float PeekFloatRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitHelper.FloatSize)); }
 
-        [BitStreamRaw(BitStreamRawRole.Read)]
+        [BitStreamRawMethod(BitStreamRawRole.Read)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ReadFloatRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitHelper.FloatSize)); }
 
-        [BitStreamRaw(BitStreamRawRole.PeekArray)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float[] PeekFloatArrayRaw(this ref ReadContext context, int count) {
@@ -57,7 +58,7 @@ namespace ComputerysBitStream {
             return result;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadArray)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float[] ReadFloatArrayRaw(this ref ReadContext context, int count) {
@@ -67,7 +68,7 @@ namespace ComputerysBitStream {
             return result;
         }
     
-        [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekFloatSpanRaw(this ref ReadContext context, int count, ref Span<float> destination) {
@@ -76,7 +77,7 @@ namespace ComputerysBitStream {
             context.Position = originalPosition;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadFloatSpanRaw(this ref ReadContext context, int count, ref Span<float> destination) {

@@ -4,8 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(char), BitHelper.CharSize)]
-    public static class CharExtensions {
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [BitStreamRawType(typeof(char), BitHelper.CharSize)]
+    public static class RawCharExtensions {
         private const int NumberOfValuesInUlong = BitHelper.ULongSize / BitHelper.CharSize;
     
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -14,12 +15,12 @@ namespace ComputerysBitStream {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static char FromBits(ulong value) => (char)value;
 
-        [BitStreamRaw(BitStreamRawRole.Write)]
+        [BitStreamRawMethod(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteCharRaw(this ref WriteContext context, char value) { context.WriteBitsRaw(AsBits(value), BitHelper.CharSize); }
     
-        [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.WriteSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteCharsRaw(this ref WriteContext context, ReadOnlySpan<char> values) {
@@ -37,17 +38,17 @@ namespace ComputerysBitStream {
             }
         }
 
-        [BitStreamRaw(BitStreamRawRole.Peek)]
+        [BitStreamRawMethod(BitStreamRawRole.Peek)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char PeekCharRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitHelper.CharSize)); }
 
-        [BitStreamRaw(BitStreamRawRole.Read)]
+        [BitStreamRawMethod(BitStreamRawRole.Read)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char ReadCharRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitHelper.CharSize)); }
 
-        [BitStreamRaw(BitStreamRawRole.PeekArray)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char[] PeekCharArrayRaw(this ref ReadContext context, int count) {
@@ -57,7 +58,7 @@ namespace ComputerysBitStream {
             return result;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadArray)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char[] ReadCharArrayRaw(this ref ReadContext context, int count) {
@@ -67,7 +68,7 @@ namespace ComputerysBitStream {
             return result;
         }
     
-        [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekCharSpanRaw(this ref ReadContext context, int count, ref Span<char> destination) {
@@ -76,7 +77,7 @@ namespace ComputerysBitStream {
             context.Position = originalPosition;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadCharSpanRaw(this ref ReadContext context, int count, ref Span<char> destination) {

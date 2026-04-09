@@ -4,9 +4,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(decimal), BitHelper.DecimalSize)]
-    public static class DecimalExtensions {
-        [BitStreamRaw(BitStreamRawRole.Write)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [BitStreamRawType(typeof(decimal), BitHelper.DecimalSize)]
+    public static class RawDecimalExtensions {
+        [BitStreamRawMethod(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteDecimalRaw(this ref WriteContext context, decimal value) {
@@ -15,7 +16,7 @@ namespace ComputerysBitStream {
             context.WriteBitsRaw(parts, parts.Length * BitHelper.ULongSize);
         }
 
-        [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.WriteSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteDecimalsRaw(this ref WriteContext context, ReadOnlySpan<decimal> values) {
@@ -23,7 +24,7 @@ namespace ComputerysBitStream {
             context.WriteBitsRaw(ulongs, ulongs.Length * BitHelper.ULongSize);
         }
 
-        [BitStreamRaw(BitStreamRawRole.Peek)]
+        [BitStreamRawMethod(BitStreamRawRole.Peek)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static decimal PeekDecimalRaw(this ref ReadContext context) {
@@ -33,7 +34,7 @@ namespace ComputerysBitStream {
             return value;
         }
 
-        [BitStreamRaw(BitStreamRawRole.Read)]
+        [BitStreamRawMethod(BitStreamRawRole.Read)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static decimal ReadDecimalRaw(this ref ReadContext context) {
@@ -44,7 +45,7 @@ namespace ComputerysBitStream {
             return value;
         }
 
-        [BitStreamRaw(BitStreamRawRole.PeekArray)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static decimal[] PeekDecimalArrayRaw(this ref ReadContext context, int count) {
@@ -54,7 +55,7 @@ namespace ComputerysBitStream {
             return result;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadArray)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static decimal[] ReadDecimalArrayRaw(this ref ReadContext context, int count) {
@@ -64,7 +65,7 @@ namespace ComputerysBitStream {
             return result;
         }
 
-        [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekDecimalSpanRaw(this ref ReadContext context, int count, ref Span<decimal> destination) {
@@ -73,7 +74,7 @@ namespace ComputerysBitStream {
             context.Position = originalPosition;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadDecimalSpanRaw(this ref ReadContext context, int count, ref Span<decimal> destination) {

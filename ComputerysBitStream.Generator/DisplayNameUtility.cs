@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace ComputerysBitStream.Generator;
 
-public static class TargetTypeNameUtility {
+internal static class DisplayNameUtility {
     private static readonly SymbolDisplayFormat CSharpDefaultFormat = new(
         typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameOnly,
         genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
@@ -11,7 +11,7 @@ public static class TargetTypeNameUtility {
                               SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers
     );
 
-    public static string GetTargetTypeName(ITypeSymbol symbol) {
+    public static string GetDisplayName(ITypeSymbol symbol) {
         return symbol.SpecialType switch {
             SpecialType.System_Boolean => "Bool",
             SpecialType.System_Byte => "Byte",

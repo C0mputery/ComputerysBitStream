@@ -4,6 +4,8 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <DefineConstants>$(DefineConstants);COMPUTERYS_BITSTREAM_GENERATOR</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
@@ -14,5 +16,6 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="..\ComputerysBitStream\Attributes.cs" Link="Attributes.cs" />
+        <Compile Include="..\ComputerysBitStream\DefaultSettings.cs" Link="DefaultSettings.cs" />
     </ItemGroup>
 </Project>

@@ -3,7 +3,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(ulong), BitHelper.ULongSize)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [BitStreamRawType(typeof(ulong), BitHelper.ULongSize)]
     public static class RawULongExtensions {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong AsBits(ulong value) => value;
@@ -11,29 +12,29 @@ namespace ComputerysBitStream {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong FromBits(ulong value) => value;
 
-        [BitStreamRaw(BitStreamRawRole.Write)]
+        [BitStreamRawMethod(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteULongRaw(this ref WriteContext context, ulong value) { context.WriteBitsRaw(AsBits(value), BitHelper.ULongSize); }
     
-        [BitStreamRaw(BitStreamRawRole.WriteSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.WriteSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteULongsRaw(this ref WriteContext context, ReadOnlySpan<ulong> values) {
             context.WriteBitsRaw(values, values.Length * BitHelper.ULongSize);
         }
 
-        [BitStreamRaw(BitStreamRawRole.Peek)]
+        [BitStreamRawMethod(BitStreamRawRole.Peek)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong PeekULongRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitHelper.ULongSize)); }
 
-        [BitStreamRaw(BitStreamRawRole.Read)]
+        [BitStreamRawMethod(BitStreamRawRole.Read)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong ReadULongRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitHelper.ULongSize)); }
 
-        [BitStreamRaw(BitStreamRawRole.PeekArray)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong[] PeekULongArrayRaw(this ref ReadContext context, int count) {
@@ -43,7 +44,7 @@ namespace ComputerysBitStream {
             return result;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadArray)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong[] ReadULongArrayRaw(this ref ReadContext context, int count) {
@@ -53,7 +54,7 @@ namespace ComputerysBitStream {
             return result;
         }
     
-        [BitStreamRaw(BitStreamRawRole.PeekSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekULongSpanRaw(this ref ReadContext context, int count, ref Span<ulong> destination) {
@@ -62,7 +63,7 @@ namespace ComputerysBitStream {
             context.Position = originalPosition;
         }
 
-        [BitStreamRaw(BitStreamRawRole.ReadSpan)]
+        [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadULongSpanRaw(this ref ReadContext context, int count, ref Span<ulong> destination) {
