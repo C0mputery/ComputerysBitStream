@@ -26,28 +26,29 @@ namespace ComputerysBitStream {
 
         /// <summary>
         /// Initializes a new <see cref="ReadContext"/> over the specified buffer.
-        /// The initial position is set to zero and the capacity is set to <c>buffer.Length * 64</c>.
+        /// The initial position is set to zero and the capacity is set to
+        /// <c>buffer.Length * BitHelper.ULongSize</c>.
         /// </summary>
-        /// <param name="buffer">The underlying buffer of 64-bit words to read bits from.</param>
+        /// <param name="buffer">The underlying buffer of <see cref="BitHelper.ULongSize"/>-bit words to read bits from.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadContext(ReadOnlySpan<ulong> buffer) {
             Buffer = buffer;
             Position = 0;
-            Capacity = buffer.Length * 64;
+            Capacity = buffer.Length * BitHelper.ULongSize;
         }
 
         /// <summary>
         /// Initializes a new <see cref="ReadContext"/> over the specified buffer with
         /// the provided starting bit <paramref name="position"/>.
-        /// The capacity is set to <c>buffer.Length * 64</c>.
+        /// The capacity is set to <c>buffer.Length * BitHelper.ULongSize</c>.
         /// </summary>
-        /// <param name="buffer">The underlying buffer of 64-bit words to read bits from.</param>
+        /// <param name="buffer">The underlying buffer of <see cref="BitHelper.ULongSize"/>-bit words to read bits from.</param>
         /// <param name="position">Initial bit position within the buffer.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadContext(ReadOnlySpan<ulong> buffer, int position) {
             Buffer = buffer;
             Position = position;
-            Capacity = buffer.Length * 64;
+            Capacity = buffer.Length * BitHelper.ULongSize;
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace ComputerysBitStream {
         /// the provided starting bit <paramref name="position"/> and explicit <paramref name="capacity"/>.
         /// Use this overload when only part of the underlying buffer should be considered readable.
         /// </summary>
-        /// <param name="buffer">The underlying buffer of 64-bit words to read bits from.</param>
+        /// <param name="buffer">The underlying buffer of <see cref="BitHelper.ULongSize"/>-bit words to read bits from.</param>
         /// <param name="position">Initial bit position within the buffer.</param>
         /// <param name="capacity">Total readable capacity in bits.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -101,7 +102,7 @@ namespace ComputerysBitStream {
         /// </summary>
         /// <param name="count">
         /// The number of bits to read.
-        /// Assumes count is between 1 and 64, inclusive, caller must ensure this.
+        /// Assumes count is between 1 and <see cref="BitHelper.ULongSize"/>, inclusive, caller must ensure this.
         /// </param>
         /// <returns>bits</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -109,7 +110,7 @@ namespace ComputerysBitStream {
             int ulongIndex = Position / BitHelper.ULongSize;
             int bitOffset = Position % BitHelper.ULongSize;
 
-            if (bitOffset != 0 || count != 64) {
+            if (bitOffset != 0 || count != BitHelper.ULongSize) {
                 ulong valueMask = count == BitHelper.ULongSize ? ulong.MaxValue : (1UL << count) - 1;
                 ulong result = (Buffer[ulongIndex] >> bitOffset);
 
@@ -128,7 +129,7 @@ namespace ComputerysBitStream {
         /// </summary>
         /// <param name="count">
         /// The number of bits to write.
-        /// Assumes count is between 1 and 64, inclusive, caller must ensure this.
+        /// Assumes count is between 1 and <see cref="BitHelper.ULongSize"/>, inclusive, caller must ensure this.
         /// </param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

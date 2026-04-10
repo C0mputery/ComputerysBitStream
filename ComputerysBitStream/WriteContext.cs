@@ -34,37 +34,37 @@ namespace ComputerysBitStream {
         /// <summary>
         /// Initializes a new <see cref="WriteContext"/> that uses the provided
         /// <paramref name="buffer"/> as its storage. The initial <see cref="Position"/>
-        /// is set to 0 and <see cref="Capacity"/> is computed as <c>buffer.Length * 64</c>.
+        /// is set to 0 and <see cref="Capacity"/> is computed as <c>buffer.Length * BitHelper.ULongSize</c>.
         /// </summary>
-        /// <param name="buffer">The underlying buffer of 64-bit words used to store bits.</param>
+        /// <param name="buffer">The underlying buffer of <see cref="BitHelper.ULongSize"/>-bit words used to store bits.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public WriteContext(Span<ulong> buffer) {
             Buffer = buffer;
             Position = 0;
-            Capacity = buffer.Length * 64;
+            Capacity = buffer.Length * BitHelper.ULongSize;
         }
 
         /// <summary>
         /// Initializes a new <see cref="WriteContext"/> that uses the provided
         /// <paramref name="buffer"/> and sets the initial bit <paramref name="position"/>.
-        /// <see cref="Capacity"/> is computed as <c>buffer.Length * 64</c>.
+        /// <see cref="Capacity"/> is computed as <c>buffer.Length * BitHelper.ULongSize</c>.
         /// </summary>
-        /// <param name="buffer">The underlying buffer of 64-bit words used to store bits.</param>
+        /// <param name="buffer">The underlying buffer of <see cref="BitHelper.ULongSize"/>-bit words used to store bits.</param>
         /// <param name="position">The initial bit position within the buffer.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public WriteContext(Span<ulong> buffer, int position) {
             Buffer = buffer;
             Position = position;
-            Capacity = buffer.Length * 64;
+            Capacity = buffer.Length * BitHelper.ULongSize;
         }
 
         /// <summary>
         /// Initializes a new <see cref="WriteContext"/> that uses the provided
         /// <paramref name="buffer"/>, initial bit <paramref name="position"/>, and an explicit
         /// <paramref name="capacity"/> in bits. Use this overload when the effective
-        /// capacity differs from the full buffer length multiplied by 64.
+        /// capacity differs from the full buffer length multiplied by <see cref="BitHelper.ULongSize"/>.
         /// </summary>
-        /// <param name="buffer">The underlying buffer of 64-bit words used to store bits.</param>
+        /// <param name="buffer">The underlying buffer of <see cref="BitHelper.ULongSize"/>-bit words used to store bits.</param>
         /// <param name="position">The initial bit position within the buffer.</param>
         /// <param name="capacity">The total capacity in bits available for writing.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -99,14 +99,14 @@ namespace ComputerysBitStream {
         /// <param name="value"> The value containing the bits to write.</param>
         /// <param name="count">
         /// The number of bits to write.
-        /// Assumes count is between 1 and 64, inclusive, caller must ensure this.
+        /// Assumes count is between <see cref="BitHelper.BoolSize"/> and <see cref="BitHelper.ULongSize"/>, inclusive, caller must ensure this.
         /// </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void WriteBitsRaw(ulong value, int count) {
             int ulongIndex = Position / BitHelper.ULongSize;
             int bitOffset = Position % BitHelper.ULongSize;
 
-            if (bitOffset != 0 || count != 64) {
+            if (bitOffset != 0 || count != BitHelper.ULongSize) {
                 ulong valueMask = count == BitHelper.ULongSize ? ulong.MaxValue : (1UL << count) - 1;
                 value &= valueMask;
 
@@ -128,7 +128,7 @@ namespace ComputerysBitStream {
                 Position += count;
             } else {
                 Buffer[ulongIndex] = value;
-                Position += 64;
+                Position += BitHelper.ULongSize;
             }
         }
     
@@ -216,8 +216,8 @@ namespace ComputerysBitStream {
         public Span<byte> ToBytes() {
             int totalBytes = BitHelper.BitsToBytes(Position);
             Span<byte> span = MemoryMarshal.Cast<ulong, byte>(Buffer).Slice(0, totalBytes);
-
-            int usedBitsInLastByte = Position & 0b111;
+            
+            int usedBitsInLastByte = Position & BitHelper.OneLessThanByteSize;
             if (usedBitsInLastByte != 0) {
                 span[totalBytes - 1] &= (byte)((1 << usedBitsInLastByte) - 1);
             }

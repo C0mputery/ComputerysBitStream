@@ -120,16 +120,60 @@ public class WriteContextTests {
         Assert.Equal((byte)0xFF, bytes[1]);
     }
 
-    [Fact]
-    public void ToBytes_ShouldMaskUnusedBitsInLastByte() {
+    [Theory]
+    [InlineData(9, 0x01)]
+    [InlineData(10, 0x03)]
+    [InlineData(11, 0x07)]
+    [InlineData(12, 0x0F)]
+    [InlineData(13, 0x1F)]
+    [InlineData(14, 0x3F)]
+    [InlineData(15, 0x7F)]
+    public void ToBytes_ShouldMaskUnusedBitsInLastByte(int position, byte expectedLastByte) {
         ulong[] buffer = new ulong[1];
         buffer[0] = ulong.MaxValue;
 
-        WriteContext context = new(buffer, 10);
+        WriteContext context = new(buffer, position);
         Span<byte> bytes = context.ToBytes();
 
-        Assert.Equal(2, bytes.Length);
-        Assert.Equal((byte)0x03, bytes[1]);
+        Assert.Equal(BitHelper.BitsToBytes(position), bytes.Length);
+        Assert.Equal((byte)0xFF, bytes[0]);
+        Assert.Equal(expectedLastByte, bytes[^1]);
+    }
+
+    [Theory]
+    [InlineData(8)]
+    [InlineData(16)]
+    public void ToBytes_WhenPositionIsByteAligned_ShouldNotMaskLastByte(int position) {
+        ulong[] buffer = new ulong[1];
+        buffer[0] = ulong.MaxValue;
+
+        WriteContext context = new(buffer, position);
+        Span<byte> bytes = context.ToBytes();
+
+        Assert.Equal(BitHelper.BitsToBytes(position), bytes.Length);
+        Assert.Equal((byte)0xFF, bytes[^1]);
+    }
+
+    [Fact]
+    public void ToBytes_WhenPositionIsZero_ShouldReturnEmptySpan() {
+        ulong[] buffer = new ulong[1];
+        buffer[0] = ulong.MaxValue;
+
+        WriteContext context = new(buffer, 0);
+        Span<byte> bytes = context.ToBytes();
+
+        Assert.Equal(0, bytes.Length);
+    }
+
+    [Fact]
+    public void ToBytes_ShouldMaskLastByteAcrossUlongBoundary() {
+        ulong[] buffer = [ulong.MaxValue, ulong.MaxValue];
+
+        WriteContext context = new(buffer, 71);
+        Span<byte> bytes = context.ToBytes();
+
+        Assert.Equal(BitHelper.BitsToBytes(71), bytes.Length);
+        Assert.Equal((byte)0x7F, bytes[^1]);
     }
 
     [Fact]
