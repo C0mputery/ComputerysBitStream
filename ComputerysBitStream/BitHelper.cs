@@ -1,5 +1,8 @@
+using System;
+using System.Runtime.CompilerServices;
+
 namespace ComputerysBitStream {
-    internal static class BitSizes {
+    internal static class BitHelper {
         private const int BitsPerByte = 8;
     
         public const int BoolSize = 1;
@@ -15,5 +18,10 @@ namespace ComputerysBitStream {
         public const int FloatSize = sizeof(float) * BitsPerByte;
         public const int DoubleSize = sizeof(double) * BitsPerByte;
         public const int DecimalSize = sizeof(decimal) * BitsPerByte;
+        
+        private const int Offset = BitsPerByte - 1;
+        private const int LogValue = 3; // this must be log2 of BitsPerByte!
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int BitsToBytes(int bits) => (bits + Offset) >> LogValue;
     }
 }

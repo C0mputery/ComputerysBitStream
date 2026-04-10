@@ -10,7 +10,7 @@ public class WriteContextTests {
         WriteContext context = new(buffer);
 
         Assert.Equal(0, context.Position);
-        Assert.Equal(buffer.Length * BitSizes.ULongSize, context.Capacity);
+        Assert.Equal(buffer.Length * BitHelper.ULongSize, context.Capacity);
     }
 
     [Theory]
@@ -21,14 +21,14 @@ public class WriteContextTests {
         WriteContext context = new(buffer, initialOffset);
 
         Assert.Equal(initialOffset, context.Position);
-        Assert.Equal(buffer.Length * BitSizes.ULongSize, context.Capacity);
+        Assert.Equal(buffer.Length * BitHelper.ULongSize, context.Capacity);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void Constructor_WithPositionAndCapacity_ShouldKeepProvidedValues(int initialOffset) {
         ulong[] buffer = new ulong[3];
-        int capacity = buffer.Length * BitSizes.ULongSize - 9;
+        int capacity = buffer.Length * BitHelper.ULongSize - 9;
 
         WriteContext context = new(buffer, initialOffset, capacity);
 

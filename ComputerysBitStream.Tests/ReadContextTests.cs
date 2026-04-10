@@ -10,7 +10,7 @@ public class ReadContextTests {
         ReadContext context = new(buffer);
 
         Assert.Equal(0, context.Position);
-        Assert.Equal(buffer.Length * BitSizes.ULongSize, context.Capacity);
+        Assert.Equal(buffer.Length * BitHelper.ULongSize, context.Capacity);
     }
 
     [Theory]
@@ -21,14 +21,14 @@ public class ReadContextTests {
         ReadContext context = new(buffer, initialOffset);
 
         Assert.Equal(initialOffset, context.Position);
-        Assert.Equal(buffer.Length * BitSizes.ULongSize, context.Capacity);
+        Assert.Equal(buffer.Length * BitHelper.ULongSize, context.Capacity);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void Constructor_WithPositionAndCapacity_ShouldKeepProvidedValues(int initialOffset) {
         ulong[] buffer = new ulong[3];
-        int capacity = buffer.Length * BitSizes.ULongSize - 5;
+        int capacity = buffer.Length * BitHelper.ULongSize - 5;
 
         ReadContext context = new(buffer, initialOffset, capacity);
 
@@ -114,7 +114,7 @@ public class ReadContextTests {
     public void PeekBitsRaw_Span_ShouldFillDestinationWithoutAdvancing(int initialOffset) {
         ulong[] buffer = CreatePatternBuffer(6);
         const int count = 130;
-        int expectedWords = (count + BitSizes.ULongSize - 1) / BitSizes.ULongSize;
+        int expectedWords = (count + BitHelper.ULongSize - 1) / BitHelper.ULongSize;
 
         ReadContext context = new(buffer, initialOffset);
         ulong[] destinationArray = [ulong.MaxValue, ulong.MaxValue, ulong.MaxValue, ulong.MaxValue];
@@ -135,7 +135,7 @@ public class ReadContextTests {
     public void ReadBitsRaw_Span_ShouldFillDestinationAndAdvance(int initialOffset) {
         ulong[] buffer = CreatePatternBuffer(6);
         const int count = 130;
-        int expectedWords = (count + BitSizes.ULongSize - 1) / BitSizes.ULongSize;
+        int expectedWords = (count + BitHelper.ULongSize - 1) / BitHelper.ULongSize;
 
         ReadContext context = new(buffer, initialOffset);
         ulong[] destinationArray = [ulong.MaxValue, ulong.MaxValue, ulong.MaxValue, ulong.MaxValue];
@@ -166,8 +166,8 @@ public class ReadContextTests {
     }
 
     private static bool ReadBit(ulong[] buffer, int position) {
-        int ulongIndex = position / BitSizes.ULongSize;
-        int bitOffset = position % BitSizes.ULongSize;
+        int ulongIndex = position / BitHelper.ULongSize;
+        int bitOffset = position % BitHelper.ULongSize;
         return (buffer[ulongIndex] & (1UL << bitOffset)) != 0;
     }
 
@@ -182,13 +182,13 @@ public class ReadContextTests {
     }
 
     private static ulong[] ReadBitsSpan(ulong[] buffer, int position, int count) {
-        int words = (count + BitSizes.ULongSize - 1) / BitSizes.ULongSize;
+        int words = (count + BitHelper.ULongSize - 1) / BitHelper.ULongSize;
         ulong[] result = new ulong[words];
 
         for (int i = 0; i < count; i++) {
             if (ReadBit(buffer, position + i)) {
-                int wordIndex = i / BitSizes.ULongSize;
-                int bitOffset = i % BitSizes.ULongSize;
+                int wordIndex = i / BitHelper.ULongSize;
+                int bitOffset = i % BitHelper.ULongSize;
                 result[wordIndex] |= 1UL << bitOffset;
             }
         }
@@ -197,7 +197,7 @@ public class ReadContextTests {
     }
 
     private static ulong MaskLowerBits(int count) {
-        if (count == BitSizes.ULongSize) { return ulong.MaxValue; }
+        if (count == BitHelper.ULongSize) { return ulong.MaxValue; }
         return (1UL << count) - 1;
     }
 }

@@ -4,9 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(char), BitSizes.CharSize)]
+    [BitStreamType(typeof(char), BitHelper.CharSize)]
     public static class CharExtensions {
-        private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.CharSize;
+        private const int NumberOfValuesInUlong = BitHelper.ULongSize / BitHelper.CharSize;
     
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong AsBits(char value) => value;
@@ -17,7 +17,7 @@ namespace ComputerysBitStream {
         [BitStreamRaw(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteCharRaw(this ref WriteContext context, char value) { context.WriteBitsRaw(AsBits(value), BitSizes.CharSize); }
+        public static void WriteCharRaw(this ref WriteContext context, char value) { context.WriteBitsRaw(AsBits(value), BitHelper.CharSize); }
     
         [BitStreamRaw(BitStreamRawRole.WriteSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -25,27 +25,27 @@ namespace ComputerysBitStream {
         public static void WriteCharsRaw(this ref WriteContext context, ReadOnlySpan<char> values) {
             ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<char, ulong>(values);
             int totalUlongs = ulongs.Length;
-            context.WriteBitsRaw(ulongs, totalUlongs * BitSizes.ULongSize);
+            context.WriteBitsRaw(ulongs, totalUlongs * BitHelper.ULongSize);
 
             int remainingChars = values.Length % NumberOfValuesInUlong;
             if (remainingChars != 0) {
                 ulong lastPacked = 0;
                 for (int i = 0; i < remainingChars; i++) {
-                    lastPacked |= (AsBits(values[values.Length - remainingChars + i])) << (i * BitSizes.CharSize);
+                    lastPacked |= (AsBits(values[values.Length - remainingChars + i])) << (i * BitHelper.CharSize);
                 }
-                context.WriteBitsRaw(lastPacked, remainingChars * BitSizes.CharSize);
+                context.WriteBitsRaw(lastPacked, remainingChars * BitHelper.CharSize);
             }
         }
 
         [BitStreamRaw(BitStreamRawRole.Peek)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static char PeekCharRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitSizes.CharSize)); }
+        public static char PeekCharRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitHelper.CharSize)); }
 
         [BitStreamRaw(BitStreamRawRole.Read)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static char ReadCharRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitSizes.CharSize)); }
+        public static char ReadCharRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitHelper.CharSize)); }
 
         [BitStreamRaw(BitStreamRawRole.PeekArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -84,13 +84,13 @@ namespace ComputerysBitStream {
             Span<ulong> ulongs = MemoryMarshal.Cast<char, ulong>(targetSpan);
             int totalUlongs = ulongs.Length;
 
-            context.ReadBitsRaw(totalUlongs * BitSizes.ULongSize, ulongs);
+            context.ReadBitsRaw(totalUlongs * BitHelper.ULongSize, ulongs);
 
             int remainingChars = count % NumberOfValuesInUlong;
             if (remainingChars != 0) {
-                ulong lastPacked = context.ReadBitsRaw(remainingChars * BitSizes.CharSize);
+                ulong lastPacked = context.ReadBitsRaw(remainingChars * BitHelper.CharSize);
                 for (int i = 0; i < remainingChars; i++) {
-                    destination[count - remainingChars + i] = FromBits(lastPacked >> (i * BitSizes.CharSize));
+                    destination[count - remainingChars + i] = FromBits(lastPacked >> (i * BitHelper.CharSize));
                 }
             }
         }

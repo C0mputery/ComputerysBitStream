@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(bool), BitSizes.BoolSize)]
+    [BitStreamType(typeof(bool), BitHelper.BoolSize)]
     public static class BoolExtensions {
-        private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.BoolSize;
+        private const int NumberOfValuesInUlong = BitHelper.ULongSize / BitHelper.BoolSize;
     
         [BitStreamRaw(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -24,7 +24,7 @@ namespace ComputerysBitStream {
                 for (int i = 0; i < NumberOfValuesInUlong; i++) {
                     packed |= (values[processed + i] ? 1UL : 0UL) << i;
                 }
-                context.WriteBitsRaw(packed, BitSizes.ULongSize);
+                context.WriteBitsRaw(packed, BitHelper.ULongSize);
                 processed += NumberOfValuesInUlong;
             }
 
@@ -34,7 +34,7 @@ namespace ComputerysBitStream {
                 for (int i = 0; i < remaining; i++) {
                     packed |= (values[processed + i] ? 1UL : 0UL) << i;
                 }
-                context.WriteBitsRaw(packed, remaining * BitSizes.BoolSize);
+                context.WriteBitsRaw(packed, remaining * BitHelper.BoolSize);
             }
         }
     
@@ -84,7 +84,7 @@ namespace ComputerysBitStream {
             int processed = 0;
 
             while (processed + NumberOfValuesInUlong <= count) {
-                ulong packed = context.ReadBitsRaw(BitSizes.ULongSize);
+                ulong packed = context.ReadBitsRaw(BitHelper.ULongSize);
                 for (int i = 0; i < NumberOfValuesInUlong; i++) {
                     destination[processed + i] = (packed & (1UL << i)) != 0UL;
                 }
@@ -93,7 +93,7 @@ namespace ComputerysBitStream {
 
             int remaining = count - processed;
             if (remaining > 0) {
-                ulong packed = context.ReadBitsRaw(remaining * BitSizes.BoolSize);
+                ulong packed = context.ReadBitsRaw(remaining * BitHelper.BoolSize);
                 for (int i = 0; i < remaining; i++) {
                     destination[processed + i] = (packed & (1UL << i)) != 0UL;
                 }

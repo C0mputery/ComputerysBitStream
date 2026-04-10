@@ -78,8 +78,8 @@ namespace ComputerysBitStream {
         /// <returns>bit</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool PeekBitRaw() {
-            int ulongIndex = Position / BitSizes.ULongSize;
-            int bitOffset = Position % BitSizes.ULongSize;
+            int ulongIndex = Position / BitHelper.ULongSize;
+            int bitOffset = Position % BitHelper.ULongSize;
             return (Buffer[ulongIndex] & (1UL << bitOffset)) != 0;
         }
     
@@ -106,14 +106,14 @@ namespace ComputerysBitStream {
         /// <returns>bits</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly ulong PeekBitsRaw(int count) {
-            int ulongIndex = Position / BitSizes.ULongSize;
-            int bitOffset = Position % BitSizes.ULongSize;
+            int ulongIndex = Position / BitHelper.ULongSize;
+            int bitOffset = Position % BitHelper.ULongSize;
 
             if (bitOffset != 0 || count != 64) {
-                ulong valueMask = count == BitSizes.ULongSize ? ulong.MaxValue : (1UL << count) - 1;
+                ulong valueMask = count == BitHelper.ULongSize ? ulong.MaxValue : (1UL << count) - 1;
                 ulong result = (Buffer[ulongIndex] >> bitOffset);
 
-                int bitsAvailableInCurrent = BitSizes.ULongSize - bitOffset;
+                int bitsAvailableInCurrent = BitHelper.ULongSize - bitOffset;
                 if (count > bitsAvailableInCurrent) {
                     result |= (Buffer[ulongIndex + 1] << bitsAvailableInCurrent);
                 }
@@ -149,14 +149,14 @@ namespace ComputerysBitStream {
         /// <param name="buffer"> output </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly void PeekBitsRaw(int count, Span<ulong> buffer) {
-            int fullUlongs = count / BitSizes.ULongSize;
-            int remainingBits = count % BitSizes.ULongSize;
+            int fullUlongs = count / BitHelper.ULongSize;
+            int remainingBits = count % BitHelper.ULongSize;
         
-            int ulongIndex = Position / BitSizes.ULongSize;
-            int bitOffset = Position % BitSizes.ULongSize;
+            int ulongIndex = Position / BitHelper.ULongSize;
+            int bitOffset = Position % BitHelper.ULongSize;
 
             if (bitOffset > 0) {
-                int invBitOffset = BitSizes.ULongSize - bitOffset;
+                int invBitOffset = BitHelper.ULongSize - bitOffset;
 
                 for (int i = 0; i < fullUlongs; i++) {
                     buffer[i] = (Buffer[ulongIndex] >> bitOffset) | (Buffer[ulongIndex + 1] << invBitOffset);
@@ -173,7 +173,7 @@ namespace ComputerysBitStream {
                 ulong valueMask = (1UL << remainingBits) - 1;
                 ulong result = (Buffer[ulongIndex] >> bitOffset) & valueMask;
 
-                int bitsAvailableInCurrent = BitSizes.ULongSize - bitOffset;
+                int bitsAvailableInCurrent = BitHelper.ULongSize - bitOffset;
                 if (remainingBits > bitsAvailableInCurrent) {
                     result |= (Buffer[ulongIndex + 1] << bitsAvailableInCurrent) & valueMask;
                 }

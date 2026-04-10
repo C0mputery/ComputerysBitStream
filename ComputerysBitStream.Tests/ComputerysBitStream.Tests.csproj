@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="..\ComputerysBitStream\BitSizes.cs" Link="BitSizes.cs" />
+        <Compile Include="..\ComputerysBitStream\BitHelper.cs" Link="BitSizes.cs" />
     </ItemGroup>
 
 </Project>

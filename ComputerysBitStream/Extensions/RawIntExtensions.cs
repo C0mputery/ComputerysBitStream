@@ -4,9 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(int), BitSizes.IntSize)]
+    [BitStreamType(typeof(int), BitHelper.IntSize)]
     public static class RawIntExtensions {
-        private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.IntSize;
+        private const int NumberOfValuesInUlong = BitHelper.ULongSize / BitHelper.IntSize;
     
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong AsBits(int value) => (uint)value;
@@ -17,7 +17,7 @@ namespace ComputerysBitStream {
         [BitStreamRaw(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteIntRaw(this ref WriteContext context, int value) { context.WriteBitsRaw(AsBits(value), BitSizes.IntSize); }
+        public static void WriteIntRaw(this ref WriteContext context, int value) { context.WriteBitsRaw(AsBits(value), BitHelper.IntSize); }
     
         [BitStreamRaw(BitStreamRawRole.WriteSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -25,27 +25,27 @@ namespace ComputerysBitStream {
         public static void WriteIntsRaw(this ref WriteContext context, ReadOnlySpan<int> values) {
             ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<int, ulong>(values);
             int totalUlongs = ulongs.Length;
-            context.WriteBitsRaw(ulongs, totalUlongs * BitSizes.ULongSize);
+            context.WriteBitsRaw(ulongs, totalUlongs * BitHelper.ULongSize);
 
             int remainingInts = values.Length % NumberOfValuesInUlong;
             if (remainingInts != 0) {
                 ulong lastPacked = 0;
                 for (int i = 0; i < remainingInts; i++) {
-                    lastPacked |= (AsBits(values[values.Length - remainingInts + i])) << (i * BitSizes.IntSize);
+                    lastPacked |= (AsBits(values[values.Length - remainingInts + i])) << (i * BitHelper.IntSize);
                 }
-                context.WriteBitsRaw(lastPacked, remainingInts * BitSizes.IntSize);
+                context.WriteBitsRaw(lastPacked, remainingInts * BitHelper.IntSize);
             }
         }
 
         [BitStreamRaw(BitStreamRawRole.Peek)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int PeekIntRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitSizes.IntSize)); }
+        public static int PeekIntRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitHelper.IntSize)); }
 
         [BitStreamRaw(BitStreamRawRole.Read)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int ReadIntRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitSizes.IntSize)); }
+        public static int ReadIntRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitHelper.IntSize)); }
 
         [BitStreamRaw(BitStreamRawRole.PeekArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -84,13 +84,13 @@ namespace ComputerysBitStream {
             Span<ulong> ulongs = MemoryMarshal.Cast<int, ulong>(targetSpan);
             int totalUlongs = ulongs.Length;
 
-            context.ReadBitsRaw(totalUlongs * BitSizes.ULongSize, ulongs);
+            context.ReadBitsRaw(totalUlongs * BitHelper.ULongSize, ulongs);
 
             int remainingInts = count % NumberOfValuesInUlong;
             if (remainingInts != 0) {
-                ulong lastPacked = context.ReadBitsRaw(remainingInts * BitSizes.IntSize);
+                ulong lastPacked = context.ReadBitsRaw(remainingInts * BitHelper.IntSize);
                 for (int i = 0; i < remainingInts; i++) {
-                    destination[count - remainingInts + i] = FromBits(lastPacked >> (i * BitSizes.IntSize));
+                    destination[count - remainingInts + i] = FromBits(lastPacked >> (i * BitHelper.IntSize));
                 }
             }
         }

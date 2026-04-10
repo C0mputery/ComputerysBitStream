@@ -81,8 +81,8 @@ namespace ComputerysBitStream {
         /// <param name="bit"> The bit to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void WriteBitRaw(bool bit) {
-            int ulongIndex = Position / BitSizes.ULongSize;
-            int currentBitInUlong = Position % BitSizes.ULongSize;
+            int ulongIndex = Position / BitHelper.ULongSize;
+            int currentBitInUlong = Position % BitHelper.ULongSize;
             ulong mask = 1UL << currentBitInUlong; // only 1 at the bit position we want to write, zeros elsewhere
             ulong bitValue = bit ? 1UL : 0UL; // convert bool to ulong (0 or 1)
             Buffer[ulongIndex] = (Buffer[ulongIndex] & ~mask) // sets the bit at bitInUlong to 0
@@ -103,11 +103,11 @@ namespace ComputerysBitStream {
         /// </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void WriteBitsRaw(ulong value, int count) {
-            int ulongIndex = Position / BitSizes.ULongSize;
-            int bitOffset = Position % BitSizes.ULongSize;
+            int ulongIndex = Position / BitHelper.ULongSize;
+            int bitOffset = Position % BitHelper.ULongSize;
 
             if (bitOffset != 0 || count != 64) {
-                ulong valueMask = count == BitSizes.ULongSize ? ulong.MaxValue : (1UL << count) - 1;
+                ulong valueMask = count == BitHelper.ULongSize ? ulong.MaxValue : (1UL << count) - 1;
                 value &= valueMask;
 
                 ulong mask = valueMask << bitOffset;
@@ -115,7 +115,7 @@ namespace ComputerysBitStream {
                                      |
                                      (value << bitOffset);
 
-                int bitsUsedInCurrent = BitSizes.ULongSize - bitOffset;
+                int bitsUsedInCurrent = BitHelper.ULongSize - bitOffset;
                 if (count > bitsUsedInCurrent) {
                     int bitsRemaining = count - bitsUsedInCurrent;
                     ulong nextMask = (1UL << bitsRemaining) - 1;
@@ -140,14 +140,14 @@ namespace ComputerysBitStream {
         /// <param name="count"> The number of bits to write.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void WriteBitsRaw(ReadOnlySpan<ulong> source, int count) {
-            int fullUlongs = count / BitSizes.ULongSize;
-            int remainingBits = count % BitSizes.ULongSize;
+            int fullUlongs = count / BitHelper.ULongSize;
+            int remainingBits = count % BitHelper.ULongSize;
         
-            int ulongIndex = Position / BitSizes.ULongSize;
-            int bitOffset = Position % BitSizes.ULongSize;
+            int ulongIndex = Position / BitHelper.ULongSize;
+            int bitOffset = Position % BitHelper.ULongSize;
 
             if (bitOffset > 0) {
-                int invBitOffset = BitSizes.ULongSize - bitOffset;
+                int invBitOffset = BitHelper.ULongSize - bitOffset;
                 ulong preserveMask = (1UL << bitOffset) - 1;
 
                 for (int i = 0; i < fullUlongs; i++) {
@@ -174,7 +174,7 @@ namespace ComputerysBitStream {
                 ulong mask = valMask << bitOffset;
                 Buffer[ulongIndex] = (Buffer[ulongIndex] & ~mask) | (val << bitOffset);
 
-                int bitsUsedInCurrent = BitSizes.ULongSize - bitOffset;
+                int bitsUsedInCurrent = BitHelper.ULongSize - bitOffset;
                 if (remainingBits > bitsUsedInCurrent) {
                     int bitsOverflow = remainingBits - bitsUsedInCurrent;
                     ulong nextMask = (1UL << bitsOverflow) - 1;
@@ -206,7 +206,7 @@ namespace ComputerysBitStream {
         /// </summary>
         /// <returns>A byte span that may have garbage data in the last byte.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly Span<byte> ToBytesRaw() { return MemoryMarshal.Cast<ulong, byte>(Buffer).Slice(0, (Position + 7) >> 3); }
+        public readonly Span<byte> ToBytesRaw() { return MemoryMarshal.Cast<ulong, byte>(Buffer).Slice(0, BitHelper.BitsToBytes(Position)); }
 
         /// <summary>
         /// Gets a span of bytes representing the written data in the buffer with garbage bits removed.
@@ -214,7 +214,7 @@ namespace ComputerysBitStream {
         /// <returns>A byte span without garbage data in the last byte.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<byte> ToBytes() {
-            int totalBytes = (Position + 7) >> 3;
+            int totalBytes = BitHelper.BitsToBytes(Position);
             Span<byte> span = MemoryMarshal.Cast<ulong, byte>(Buffer).Slice(0, totalBytes);
 
             int usedBitsInLastByte = Position & 0b111;

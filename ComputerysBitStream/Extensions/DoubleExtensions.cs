@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(double), BitSizes.DoubleSize)]
+    [BitStreamType(typeof(double), BitHelper.DoubleSize)]
     public static class DoubleExtensions {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong AsBits(double value) => (ulong)BitConverter.DoubleToInt64Bits(value);
@@ -15,25 +15,25 @@ namespace ComputerysBitStream {
         [BitStreamRaw(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteDoubleRaw(this ref WriteContext context, double value) { context.WriteBitsRaw(AsBits(value), BitSizes.DoubleSize); }
+        public static void WriteDoubleRaw(this ref WriteContext context, double value) { context.WriteBitsRaw(AsBits(value), BitHelper.DoubleSize); }
     
         [BitStreamRaw(BitStreamRawRole.WriteSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteDoublesRaw(this ref WriteContext context, ReadOnlySpan<double> values) {
             ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<double, ulong>(values);
-            context.WriteBitsRaw(ulongs, ulongs.Length * BitSizes.ULongSize);
+            context.WriteBitsRaw(ulongs, ulongs.Length * BitHelper.ULongSize);
         }
 
         [BitStreamRaw(BitStreamRawRole.Peek)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double PeekDoubleRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitSizes.DoubleSize)); }
+        public static double PeekDoubleRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitHelper.DoubleSize)); }
 
         [BitStreamRaw(BitStreamRawRole.Read)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double ReadDoubleRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitSizes.DoubleSize)); }
+        public static double ReadDoubleRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitHelper.DoubleSize)); }
 
         [BitStreamRaw(BitStreamRawRole.PeekArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -70,7 +70,7 @@ namespace ComputerysBitStream {
         public static void ReadDoubleSpanRaw(this ref ReadContext context, int count, ref Span<double> destination) {
             Span<double> targetSpan = destination.Slice(0, count);
             Span<ulong> ulongs = MemoryMarshal.Cast<double, ulong>(targetSpan);
-            context.ReadBitsRaw(ulongs.Length * BitSizes.ULongSize, ulongs);
+            context.ReadBitsRaw(ulongs.Length * BitHelper.ULongSize, ulongs);
         }
     }
 }

@@ -4,9 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(short), BitSizes.ShortSize)]
+    [BitStreamType(typeof(short), BitHelper.ShortSize)]
     public static class RawShortExtensions {
-        private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.ShortSize;
+        private const int NumberOfValuesInUlong = BitHelper.ULongSize / BitHelper.ShortSize;
     
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong AsBits(short value) => (ushort)value;
@@ -17,7 +17,7 @@ namespace ComputerysBitStream {
         [BitStreamRaw(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteShortRaw(this ref WriteContext context, short value) { context.WriteBitsRaw(AsBits(value), BitSizes.ShortSize); }
+        public static void WriteShortRaw(this ref WriteContext context, short value) { context.WriteBitsRaw(AsBits(value), BitHelper.ShortSize); }
     
         [BitStreamRaw(BitStreamRawRole.WriteSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -25,27 +25,27 @@ namespace ComputerysBitStream {
         public static void WriteShortsRaw(this ref WriteContext context, ReadOnlySpan<short> values) {
             ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<short, ulong>(values);
             int totalUlongs = ulongs.Length;
-            context.WriteBitsRaw(ulongs, totalUlongs * BitSizes.ULongSize);
+            context.WriteBitsRaw(ulongs, totalUlongs * BitHelper.ULongSize);
 
             int remainingShorts = values.Length % NumberOfValuesInUlong;
             if (remainingShorts != 0) {
                 ulong lastPacked = 0;
                 for (int i = 0; i < remainingShorts; i++) {
-                    lastPacked |= (AsBits(values[values.Length - remainingShorts + i])) << (i * BitSizes.ShortSize);
+                    lastPacked |= (AsBits(values[values.Length - remainingShorts + i])) << (i * BitHelper.ShortSize);
                 }
-                context.WriteBitsRaw(lastPacked, remainingShorts * BitSizes.ShortSize);
+                context.WriteBitsRaw(lastPacked, remainingShorts * BitHelper.ShortSize);
             }
         }
 
         [BitStreamRaw(BitStreamRawRole.Peek)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static short PeekShortRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitSizes.ShortSize)); }
+        public static short PeekShortRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitHelper.ShortSize)); }
 
         [BitStreamRaw(BitStreamRawRole.Read)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static short ReadShortRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitSizes.ShortSize)); }
+        public static short ReadShortRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitHelper.ShortSize)); }
 
         [BitStreamRaw(BitStreamRawRole.PeekArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -84,13 +84,13 @@ namespace ComputerysBitStream {
             Span<ulong> ulongs = MemoryMarshal.Cast<short, ulong>(targetSpan);
             int totalUlongs = ulongs.Length;
 
-            context.ReadBitsRaw(totalUlongs * BitSizes.ULongSize, ulongs);
+            context.ReadBitsRaw(totalUlongs * BitHelper.ULongSize, ulongs);
 
             int remainingShorts = count % NumberOfValuesInUlong;
             if (remainingShorts != 0) {
-                ulong lastPacked = context.ReadBitsRaw(remainingShorts * BitSizes.ShortSize);
+                ulong lastPacked = context.ReadBitsRaw(remainingShorts * BitHelper.ShortSize);
                 for (int i = 0; i < remainingShorts; i++) {
-                    destination[count - remainingShorts + i] = FromBits(lastPacked >> (i * BitSizes.ShortSize));
+                    destination[count - remainingShorts + i] = FromBits(lastPacked >> (i * BitHelper.ShortSize));
                 }
             }
         }

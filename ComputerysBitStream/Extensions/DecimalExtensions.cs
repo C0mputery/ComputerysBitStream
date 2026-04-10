@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(decimal), BitSizes.DecimalSize)]
+    [BitStreamType(typeof(decimal), BitHelper.DecimalSize)]
     public static class DecimalExtensions {
         [BitStreamRaw(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -12,7 +12,7 @@ namespace ComputerysBitStream {
         public static void WriteDecimalRaw(this ref WriteContext context, decimal value) {
             ReadOnlySpan<decimal> dSpan = MemoryMarshal.CreateReadOnlySpan(ref value, 1);
             ReadOnlySpan<ulong> parts = MemoryMarshal.Cast<decimal, ulong>(dSpan);
-            context.WriteBitsRaw(parts, parts.Length * BitSizes.ULongSize);
+            context.WriteBitsRaw(parts, parts.Length * BitHelper.ULongSize);
         }
 
         [BitStreamRaw(BitStreamRawRole.WriteSpan)]
@@ -20,7 +20,7 @@ namespace ComputerysBitStream {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteDecimalsRaw(this ref WriteContext context, ReadOnlySpan<decimal> values) {
             ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<decimal, ulong>(values);
-            context.WriteBitsRaw(ulongs, ulongs.Length * BitSizes.ULongSize);
+            context.WriteBitsRaw(ulongs, ulongs.Length * BitHelper.ULongSize);
         }
 
         [BitStreamRaw(BitStreamRawRole.Peek)]
@@ -40,7 +40,7 @@ namespace ComputerysBitStream {
             decimal value = 0;
             Span<decimal> dSpan = MemoryMarshal.CreateSpan(ref value, 1);
             Span<ulong> parts = MemoryMarshal.Cast<decimal, ulong>(dSpan);
-            context.ReadBitsRaw(parts.Length * BitSizes.ULongSize, parts);
+            context.ReadBitsRaw(parts.Length * BitHelper.ULongSize, parts);
             return value;
         }
 
@@ -79,7 +79,7 @@ namespace ComputerysBitStream {
         public static void ReadDecimalSpanRaw(this ref ReadContext context, int count, ref Span<decimal> destination) {
             Span<decimal> targetSpan = destination.Slice(0, count);
             Span<ulong> ulongs = MemoryMarshal.Cast<decimal, ulong>(targetSpan);
-            context.ReadBitsRaw(ulongs.Length * BitSizes.ULongSize, ulongs);
+            context.ReadBitsRaw(ulongs.Length * BitHelper.ULongSize, ulongs);
         }
     }
 }

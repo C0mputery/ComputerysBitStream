@@ -4,9 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ComputerysBitStream {
-    [BitStreamType(typeof(float), BitSizes.FloatSize)]
+    [BitStreamType(typeof(float), BitHelper.FloatSize)]
     public static class FloatExtensions {
-        private const int NumberOfValuesInUlong = BitSizes.ULongSize / BitSizes.FloatSize;
+        private const int NumberOfValuesInUlong = BitHelper.ULongSize / BitHelper.FloatSize;
     
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong AsBits(float value) => (uint)BitConverter.SingleToInt32Bits(value);
@@ -17,7 +17,7 @@ namespace ComputerysBitStream {
         [BitStreamRaw(BitStreamRawRole.Write)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteFloatRaw(this ref WriteContext context, float value) { context.WriteBitsRaw(AsBits(value), BitSizes.FloatSize); }
+        public static void WriteFloatRaw(this ref WriteContext context, float value) { context.WriteBitsRaw(AsBits(value), BitHelper.FloatSize); }
     
         [BitStreamRaw(BitStreamRawRole.WriteSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -25,27 +25,27 @@ namespace ComputerysBitStream {
         public static void WriteFloatsRaw(this ref WriteContext context, ReadOnlySpan<float> values) {
             ReadOnlySpan<ulong> ulongs = MemoryMarshal.Cast<float, ulong>(values);
             int totalUlongs = ulongs.Length;
-            context.WriteBitsRaw(ulongs, totalUlongs * BitSizes.ULongSize);
+            context.WriteBitsRaw(ulongs, totalUlongs * BitHelper.ULongSize);
 
             int remainingFloats = values.Length % NumberOfValuesInUlong;
             if (remainingFloats != 0) {
                 ulong lastPacked = 0;
                 for (int i = 0; i < remainingFloats; i++) {
-                    lastPacked |= (AsBits(values[values.Length - remainingFloats + i])) << (i * BitSizes.FloatSize);
+                    lastPacked |= (AsBits(values[values.Length - remainingFloats + i])) << (i * BitHelper.FloatSize);
                 }
-                context.WriteBitsRaw(lastPacked, remainingFloats * BitSizes.FloatSize);
+                context.WriteBitsRaw(lastPacked, remainingFloats * BitHelper.FloatSize);
             }
         }
 
         [BitStreamRaw(BitStreamRawRole.Peek)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float PeekFloatRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitSizes.FloatSize)); }
+        public static float PeekFloatRaw(this ref ReadContext context) { return FromBits(context.PeekBitsRaw(BitHelper.FloatSize)); }
 
         [BitStreamRaw(BitStreamRawRole.Read)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float ReadFloatRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitSizes.FloatSize)); }
+        public static float ReadFloatRaw(this ref ReadContext context) { return FromBits(context.ReadBitsRaw(BitHelper.FloatSize)); }
 
         [BitStreamRaw(BitStreamRawRole.PeekArray)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -84,13 +84,13 @@ namespace ComputerysBitStream {
             Span<ulong> ulongs = MemoryMarshal.Cast<float, ulong>(targetSpan);
             int totalUlongs = ulongs.Length;
 
-            context.ReadBitsRaw(totalUlongs * BitSizes.ULongSize, ulongs);
+            context.ReadBitsRaw(totalUlongs * BitHelper.ULongSize, ulongs);
 
             int remainingFloats = count % NumberOfValuesInUlong;
             if (remainingFloats != 0) {
-                ulong lastPacked = context.ReadBitsRaw(remainingFloats * BitSizes.FloatSize);
+                ulong lastPacked = context.ReadBitsRaw(remainingFloats * BitHelper.FloatSize);
                 for (int i = 0; i < remainingFloats; i++) {
-                    destination[count - remainingFloats + i] = FromBits(lastPacked >> (i * BitSizes.FloatSize));
+                    destination[count - remainingFloats + i] = FromBits(lastPacked >> (i * BitHelper.FloatSize));
                 }
             }
         }
