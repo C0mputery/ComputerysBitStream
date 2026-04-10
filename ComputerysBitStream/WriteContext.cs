@@ -204,12 +204,25 @@ namespace ComputerysBitStream {
         /// Gets a span of bytes representing the written data in the buffer.
         /// This will include garbage bits in the last byte if the total number of bits written is not a multiple of 8.
         /// </summary>
-        /// <returns></returns>
-        public readonly Span<byte> ToBytes() {
-            int relevantUlongs = (Position + 63) / 64;
-            Span<ulong> relevantBuffer = Buffer.Slice(0, relevantUlongs);
-            int totalBytes = (Position + 7) / 8;
-            return MemoryMarshal.Cast<ulong, byte>(relevantBuffer).Slice(0, totalBytes);
+        /// <returns>A byte span that may have garbage data in the last byte.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Span<byte> ToBytesRaw() { return MemoryMarshal.Cast<ulong, byte>(Buffer).Slice(0, (Position + 7) >> 3); }
+
+        /// <summary>
+        /// Gets a span of bytes representing the written data in the buffer with garbage bits removed.
+        /// </summary>
+        /// <returns>A byte span without garbage data in the last byte.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Span<byte> ToBytes() {
+            int totalBytes = (Position + 7) >> 3;
+            Span<byte> span = MemoryMarshal.Cast<ulong, byte>(Buffer).Slice(0, totalBytes);
+
+            int usedBitsInLastByte = Position & 0b111;
+            if (usedBitsInLastByte != 0) {
+                span[totalBytes - 1] &= (byte)((1 << usedBitsInLastByte) - 1);
+            }
+
+            return span;
         }
     
         /// <summary>
