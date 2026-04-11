@@ -14,8 +14,8 @@ internal record BitStreamTypeInfo(
     int Size,
     RawRoleBindings RawMethods,
     SourceLocationInfo? Location,
-    Helpers<DuplicateRawRoleInfo> DuplicateRoles,
-    Helpers<NonPublicRawMethodInfo> NonPublicRawMethods
+    EquatableImmutableArray<DuplicateRawRoleInfo> DuplicateRoles,
+    EquatableImmutableArray<NonPublicRawMethodInfo> NonPublicRawMethods
 );
 
 internal readonly record struct RawRoleBindings {
