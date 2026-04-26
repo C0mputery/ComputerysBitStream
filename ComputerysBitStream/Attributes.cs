@@ -86,16 +86,38 @@ namespace ComputerysBitStream {
         Debug
     }
 
+    /// <summary>
+    /// Specifies a single serialization setting to apply to an interface.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Interface, Inherited = false, AllowMultiple = true)]
     public sealed class BitStreamSettingAttribute : Attribute {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BitStreamSettingAttribute"/> class.
+        /// </summary>
+        /// <param name="type">The type of the serialization setting.</param>
         public BitStreamSettingAttribute(Type type) { }
     }
+
+    /// <summary>
+    /// Marks an interface as providing a collection of <see cref="BitStreamSettingAttribute"/> definitions.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Interface, Inherited = false, AllowMultiple = false)]
     public sealed class BitStreamSettingsAttribute : Attribute {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BitStreamSettingsAttribute"/> class.
+        /// </summary>
         public BitStreamSettingsAttribute() { }
     }
+
+    /// <summary>
+    /// Specifies the default serialization settings for the entire assembly.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Assembly, Inherited = false, AllowMultiple = false)]
     public sealed class DefaultBitStreamSettingsAttribute : Attribute {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultBitStreamSettingsAttribute"/> class.
+        /// </summary>
+        /// <param name="serializationSetting">The type of the default serialization setting.</param>
         public DefaultBitStreamSettingsAttribute(Type serializationSetting) { }
     }
     
