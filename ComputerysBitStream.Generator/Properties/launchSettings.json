@@ -4,6 +4,10 @@
     "Generators": {
       "commandName": "DebugRoslynComponent",
       "targetProject": "../ComputerysBitStream/ComputerysBitStream.csproj"
+    },
+    "Generators (Tests)": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "../ComputerysBitStream.Tests/ComputerysBitStream.Tests.csproj"
     }
   }
 }

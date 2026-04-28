@@ -7,8 +7,7 @@ internal static class DisplayNameUtility {
     private static readonly SymbolDisplayFormat CSharpDefaultFormat = new(
         typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameOnly,
         genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
-        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
-                              SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes | SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers
     );
 
     public static string GetDisplayName(ITypeSymbol symbol) {
@@ -27,9 +26,9 @@ internal static class DisplayNameUtility {
             SpecialType.System_Decimal => "Decimal",
             SpecialType.System_String => "String",
             SpecialType.System_Char => "Char",
-
-            // doupt these will ever get hit but trying to make this compleate
             SpecialType.System_DateTime => "DateTime",
+            
+            // doubt these will ever get hit but trying to make this complete
             SpecialType.System_IntPtr => "NInt",
             SpecialType.System_UIntPtr => "NUInt",
             SpecialType.System_Object => "Object",
@@ -45,14 +44,14 @@ internal static class DisplayNameUtility {
         StringBuilder builder = new(displayName.Length);
 
         for (int i = 0; i < displayName.Length; i++) {
-            char c = displayName[i];
+            char character = displayName[i];
 
-            if (char.IsLetterOrDigit(c) || c == '_') {
-                builder.Append(c);
+            if (char.IsLetterOrDigit(character) || character == '_') {
+                builder.Append(character);
                 continue;
             }
 
-            switch (c) {
+            switch (character) {
                 case '<':
                     AppendWord("Of", builder);
                     break;
@@ -77,6 +76,9 @@ internal static class DisplayNameUtility {
                 }
                 case '?':
                     AppendWord("Nullable", builder);
+                    break;
+                case '`':
+                case '>':
                     break;
             }
         }

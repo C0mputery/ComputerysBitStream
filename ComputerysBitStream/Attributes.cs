@@ -4,6 +4,7 @@
 // ReSharper disable UnusedParameter.Local
 
 using System;
+using System.ComponentModel;
 
 namespace ComputerysBitStream {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
@@ -82,8 +83,6 @@ namespace ComputerysBitStream {
         /// Signature: public static void MethodName(this ref ReadContext context, int count, ref Span&lt;Type&gt; destination)
         /// </summary>
         ReadSpan,
-        
-        Debug
     }
 
     /// <summary>
@@ -136,16 +135,18 @@ namespace ComputerysBitStream {
         /// <summary>
         /// Marks a struct to have read and write methods source generated
         /// </summary>
+        /// <param name="settings">The type of serialization settings to apply to this struct.</param>
         public BitStreamStructAttribute(Type? settings = null) { }
         
         /// <summary>
         /// Marks a struct to have read and write methods source generated
         /// </summary>
         /// <param name="alias"> Name that will be used for the Read and Write methods, use this to avoid conflicts for the same type or type name </param>
+        /// <param name="settings">The type of serialization settings to apply to this struct.</param>
         public BitStreamStructAttribute(string alias, Type? settings = null) { }
     }
 
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
     public sealed class BitStreamStructIncludeAttribute : Attribute {
         /// <summary>
         /// Marks a member to be included in the source generation of a struct marked with BitStreamStructAttribute.
@@ -153,11 +154,61 @@ namespace ComputerysBitStream {
         public BitStreamStructIncludeAttribute() { }
     }
 
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
     public sealed class BitStreamStructIgnoreAttribute : Attribute {
         /// <summary>
         /// Marks a member to be excluded from the source generation of a struct marked with BitStreamStructAttribute.
         /// </summary>
         public BitStreamStructIgnoreAttribute() { }
+    }
+    
+    /// <summary>
+    /// For structs that cannot be annotated with <see cref="BitStreamStructAttribute"/>.
+    /// Apply this attribute to a <c>static partial</c> class to externally declare a struct for source generation.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    public sealed class BitStreamProxyStructAttribute : Attribute {
+        /// <summary>
+        /// Externally marks a struct to have read and write methods source generated
+        /// </summary>
+        /// <param name="targetType">Type to target</param>
+        /// <param name="settings">The type of serialization settings to apply to this struct.</param>
+        public BitStreamProxyStructAttribute(Type targetType, Type? settings = null) { }
+        
+        /// <summary>
+        /// Externally marks a struct to have read and write methods source generated
+        /// </summary>
+        /// <param name="targetType">Type to target</param>
+        /// <param name="includes">Members to be included in the source generation of the struct</param>
+        /// <param name="ignores">Marks a member to be excluded from the source generation of the struct</param>
+        /// <param name="settings">The type of serialization settings to apply to this struct.</param>
+        public BitStreamProxyStructAttribute(Type targetType, string[]? includes, string[]? ignores, Type? settings = null) { }
+        
+        /// <summary>
+        /// Externally marks a struct to have read and write methods source generated
+        /// </summary>
+        /// <param name="targetType">Type to target</param>
+        /// <param name="alias"> Name that will be used for the Read and Write methods, use this to avoid conflicts for the same type or type name</param>
+        /// <param name="settings">The type of serialization settings to apply to this struct</param>
+        public BitStreamProxyStructAttribute(Type targetType, string alias, Type? settings = null) { }
+        
+        /// <summary>
+        /// Externally marks a struct to have read and write methods source generated
+        /// </summary>
+        /// <param name="targetType">Type to target</param>
+        /// <param name="includes">Members to be included in the source generation of the struct</param>
+        /// <param name="ignores">Marks a member to be excluded from the source generation of the struct</param>
+        /// <param name="alias"> Name that will be used for the Read and Write methods, use this to avoid conflicts for the same type or type name</param>
+        /// <param name="settings">The type of serialization settings to apply to this struct</param>
+        public BitStreamProxyStructAttribute(Type targetType, string[]? includes, string[]? ignores, string alias, Type? settings = null) { }
+    }
+    
+    /// <summary>
+    /// Compiler Generated on Structs marked with BitStreamStructAttribute, and classes marked with BitStreamProxyStructAttribute
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
+    public sealed class BitStreamStructMetadataAttribute : Attribute {  
+        public BitStreamStructMetadataAttribute(bool isFixedSize, int size = 0) { }
     }
 }

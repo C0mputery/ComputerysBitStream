@@ -86,11 +86,23 @@ internal static class RawTypeWrapperSourceEmitter {
             writer.WriteLine("}");
         }
         
+        writer.WriteLines(SizeMethods(type));
+        
         writer.Indent--;
         
         writer.WriteLine("}");
         
         return SourceText.From(stringWriter.ToString(), Encoding.UTF8);
+    }
+    
+    private static string SizeMethods(ParsedRawData type) {
+        return $$"""
+        public static class {{type.Alias}}SizeExtensions {
+            [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static int Get{{type.Alias}}SizeInBits(this {{type.TargetTypeFullyQualifiedName}} value) => {{type.Size}};
+        }
+        """;
     }
     
     // 1. void Write{Type}({Type} value)

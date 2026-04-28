@@ -21,6 +21,7 @@ namespace ComputerysBitStream {
         public const int FloatSize = sizeof(float) * BitsPerByte;
         public const int DoubleSize = sizeof(double) * BitsPerByte;
         public const int DecimalSize = sizeof(decimal) * BitsPerByte;
+        public const int DateTimeSize = sizeof(long) * BitsPerByte;
         
         private const int LogValue = 3;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

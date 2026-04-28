@@ -151,10 +151,10 @@ namespace ComputerysBitStream {
                 ulong preserveMask = (1UL << bitOffset) - 1;
 
                 for (int i = 0; i < fullUlongs; i++) {
-                    ulong val = source[i];
+                    ulong value = source[i];
 
-                    Buffer[ulongIndex] = (Buffer[ulongIndex] & preserveMask) | (val << bitOffset);
-                    Buffer[ulongIndex + 1] = (Buffer[ulongIndex + 1] & ~preserveMask) | (val >> invBitOffset);
+                    Buffer[ulongIndex] = (Buffer[ulongIndex] & preserveMask) | (value << bitOffset);
+                    Buffer[ulongIndex + 1] = (Buffer[ulongIndex + 1] & ~preserveMask) | (value >> invBitOffset);
                 
                     ulongIndex++;
                 }
@@ -166,19 +166,19 @@ namespace ComputerysBitStream {
             }
 
             if (remainingBits > 0) {
-                ulong val = source[fullUlongs];
+                ulong value = source[fullUlongs];
             
-                ulong valMask = (1UL << remainingBits) - 1;
-                val &= valMask;
+                ulong valueMask = (1UL << remainingBits) - 1;
+                value &= valueMask;
 
-                ulong mask = valMask << bitOffset;
-                Buffer[ulongIndex] = (Buffer[ulongIndex] & ~mask) | (val << bitOffset);
+                ulong mask = valueMask << bitOffset;
+                Buffer[ulongIndex] = (Buffer[ulongIndex] & ~mask) | (value << bitOffset);
 
                 int bitsUsedInCurrent = BitHelper.ULongSize - bitOffset;
                 if (remainingBits > bitsUsedInCurrent) {
                     int bitsOverflow = remainingBits - bitsUsedInCurrent;
                     ulong nextMask = (1UL << bitsOverflow) - 1;
-                    Buffer[ulongIndex + 1] = (Buffer[ulongIndex + 1] & ~nextMask) | (val >> bitsUsedInCurrent);
+                    Buffer[ulongIndex + 1] = (Buffer[ulongIndex + 1] & ~nextMask) | (value >> bitsUsedInCurrent);
                 }
             }
         

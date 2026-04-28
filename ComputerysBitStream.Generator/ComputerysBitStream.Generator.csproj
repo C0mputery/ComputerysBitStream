@@ -12,10 +12,14 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0" PrivateAssets="all" />
+        <PackageReference Include="System.Memory" Version="4.6.3" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="..\ComputerysBitStream\Attributes.cs" Link="Attributes.cs" />
-        <Compile Include="..\ComputerysBitStream\DefaultSettings.cs" Link="DefaultSettings.cs" />
+        <Compile Include="..\ComputerysBitStream\Attributes.cs" Link="ComputerysBitStream\Attributes.cs" />
+        <Compile Include="..\ComputerysBitStream\DefaultSettings.cs" Link="ComputerysBitStream\DefaultSettings.cs" />
+        <Compile Include="..\ComputerysBitStream\BitHelper.cs" Link="ComputerysBitStream\BitHelper.cs" />
+        <Compile Include="..\ComputerysBitStream\WriteContext.cs" Link="ComputerysBitStream\WriteContext.cs" />
+        <Compile Include="..\ComputerysBitStream\ReadContext.cs" Link="ComputerysBitStream\ReadContext.cs" />
     </ItemGroup>
 </Project>

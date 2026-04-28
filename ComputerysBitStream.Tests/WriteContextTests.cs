@@ -191,7 +191,7 @@ public class WriteContextTests {
 
         InsufficientWriteSpaceException? exception = null;
         try { context.ThrowIfNoSpace("UInt", 3); }
-        catch (InsufficientWriteSpaceException ex) { exception = ex; }
+        catch (InsufficientWriteSpaceException caughtException) { exception = caughtException; }
 
         Assert.NotNull(exception);
         InsufficientWriteSpaceException captured = exception;

@@ -11,8 +11,8 @@ namespace ComputerysBitStream {
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteDecimalRaw(this ref WriteContext context, decimal value) {
-            ReadOnlySpan<decimal> dSpan = MemoryMarshal.CreateReadOnlySpan(ref value, 1);
-            ReadOnlySpan<ulong> parts = MemoryMarshal.Cast<decimal, ulong>(dSpan);
+            ReadOnlySpan<decimal> decimalSpan = MemoryMarshal.CreateReadOnlySpan(ref value, 1);
+            ReadOnlySpan<ulong> parts = MemoryMarshal.Cast<decimal, ulong>(decimalSpan);
             context.WriteBitsRaw(parts, parts.Length * BitHelper.ULongSize);
         }
 
@@ -39,8 +39,8 @@ namespace ComputerysBitStream {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static decimal ReadDecimalRaw(this ref ReadContext context) {
             decimal value = 0;
-            Span<decimal> dSpan = MemoryMarshal.CreateSpan(ref value, 1);
-            Span<ulong> parts = MemoryMarshal.Cast<decimal, ulong>(dSpan);
+            Span<decimal> decimalSpan = MemoryMarshal.CreateSpan(ref value, 1);
+            Span<ulong> parts = MemoryMarshal.Cast<decimal, ulong>(decimalSpan);
             context.ReadBitsRaw(parts.Length * BitHelper.ULongSize, parts);
             return value;
         }
