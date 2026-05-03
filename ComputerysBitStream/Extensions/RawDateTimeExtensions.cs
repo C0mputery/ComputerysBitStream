@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -42,7 +42,7 @@ namespace ComputerysBitStream {
         public static DateTime[] PeekDateTimeArrayRaw(this ref ReadContext context, int count) {
             DateTime[] result = new DateTime[count];
             Span<DateTime> span = result.AsSpan();
-            context.PeekDateTimeSpanRaw(count, ref span);
+            context.PeekDateTimeSpanRaw(count, span);
             return result;
         }
 
@@ -52,23 +52,23 @@ namespace ComputerysBitStream {
         public static DateTime[] ReadDateTimeArrayRaw(this ref ReadContext context, int count) {
             DateTime[] result = new DateTime[count];
             Span<DateTime> span = result.AsSpan();
-            context.ReadDateTimeSpanRaw(count, ref span);
+            context.ReadDateTimeSpanRaw(count, span);
             return result;
         }
 
         [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void PeekDateTimeSpanRaw(this ref ReadContext context, int count, ref Span<DateTime> destination) {
+        public static void PeekDateTimeSpanRaw(this ref ReadContext context, int count, Span<DateTime> destination) {
             int originalPosition = context.Position;
-            context.ReadDateTimeSpanRaw(count, ref destination);
+            context.ReadDateTimeSpanRaw(count, destination);
             context.Position = originalPosition;
         }
 
         [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ReadDateTimeSpanRaw(this ref ReadContext context, int count, ref Span<DateTime> destination) {
+        public static void ReadDateTimeSpanRaw(this ref ReadContext context, int count, Span<DateTime> destination) {
             Span<DateTime> targetSpan = destination.Slice(0, count);
             Span<ulong> ulongs = MemoryMarshal.Cast<DateTime, ulong>(targetSpan);
             context.ReadBitsRaw(ulongs.Length * BitHelper.ULongSize, ulongs);

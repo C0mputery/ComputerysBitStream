@@ -23,18 +23,18 @@ public abstract class ExtensionTestSuite<T> {
     protected abstract T TryReadAlias(ReadContext context);
 
     protected abstract void WriteSpanRaw(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanRaw(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void ReadSpanRaw(ReadContext context, int count, ref Span<T> destination);
+    protected abstract void PeekSpanRaw(ReadContext context, int count, Span<T> destination);
+    protected abstract void ReadSpanRaw(ReadContext context, int count, Span<T> destination);
     protected abstract void WriteSpanWithoutLength(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanWithoutLength(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void ReadSpanWithoutLength(ReadContext context, int count, ref Span<T> destination);
+    protected abstract void PeekSpanWithoutLength(ReadContext context, int count, Span<T> destination);
+    protected abstract void ReadSpanWithoutLength(ReadContext context, int count, Span<T> destination);
     protected abstract void WriteSpanWithoutLengthAlias(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void TryPeekSpanWithoutLength(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void TryReadSpanWithoutLength(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<T> destination);
+    protected abstract void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
+    protected abstract void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
+    protected abstract void TryPeekSpanWithoutLength(ReadContext context, int count, Span<T> destination);
+    protected abstract void TryReadSpanWithoutLength(ReadContext context, int count, Span<T> destination);
+    protected abstract void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
+    protected abstract void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
 
     protected abstract void WriteArrayRaw(WriteContext context, T[] values);
     protected abstract T[] PeekArrayRaw(ReadContext context, int count);
@@ -62,15 +62,15 @@ public abstract class ExtensionTestSuite<T> {
     protected abstract T[] TryReadArrayWithLengthAlias(ReadContext context);
 
     protected abstract void WriteSpan(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanWithLength(ReadContext context, ref Span<T> destination);
-    protected abstract void ReadSpanWithLength(ReadContext context, ref Span<T> destination);
+    protected abstract void PeekSpanWithLength(ReadContext context, Span<T> destination);
+    protected abstract void ReadSpanWithLength(ReadContext context, Span<T> destination);
     protected abstract void WriteSpanAlias(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanWithLengthAlias(ReadContext context, ref Span<T> destination);
-    protected abstract void ReadSpanWithLengthAlias(ReadContext context, ref Span<T> destination);
-    protected abstract void TryPeekSpanWithLength(ReadContext context, ref Span<T> destination);
-    protected abstract void TryReadSpanWithLength(ReadContext context, ref Span<T> destination);
-    protected abstract void TryPeekSpanWithLengthAlias(ReadContext context, ref Span<T> destination);
-    protected abstract void TryReadSpanWithLengthAlias(ReadContext context, ref Span<T> destination);
+    protected abstract void PeekSpanWithLengthAlias(ReadContext context, Span<T> destination);
+    protected abstract void ReadSpanWithLengthAlias(ReadContext context, Span<T> destination);
+    protected abstract void TryPeekSpanWithLength(ReadContext context, Span<T> destination);
+    protected abstract void TryReadSpanWithLength(ReadContext context, Span<T> destination);
+    protected abstract void TryPeekSpanWithLengthAlias(ReadContext context, Span<T> destination);
+    protected abstract void TryReadSpanWithLengthAlias(ReadContext context, Span<T> destination);
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
@@ -264,7 +264,7 @@ public abstract class ExtensionTestSuite<T> {
         T[] expected = initialValues.ToArray();
         Span<T> destination = initialValues.ToArray();
 
-        foreach (SpanReadOperation operation in operations) { operation(context, ref destination); }
+        foreach (SpanReadOperation operation in operations) { operation(context, destination); }
 
         Assert.Equal(expected, destination.ToArray());
         Assert.Equal(originalPosition, context.Position);
@@ -275,7 +275,7 @@ public abstract class ExtensionTestSuite<T> {
         T[] expected = initialValues.ToArray();
         Span<T> destination = initialValues.ToArray();
 
-        foreach (FixedLengthSpanReadOperation operation in operations) { operation(context, count, ref destination); }
+        foreach (FixedLengthSpanReadOperation operation in operations) { operation(context, count, destination); }
 
         Assert.Equal(expected, destination.ToArray());
         Assert.Equal(originalPosition, context.Position);
@@ -350,7 +350,7 @@ public abstract class ExtensionTestSuite<T> {
         AssertReadSpanOutOfBoundsAndPositionUnchanged(context, Values, count, PeekSpanWithoutLength, ReadSpanWithoutLength, PeekSpanWithoutLengthAlias, ReadSpanWithoutLengthAlias);
     }
 
-    private delegate void SpanReadOperation(ReadContext context, ref Span<T> destination);
+    private delegate void SpanReadOperation(ReadContext context, Span<T> destination);
 
-    private delegate void FixedLengthSpanReadOperation(ReadContext context, int count, ref Span<T> destination);
+    private delegate void FixedLengthSpanReadOperation(ReadContext context, int count, Span<T> destination);
 }

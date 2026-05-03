@@ -45,26 +45,26 @@ public class ContainerStructTests : StructTestSuite<ContainerStruct> {
     protected override ContainerStruct[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out ContainerStruct[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<ContainerStruct> values) => context.WriteContainerStructs(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<ContainerStruct> destination) => context.PeekContainerStructs(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<ContainerStruct> destination) => context.ReadContainerStructs(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<ContainerStruct> destination) => context.PeekContainerStructs(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<ContainerStruct> destination) => context.ReadContainerStructs(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<ContainerStruct> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<ContainerStruct> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<ContainerStruct> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<ContainerStruct> destination) { Assert.True(context.TryPeekContainerStructs(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<ContainerStruct> destination) { Assert.True(context.TryReadContainerStructs(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<ContainerStruct> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<ContainerStruct> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<ContainerStruct> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<ContainerStruct> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<ContainerStruct> destination) { Assert.True(context.TryPeekContainerStructs(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<ContainerStruct> destination) { Assert.True(context.TryReadContainerStructs(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<ContainerStruct> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<ContainerStruct> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<ContainerStruct> values) => context.WriteContainerStructsWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<ContainerStruct> destination) => context.PeekContainerStructs(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<ContainerStruct> destination) => context.ReadContainerStructs(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<ContainerStruct> destination) => context.PeekContainerStructs(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<ContainerStruct> destination) => context.ReadContainerStructs(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<ContainerStruct> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<ContainerStruct> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<ContainerStruct> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<ContainerStruct> destination) { Assert.True(context.TryPeekContainerStructs(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<ContainerStruct> destination) { Assert.True(context.TryReadContainerStructs(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<ContainerStruct> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<ContainerStruct> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<ContainerStruct> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<ContainerStruct> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<ContainerStruct> destination) { Assert.True(context.TryPeekContainerStructs(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<ContainerStruct> destination) { Assert.True(context.TryReadContainerStructs(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<ContainerStruct> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<ContainerStruct> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(ContainerStruct value) => value.GetContainerStructSizeInBits();
     protected override bool IsFixedSizeStruct(ContainerStruct value) => value.IsContainerStructFixedSizeStruct();

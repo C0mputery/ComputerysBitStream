@@ -74,13 +74,13 @@ namespace ComputerysBitStream {
         
         /// <summary>
         /// Used for multi value peeks with span output
-        /// Signature: public static void MethodName(this ref ReadContext context, int count, ref Span&lt;Type&gt; destination)
+        /// Signature: public static void MethodName(this ref ReadContext context, int count, Span&lt;Type&gt; destination)
         /// </summary>
         PeekSpan,
         
         /// <summary>
         /// Used for multi value reads with span output
-        /// Signature: public static void MethodName(this ref ReadContext context, int count, ref Span&lt;Type&gt; destination)
+        /// Signature: public static void MethodName(this ref ReadContext context, int count, Span&lt;Type&gt; destination)
         /// </summary>
         ReadSpan,
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -567,10 +567,10 @@ internal static class StructWrapperSourceEmitter {
         );
     }
 
-    // 1. void Peek{Type}s(ref Span<{Type}> destination)
-    // 2. void Peek(ref Span<{Type}> destination)
-    // 3. bool TryPeek{Type}s(ref Span<{Type}> destination)
-    // 4. bool TryPeek(ref Span<{Type}> destination)
+    // 1. void Peek{Type}s(Span<{Type}> destination)
+    // 2. void Peek(Span<{Type}> destination)
+    // 3. bool TryPeek{Type}s(Span<{Type}> destination)
+    // 4. bool TryPeek(Span<{Type}> destination)
     private static void EmitPeekSpan(IndentedTextWriter writer, string alias, string typeFullyQualifiedName, ParsedRawData intHandler, bool isFixedSize, int fixedSize) {
         string spaceCheck = isFixedSize
             ? $"int bitsNeeded = count * {fixedSize} + {intHandler.Size};\nif (context.IsInsufficientSpace(bitsNeeded)) {{ return; }}"
@@ -588,10 +588,10 @@ internal static class StructWrapperSourceEmitter {
                 $"Peeks at a length-prefixed sequence of <see cref=\"{typeFullyQualifiedName}\"/> values into the specified destination span without advancing the bit stream.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static void Peek{alias}s(this ref ReadContext context, ref Span<{typeFullyQualifiedName}> destination)",
+            $"public static void Peek{alias}s(this ref ReadContext context, Span<{typeFullyQualifiedName}> destination)",
             isFixedSize
                 ? $"if (context.IsInsufficientSpace({intHandler.Size})) {{ return; }}\nint count = context.{intHandler.Methods[BitStreamRawRole.Peek].MethodName}();\nif (0 > count || count > destination.Length) {{ return; }}\n{spaceCheck}\nint originalPosition = context.Position;\ncontext.Position += {intHandler.Size};\nfor (int i = 0; i < count; i++) {{ destination[i] = context.Read{alias}(); }}\ncontext.Position = originalPosition;"
-                : $"if (!context.TryPeek{alias}s(ref destination)) {{ return; }}"
+                : $"if (!context.TryPeek{alias}s(destination)) {{ return; }}"
         );
 
         EmitMethod(writer,
@@ -599,8 +599,8 @@ internal static class StructWrapperSourceEmitter {
                 $"Peeks at a length-prefixed sequence of <see cref=\"{typeFullyQualifiedName}\"/> values into the specified destination span without advancing the bit stream.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static void Peek(this ref ReadContext context, ref Span<{typeFullyQualifiedName}> destination)",
-            $"context.Peek{alias}s(ref destination);"
+            $"public static void Peek(this ref ReadContext context, Span<{typeFullyQualifiedName}> destination)",
+            $"context.Peek{alias}s(destination);"
         );
 
         EmitMethod(writer,
@@ -609,7 +609,7 @@ internal static class StructWrapperSourceEmitter {
                 returns: "<see langword=\"true\"/> if the values could be read; otherwise, <see langword=\"false\"/>.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static bool TryPeek{alias}s(this ref ReadContext context, ref Span<{typeFullyQualifiedName}> destination)",
+            $"public static bool TryPeek{alias}s(this ref ReadContext context, Span<{typeFullyQualifiedName}> destination)",
             $"if (context.IsInsufficientSpace({intHandler.Size})) {{ return false; }}\nint count = context.{intHandler.Methods[BitStreamRawRole.Peek].MethodName}();\nif (0 > count || count > destination.Length) {{ return false; }}\n{trySpaceCheck}\nint originalPosition = context.Position;\ncontext.Position += {intHandler.Size};\n{tryLoop}\ncontext.Position = originalPosition;\nreturn true;"
         );
 
@@ -619,15 +619,15 @@ internal static class StructWrapperSourceEmitter {
                 returns: "<see langword=\"true\"/> if the values could be read; otherwise, <see langword=\"false\"/>.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static bool TryPeek(this ref ReadContext context, ref Span<{typeFullyQualifiedName}> destination)",
-            $"return context.TryPeek{alias}s(ref destination);"
+            $"public static bool TryPeek(this ref ReadContext context, Span<{typeFullyQualifiedName}> destination)",
+            $"return context.TryPeek{alias}s(destination);"
         );
     }
 
-    // 1. void Read{Type}s(ref Span<{Type}> destination)
-    // 2. void Read(ref Span<{Type}> destination)
-    // 3. bool TryRead{Type}s(ref Span<{Type}> destination)
-    // 4. bool TryRead(ref Span<{Type}> destination)
+    // 1. void Read{Type}s(Span<{Type}> destination)
+    // 2. void Read(Span<{Type}> destination)
+    // 3. bool TryRead{Type}s(Span<{Type}> destination)
+    // 4. bool TryRead(Span<{Type}> destination)
     private static void EmitReadSpan(IndentedTextWriter writer, string alias, string typeFullyQualifiedName, ParsedRawData intHandler, bool isFixedSize, int fixedSize) {
         string spaceCheck = isFixedSize
             ? $"int bitsNeeded = count * {fixedSize} + {intHandler.Size};\nif (context.IsInsufficientSpace(bitsNeeded)) {{ return; }}"
@@ -645,10 +645,10 @@ internal static class StructWrapperSourceEmitter {
                 $"Reads a length-prefixed sequence of <see cref=\"{typeFullyQualifiedName}\"/> values into the specified destination span and advances the bit stream.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static void Read{alias}s(this ref ReadContext context, ref Span<{typeFullyQualifiedName}> destination)",
+            $"public static void Read{alias}s(this ref ReadContext context, Span<{typeFullyQualifiedName}> destination)",
             isFixedSize
                 ? $"if (context.IsInsufficientSpace({intHandler.Size})) {{ return; }}\nint count = context.{intHandler.Methods[BitStreamRawRole.Peek].MethodName}();\nif (0 > count || count > destination.Length) {{ return; }}\n{spaceCheck}\ncontext.Position += {intHandler.Size};\nfor (int i = 0; i < count; i++) {{ destination[i] = context.Read{alias}(); }}"
-                : $"if (!context.TryRead{alias}s(ref destination)) {{ return; }}"
+                : $"if (!context.TryRead{alias}s(destination)) {{ return; }}"
         );
 
         EmitMethod(writer,
@@ -656,8 +656,8 @@ internal static class StructWrapperSourceEmitter {
                 $"Reads a length-prefixed sequence of <see cref=\"{typeFullyQualifiedName}\"/> values into the specified destination span and advances the bit stream.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static void Read(this ref ReadContext context, ref Span<{typeFullyQualifiedName}> destination)",
-            $"context.Read{alias}s(ref destination);"
+            $"public static void Read(this ref ReadContext context, Span<{typeFullyQualifiedName}> destination)",
+            $"context.Read{alias}s(destination);"
         );
 
         EmitMethod(writer,
@@ -666,7 +666,7 @@ internal static class StructWrapperSourceEmitter {
                 returns: "<see langword=\"true\"/> if the values could be read; otherwise, <see langword=\"false\"/>.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static bool TryRead{alias}s(this ref ReadContext context, ref Span<{typeFullyQualifiedName}> destination)",
+            $"public static bool TryRead{alias}s(this ref ReadContext context, Span<{typeFullyQualifiedName}> destination)",
             $"if (context.IsInsufficientSpace({intHandler.Size})) {{ return false; }}\nint count = context.{intHandler.Methods[BitStreamRawRole.Peek].MethodName}();\nif (0 > count || count > destination.Length) {{ return false; }}\n{trySpaceCheck}\nint originalPosition = context.Position;\ncontext.Position += {intHandler.Size};\n{tryLoop}\nreturn true;"
         );
 
@@ -676,15 +676,15 @@ internal static class StructWrapperSourceEmitter {
                 returns: "<see langword=\"true\"/> if the values could be read; otherwise, <see langword=\"false\"/>.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static bool TryRead(this ref ReadContext context, ref Span<{typeFullyQualifiedName}> destination)",
-            $"return context.TryRead{alias}s(ref destination);"
+            $"public static bool TryRead(this ref ReadContext context, Span<{typeFullyQualifiedName}> destination)",
+            $"return context.TryRead{alias}s(destination);"
         );
     }
 
-    // 1. void Peek{Type}s(int count, ref Span<{Type}> destination)
-    // 2. void Peek(int count, ref Span<{Type}> destination)
-    // 3. bool TryPeek{Type}s(int count, ref Span<{Type}> destination)
-    // 4. bool TryPeek(int count, ref Span<{Type}> destination)
+    // 1. void Peek{Type}s(int count, Span<{Type}> destination)
+    // 2. void Peek(int count, Span<{Type}> destination)
+    // 3. bool TryPeek{Type}s(int count, Span<{Type}> destination)
+    // 4. bool TryPeek(int count, Span<{Type}> destination)
     private static void EmitPeekSpanWithoutLength(IndentedTextWriter writer, string alias, string typeFullyQualifiedName, bool isFixedSize, int fixedSize) {
         string spaceCheck = isFixedSize
             ? $"int bitsNeeded = count * {fixedSize};\nif (context.IsInsufficientSpace(bitsNeeded)) {{ return; }}"
@@ -702,10 +702,10 @@ internal static class StructWrapperSourceEmitter {
                 $"Peeks at a sequence of <see cref=\"{typeFullyQualifiedName}\"/> values of the specified length into the destination span without advancing the bit stream.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("count", "The number of values to peek."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static void Peek{alias}s(this ref ReadContext context, int count, ref Span<{typeFullyQualifiedName}> destination)",
+            $"public static void Peek{alias}s(this ref ReadContext context, int count, Span<{typeFullyQualifiedName}> destination)",
             isFixedSize
                 ? $"if (0 > count || count > destination.Length) {{ return; }}\n{spaceCheck}\nint originalPosition = context.Position;\nfor (int i = 0; i < count; i++) {{ destination[i] = context.Read{alias}(); }}\ncontext.Position = originalPosition;"
-                : $"if (!context.TryPeek{alias}s(count, ref destination)) {{ return; }}"
+                : $"if (!context.TryPeek{alias}s(count, destination)) {{ return; }}"
         );
 
         EmitMethod(writer,
@@ -713,8 +713,8 @@ internal static class StructWrapperSourceEmitter {
                 $"Peeks at a sequence of <see cref=\"{typeFullyQualifiedName}\"/> values of the specified length into the destination span without advancing the bit stream.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("count", "The number of values to peek."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static void Peek(this ref ReadContext context, int count, ref Span<{typeFullyQualifiedName}> destination)",
-            $"context.Peek{alias}s(count, ref destination);"
+            $"public static void Peek(this ref ReadContext context, int count, Span<{typeFullyQualifiedName}> destination)",
+            $"context.Peek{alias}s(count, destination);"
         );
 
         EmitMethod(writer,
@@ -723,7 +723,7 @@ internal static class StructWrapperSourceEmitter {
                 returns: "<see langword=\"true\"/> if the values could be read; otherwise, <see langword=\"false\"/>.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("count", "The number of values to peek."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static bool TryPeek{alias}s(this ref ReadContext context, int count, ref Span<{typeFullyQualifiedName}> destination)",
+            $"public static bool TryPeek{alias}s(this ref ReadContext context, int count, Span<{typeFullyQualifiedName}> destination)",
             $"if (0 > count || count > destination.Length) {{ return false; }}\n{trySpaceCheck}\nint originalPosition = context.Position;\n{tryLoop}\ncontext.Position = originalPosition;\nreturn true;"
         );
 
@@ -733,15 +733,15 @@ internal static class StructWrapperSourceEmitter {
                 returns: "<see langword=\"true\"/> if the values could be read; otherwise, <see langword=\"false\"/>.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("count", "The number of values to peek."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static bool TryPeek(this ref ReadContext context, int count, ref Span<{typeFullyQualifiedName}> destination)",
-            $"return context.TryPeek{alias}s(count, ref destination);"
+            $"public static bool TryPeek(this ref ReadContext context, int count, Span<{typeFullyQualifiedName}> destination)",
+            $"return context.TryPeek{alias}s(count, destination);"
         );
     }
 
-    // 1. void Read{Type}s(int count, ref Span<{Type}> destination)
-    // 2. void Read(int count, ref Span<{Type}> destination)
-    // 3. bool TryRead{Type}s(int count, ref Span<{Type}> destination)
-    // 4. bool TryRead(int count, ref Span<{Type}> destination)
+    // 1. void Read{Type}s(int count, Span<{Type}> destination)
+    // 2. void Read(int count, Span<{Type}> destination)
+    // 3. bool TryRead{Type}s(int count, Span<{Type}> destination)
+    // 4. bool TryRead(int count, Span<{Type}> destination)
     private static void EmitReadSpanWithoutLength(IndentedTextWriter writer, string alias, string typeFullyQualifiedName, bool isFixedSize, int fixedSize) {
         string spaceCheck = isFixedSize
             ? $"int bitsNeeded = count * {fixedSize};\nif (context.IsInsufficientSpace(bitsNeeded)) {{ return; }}"
@@ -759,10 +759,10 @@ internal static class StructWrapperSourceEmitter {
                 $"Reads a sequence of <see cref=\"{typeFullyQualifiedName}\"/> values of the specified length into the destination span and advances the bit stream.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("count", "The number of values to read."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static void Read{alias}s(this ref ReadContext context, int count, ref Span<{typeFullyQualifiedName}> destination)",
+            $"public static void Read{alias}s(this ref ReadContext context, int count, Span<{typeFullyQualifiedName}> destination)",
             isFixedSize
                 ? $"if (0 > count || count > destination.Length) {{ return; }}\n{spaceCheck}\nfor (int i = 0; i < count; i++) {{ destination[i] = context.Read{alias}(); }}"
-                : $"if (!context.TryRead{alias}s(count, ref destination)) {{ return; }}"
+                : $"if (!context.TryRead{alias}s(count, destination)) {{ return; }}"
         );
 
         EmitMethod(writer,
@@ -770,8 +770,8 @@ internal static class StructWrapperSourceEmitter {
                 $"Reads a sequence of <see cref=\"{typeFullyQualifiedName}\"/> values of the specified length into the destination span and advances the bit stream.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("count", "The number of values to read."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static void Read(this ref ReadContext context, int count, ref Span<{typeFullyQualifiedName}> destination)",
-            $"context.Read{alias}s(count, ref destination);"
+            $"public static void Read(this ref ReadContext context, int count, Span<{typeFullyQualifiedName}> destination)",
+            $"context.Read{alias}s(count, destination);"
         );
 
         EmitMethod(writer,
@@ -780,7 +780,7 @@ internal static class StructWrapperSourceEmitter {
                 returns: "<see langword=\"true\"/> if the values could be read; otherwise, <see langword=\"false\"/>.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("count", "The number of values to read."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static bool TryRead{alias}s(this ref ReadContext context, int count, ref Span<{typeFullyQualifiedName}> destination)",
+            $"public static bool TryRead{alias}s(this ref ReadContext context, int count, Span<{typeFullyQualifiedName}> destination)",
             $"if (0 > count || count > destination.Length) {{ return false; }}\n{trySpaceCheck}\nint originalPosition = context.Position;\n{tryLoop}\nreturn true;"
         );
 
@@ -790,8 +790,8 @@ internal static class StructWrapperSourceEmitter {
                 returns: "<see langword=\"true\"/> if the values could be read; otherwise, <see langword=\"false\"/>.",
                 parameters: [new DocParameter("context", "The read context."), new DocParameter("count", "The number of values to read."), new DocParameter("destination", "The span that receives the values.")]
             ),
-            $"public static bool TryRead(this ref ReadContext context, int count, ref Span<{typeFullyQualifiedName}> destination)",
-            $"return context.TryRead{alias}s(count, ref destination);"
+            $"public static bool TryRead(this ref ReadContext context, int count, Span<{typeFullyQualifiedName}> destination)",
+            $"return context.TryRead{alias}s(count, destination);"
         );
     }
 

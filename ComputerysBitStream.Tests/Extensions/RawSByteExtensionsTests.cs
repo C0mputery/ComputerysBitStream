@@ -22,28 +22,28 @@ public class RawSByteExtensionsTests : ExtensionTestSuite<sbyte> {
     protected override sbyte TryReadAlias(ReadContext context) { Assert.True(context.TryRead(out sbyte v)); return v; }
 
     protected override void WriteSpanRaw(WriteContext context, Span<sbyte> values) => context.WriteSBytesRaw(values);
-    protected override void PeekSpanRaw(ReadContext context, int count, ref Span<sbyte> destination) => context.PeekSByteSpanRaw(count, ref destination);
-    protected override void ReadSpanRaw(ReadContext context, int count, ref Span<sbyte> destination) => context.ReadSByteSpanRaw(count, ref destination);
+    protected override void PeekSpanRaw(ReadContext context, int count, Span<sbyte> destination) => context.PeekSByteSpanRaw(count, destination);
+    protected override void ReadSpanRaw(ReadContext context, int count, Span<sbyte> destination) => context.ReadSByteSpanRaw(count, destination);
     protected override void WriteSpanWithoutLength(WriteContext context, Span<sbyte> values) => context.WriteSBytesWithoutLength(values);
-    protected override void PeekSpanWithoutLength(ReadContext context, int count, ref Span<sbyte> destination) => context.PeekSBytes(count, ref destination);
-    protected override void ReadSpanWithoutLength(ReadContext context, int count, ref Span<sbyte> destination) => context.ReadSBytes(count, ref destination);
+    protected override void PeekSpanWithoutLength(ReadContext context, int count, Span<sbyte> destination) => context.PeekSBytes(count, destination);
+    protected override void ReadSpanWithoutLength(ReadContext context, int count, Span<sbyte> destination) => context.ReadSBytes(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<sbyte> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<sbyte> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<sbyte> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLength(ReadContext context, int count, ref Span<sbyte> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLength(ReadContext context, int count, ref Span<sbyte> destination) { Assert.True(context.TryRead(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<sbyte> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<sbyte> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<sbyte> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<sbyte> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLength(ReadContext context, int count, Span<sbyte> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<sbyte> destination) { Assert.True(context.TryRead(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<sbyte> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<sbyte> destination) { Assert.True(context.TryRead(count, destination)); }
     protected override void WriteSpan(WriteContext context, Span<sbyte> values) => context.WriteSBytes(values);
-    protected override void PeekSpanWithLength(ReadContext context, ref Span<sbyte> destination) => context.PeekSBytes(ref destination);
-    protected override void ReadSpanWithLength(ReadContext context, ref Span<sbyte> destination) => context.ReadSBytes(ref destination);
+    protected override void PeekSpanWithLength(ReadContext context, Span<sbyte> destination) => context.PeekSBytes(destination);
+    protected override void ReadSpanWithLength(ReadContext context, Span<sbyte> destination) => context.ReadSBytes(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<sbyte> values) => context.Write(values);
-    protected override void PeekSpanWithLengthAlias(ReadContext context, ref Span<sbyte> destination) => context.Peek(ref destination);
-    protected override void ReadSpanWithLengthAlias(ReadContext context, ref Span<sbyte> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanWithLength(ReadContext context, ref Span<sbyte> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanWithLength(ReadContext context, ref Span<sbyte> destination) { Assert.True(context.TryRead(ref destination)); }
-    protected override void TryPeekSpanWithLengthAlias(ReadContext context, ref Span<sbyte> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanWithLengthAlias(ReadContext context, ref Span<sbyte> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanWithLengthAlias(ReadContext context, Span<sbyte> destination) => context.Peek(destination);
+    protected override void ReadSpanWithLengthAlias(ReadContext context, Span<sbyte> destination) => context.Read(destination);
+    protected override void TryPeekSpanWithLength(ReadContext context, Span<sbyte> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanWithLength(ReadContext context, Span<sbyte> destination) { Assert.True(context.TryRead(destination)); }
+    protected override void TryPeekSpanWithLengthAlias(ReadContext context, Span<sbyte> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanWithLengthAlias(ReadContext context, Span<sbyte> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteArrayRaw(WriteContext context, sbyte[] values) => context.WriteSBytesRaw(values);
     protected override sbyte[] PeekArrayRaw(ReadContext context, int count) => context.PeekSByteArrayRaw(count);

@@ -22,28 +22,28 @@ public class DecimalExtensionsTests : ExtensionTestSuite<decimal> {
     protected override decimal TryReadAlias(ReadContext context) { Assert.True(context.TryRead(out decimal v)); return v; }
 
     protected override void WriteSpanRaw(WriteContext context, Span<decimal> values) => context.WriteDecimalsRaw(values);
-    protected override void PeekSpanRaw(ReadContext context, int count, ref Span<decimal> destination) => context.PeekDecimalSpanRaw(count, ref destination);
-    protected override void ReadSpanRaw(ReadContext context, int count, ref Span<decimal> destination) => context.ReadDecimalSpanRaw(count, ref destination);
+    protected override void PeekSpanRaw(ReadContext context, int count, Span<decimal> destination) => context.PeekDecimalSpanRaw(count, destination);
+    protected override void ReadSpanRaw(ReadContext context, int count, Span<decimal> destination) => context.ReadDecimalSpanRaw(count, destination);
     protected override void WriteSpanWithoutLength(WriteContext context, Span<decimal> values) => context.WriteDecimalsWithoutLength(values);
-    protected override void PeekSpanWithoutLength(ReadContext context, int count, ref Span<decimal> destination) => context.PeekDecimals(count, ref destination);
-    protected override void ReadSpanWithoutLength(ReadContext context, int count, ref Span<decimal> destination) => context.ReadDecimals(count, ref destination);
+    protected override void PeekSpanWithoutLength(ReadContext context, int count, Span<decimal> destination) => context.PeekDecimals(count, destination);
+    protected override void ReadSpanWithoutLength(ReadContext context, int count, Span<decimal> destination) => context.ReadDecimals(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<decimal> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<decimal> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<decimal> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLength(ReadContext context, int count, ref Span<decimal> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLength(ReadContext context, int count, ref Span<decimal> destination) { Assert.True(context.TryRead(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<decimal> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<decimal> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<decimal> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<decimal> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLength(ReadContext context, int count, Span<decimal> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<decimal> destination) { Assert.True(context.TryRead(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<decimal> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<decimal> destination) { Assert.True(context.TryRead(count, destination)); }
     protected override void WriteSpan(WriteContext context, Span<decimal> values) => context.WriteDecimals(values);
-    protected override void PeekSpanWithLength(ReadContext context, ref Span<decimal> destination) => context.PeekDecimals(ref destination);
-    protected override void ReadSpanWithLength(ReadContext context, ref Span<decimal> destination) => context.ReadDecimals(ref destination);
+    protected override void PeekSpanWithLength(ReadContext context, Span<decimal> destination) => context.PeekDecimals(destination);
+    protected override void ReadSpanWithLength(ReadContext context, Span<decimal> destination) => context.ReadDecimals(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<decimal> values) => context.Write(values);
-    protected override void PeekSpanWithLengthAlias(ReadContext context, ref Span<decimal> destination) => context.Peek(ref destination);
-    protected override void ReadSpanWithLengthAlias(ReadContext context, ref Span<decimal> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanWithLength(ReadContext context, ref Span<decimal> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanWithLength(ReadContext context, ref Span<decimal> destination) { Assert.True(context.TryRead(ref destination)); }
-    protected override void TryPeekSpanWithLengthAlias(ReadContext context, ref Span<decimal> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanWithLengthAlias(ReadContext context, ref Span<decimal> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanWithLengthAlias(ReadContext context, Span<decimal> destination) => context.Peek(destination);
+    protected override void ReadSpanWithLengthAlias(ReadContext context, Span<decimal> destination) => context.Read(destination);
+    protected override void TryPeekSpanWithLength(ReadContext context, Span<decimal> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanWithLength(ReadContext context, Span<decimal> destination) { Assert.True(context.TryRead(destination)); }
+    protected override void TryPeekSpanWithLengthAlias(ReadContext context, Span<decimal> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanWithLengthAlias(ReadContext context, Span<decimal> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteArrayRaw(WriteContext context, decimal[] values) => context.WriteDecimalsRaw(values);
     protected override decimal[] PeekArrayRaw(ReadContext context, int count) => context.PeekDecimalArrayRaw(count);

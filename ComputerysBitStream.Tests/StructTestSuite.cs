@@ -55,35 +55,35 @@ public abstract class StructTestSuite<T> {
 
     // Named span-with-length methods
     protected abstract void WriteSpanNamed(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanNamed(ReadContext context, ref Span<T> destination);
-    protected abstract void ReadSpanNamed(ReadContext context, ref Span<T> destination);
+    protected abstract void PeekSpanNamed(ReadContext context, Span<T> destination);
+    protected abstract void ReadSpanNamed(ReadContext context, Span<T> destination);
 
     // Alias span-with-length methods
     protected abstract void WriteSpanAlias(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanAlias(ReadContext context, ref Span<T> destination);
-    protected abstract void ReadSpanAlias(ReadContext context, ref Span<T> destination);
+    protected abstract void PeekSpanAlias(ReadContext context, Span<T> destination);
+    protected abstract void ReadSpanAlias(ReadContext context, Span<T> destination);
 
     // Try span-with-length methods
-    protected abstract void TryPeekSpanNamed(ReadContext context, ref Span<T> destination);
-    protected abstract void TryReadSpanNamed(ReadContext context, ref Span<T> destination);
-    protected abstract void TryPeekSpanAlias(ReadContext context, ref Span<T> destination);
-    protected abstract void TryReadSpanAlias(ReadContext context, ref Span<T> destination);
+    protected abstract void TryPeekSpanNamed(ReadContext context, Span<T> destination);
+    protected abstract void TryReadSpanNamed(ReadContext context, Span<T> destination);
+    protected abstract void TryPeekSpanAlias(ReadContext context, Span<T> destination);
+    protected abstract void TryReadSpanAlias(ReadContext context, Span<T> destination);
 
     // Named span-without-length methods
     protected abstract void WriteSpanWithoutLengthNamed(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<T> destination);
+    protected abstract void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<T> destination);
+    protected abstract void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<T> destination);
 
     // Alias span-without-length methods
     protected abstract void WriteSpanWithoutLengthAlias(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<T> destination);
+    protected abstract void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
+    protected abstract void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
 
     // Try span-without-length methods
-    protected abstract void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<T> destination);
-    protected abstract void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<T> destination);
+    protected abstract void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<T> destination);
+    protected abstract void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<T> destination);
+    protected abstract void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
+    protected abstract void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
 
     // Fixed-size metadata methods
     protected abstract int GetSizeInBits(T value);
@@ -266,7 +266,7 @@ public abstract class StructTestSuite<T> {
         int originalPosition = context.Position;
         T[] expected = initialValues.ToArray();
         Span<T> destination = initialValues.ToArray();
-        foreach (SpanReadOperation operation in operations) { operation(context, ref destination); }
+        foreach (SpanReadOperation operation in operations) { operation(context, destination); }
         Assert.Equal(expected, destination.ToArray());
         Assert.Equal(originalPosition, context.Position);
     }
@@ -275,7 +275,7 @@ public abstract class StructTestSuite<T> {
         int originalPosition = context.Position;
         T[] expected = initialValues.ToArray();
         Span<T> destination = initialValues.ToArray();
-        foreach (FixedLengthSpanReadOperation operation in operations) { operation(context, count, ref destination); }
+        foreach (FixedLengthSpanReadOperation operation in operations) { operation(context, count, destination); }
         Assert.Equal(expected, destination.ToArray());
         Assert.Equal(originalPosition, context.Position);
     }
@@ -345,6 +345,6 @@ public abstract class StructTestSuite<T> {
         AssertReadSpanOutOfBoundsAndPositionUnchanged(context, Values, count, PeekSpanWithoutLengthNamed, ReadSpanWithoutLengthNamed, PeekSpanWithoutLengthAlias, ReadSpanWithoutLengthAlias);
     }
 
-    private delegate void SpanReadOperation(ReadContext context, ref Span<T> destination);
-    private delegate void FixedLengthSpanReadOperation(ReadContext context, int count, ref Span<T> destination);
+    private delegate void SpanReadOperation(ReadContext context, Span<T> destination);
+    private delegate void FixedLengthSpanReadOperation(ReadContext context, int count, Span<T> destination);
 }

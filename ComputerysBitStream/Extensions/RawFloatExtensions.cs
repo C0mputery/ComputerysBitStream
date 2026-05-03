@@ -54,7 +54,7 @@ namespace ComputerysBitStream {
         public static float[] PeekFloatArrayRaw(this ref ReadContext context, int count) {
             float[] result = new float[count];
             Span<float> span = result.AsSpan();
-            context.PeekFloatSpanRaw(count, ref span);
+            context.PeekFloatSpanRaw(count, span);
             return result;
         }
 
@@ -64,23 +64,23 @@ namespace ComputerysBitStream {
         public static float[] ReadFloatArrayRaw(this ref ReadContext context, int count) {
             float[] result = new float[count];
             Span<float> span = result.AsSpan();
-            context.ReadFloatSpanRaw(count, ref span);
+            context.ReadFloatSpanRaw(count, span);
             return result;
         }
     
         [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void PeekFloatSpanRaw(this ref ReadContext context, int count, ref Span<float> destination) {
+        public static void PeekFloatSpanRaw(this ref ReadContext context, int count, Span<float> destination) {
             int originalPosition = context.Position;
-            context.ReadFloatSpanRaw(count, ref destination);
+            context.ReadFloatSpanRaw(count, destination);
             context.Position = originalPosition;
         }
 
         [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ReadFloatSpanRaw(this ref ReadContext context, int count, ref Span<float> destination) {
+        public static void ReadFloatSpanRaw(this ref ReadContext context, int count, Span<float> destination) {
             Span<float> targetSpan = destination.Slice(0, count);
             Span<ulong> ulongs = MemoryMarshal.Cast<float, ulong>(targetSpan);
             int totalUlongs = ulongs.Length;

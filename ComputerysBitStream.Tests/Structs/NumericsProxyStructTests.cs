@@ -46,26 +46,26 @@ public class Vector2Tests : StructTestSuite<Vector2> {
     protected override Vector2[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out Vector2[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<Vector2> values) => context.WriteVector2s(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<Vector2> destination) => context.PeekVector2s(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<Vector2> destination) => context.ReadVector2s(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<Vector2> destination) => context.PeekVector2s(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<Vector2> destination) => context.ReadVector2s(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<Vector2> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<Vector2> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<Vector2> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<Vector2> destination) { Assert.True(context.TryPeekVector2s(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<Vector2> destination) { Assert.True(context.TryReadVector2s(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<Vector2> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<Vector2> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<Vector2> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<Vector2> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<Vector2> destination) { Assert.True(context.TryPeekVector2s(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<Vector2> destination) { Assert.True(context.TryReadVector2s(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<Vector2> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<Vector2> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<Vector2> values) => context.WriteVector2sWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector2> destination) => context.PeekVector2s(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector2> destination) => context.ReadVector2s(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector2> destination) => context.PeekVector2s(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector2> destination) => context.ReadVector2s(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<Vector2> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector2> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector2> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector2> destination) { Assert.True(context.TryPeekVector2s(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector2> destination) { Assert.True(context.TryReadVector2s(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector2> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector2> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector2> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector2> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector2> destination) { Assert.True(context.TryPeekVector2s(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector2> destination) { Assert.True(context.TryReadVector2s(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector2> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector2> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(Vector2 value) => value.GetVector2SizeInBits();
     protected override bool IsFixedSizeStruct(Vector2 value) => value.IsVector2FixedSizeStruct();
@@ -114,26 +114,26 @@ public class Vector3Tests : StructTestSuite<Vector3> {
     protected override Vector3[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out Vector3[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<Vector3> values) => context.WriteVector3s(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<Vector3> destination) => context.PeekVector3s(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<Vector3> destination) => context.ReadVector3s(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<Vector3> destination) => context.PeekVector3s(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<Vector3> destination) => context.ReadVector3s(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<Vector3> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<Vector3> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<Vector3> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<Vector3> destination) { Assert.True(context.TryPeekVector3s(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<Vector3> destination) { Assert.True(context.TryReadVector3s(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<Vector3> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<Vector3> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<Vector3> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<Vector3> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<Vector3> destination) { Assert.True(context.TryPeekVector3s(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<Vector3> destination) { Assert.True(context.TryReadVector3s(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<Vector3> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<Vector3> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<Vector3> values) => context.WriteVector3sWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector3> destination) => context.PeekVector3s(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector3> destination) => context.ReadVector3s(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector3> destination) => context.PeekVector3s(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector3> destination) => context.ReadVector3s(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<Vector3> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector3> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector3> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector3> destination) { Assert.True(context.TryPeekVector3s(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector3> destination) { Assert.True(context.TryReadVector3s(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector3> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector3> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector3> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector3> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector3> destination) { Assert.True(context.TryPeekVector3s(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector3> destination) { Assert.True(context.TryReadVector3s(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector3> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector3> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(Vector3 value) => value.GetVector3SizeInBits();
     protected override bool IsFixedSizeStruct(Vector3 value) => value.IsVector3FixedSizeStruct();
@@ -182,26 +182,26 @@ public class Vector4Tests : StructTestSuite<Vector4> {
     protected override Vector4[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out Vector4[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<Vector4> values) => context.WriteVector4s(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<Vector4> destination) => context.PeekVector4s(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<Vector4> destination) => context.ReadVector4s(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<Vector4> destination) => context.PeekVector4s(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<Vector4> destination) => context.ReadVector4s(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<Vector4> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<Vector4> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<Vector4> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<Vector4> destination) { Assert.True(context.TryPeekVector4s(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<Vector4> destination) { Assert.True(context.TryReadVector4s(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<Vector4> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<Vector4> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<Vector4> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<Vector4> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<Vector4> destination) { Assert.True(context.TryPeekVector4s(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<Vector4> destination) { Assert.True(context.TryReadVector4s(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<Vector4> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<Vector4> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<Vector4> values) => context.WriteVector4sWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector4> destination) => context.PeekVector4s(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector4> destination) => context.ReadVector4s(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector4> destination) => context.PeekVector4s(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector4> destination) => context.ReadVector4s(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<Vector4> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector4> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector4> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector4> destination) { Assert.True(context.TryPeekVector4s(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Vector4> destination) { Assert.True(context.TryReadVector4s(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector4> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Vector4> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector4> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector4> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector4> destination) { Assert.True(context.TryPeekVector4s(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Vector4> destination) { Assert.True(context.TryReadVector4s(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector4> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Vector4> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(Vector4 value) => value.GetVector4SizeInBits();
     protected override bool IsFixedSizeStruct(Vector4 value) => value.IsVector4FixedSizeStruct();
@@ -250,26 +250,26 @@ public class QuaternionTests : StructTestSuite<Quaternion> {
     protected override Quaternion[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out Quaternion[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<Quaternion> values) => context.WriteQuaternions(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<Quaternion> destination) => context.PeekQuaternions(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<Quaternion> destination) => context.ReadQuaternions(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<Quaternion> destination) => context.PeekQuaternions(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<Quaternion> destination) => context.ReadQuaternions(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<Quaternion> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<Quaternion> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<Quaternion> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<Quaternion> destination) { Assert.True(context.TryPeekQuaternions(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<Quaternion> destination) { Assert.True(context.TryReadQuaternions(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<Quaternion> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<Quaternion> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<Quaternion> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<Quaternion> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<Quaternion> destination) { Assert.True(context.TryPeekQuaternions(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<Quaternion> destination) { Assert.True(context.TryReadQuaternions(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<Quaternion> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<Quaternion> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<Quaternion> values) => context.WriteQuaternionsWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Quaternion> destination) => context.PeekQuaternions(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Quaternion> destination) => context.ReadQuaternions(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Quaternion> destination) => context.PeekQuaternions(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Quaternion> destination) => context.ReadQuaternions(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<Quaternion> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Quaternion> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Quaternion> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Quaternion> destination) { Assert.True(context.TryPeekQuaternions(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Quaternion> destination) { Assert.True(context.TryReadQuaternions(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Quaternion> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Quaternion> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Quaternion> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Quaternion> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Quaternion> destination) { Assert.True(context.TryPeekQuaternions(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Quaternion> destination) { Assert.True(context.TryReadQuaternions(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Quaternion> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Quaternion> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(Quaternion value) => value.GetQuaternionSizeInBits();
     protected override bool IsFixedSizeStruct(Quaternion value) => value.IsQuaternionFixedSizeStruct();
@@ -318,26 +318,26 @@ public class Matrix3x2Tests : StructTestSuite<Matrix3x2> {
     protected override Matrix3x2[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out Matrix3x2[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<Matrix3x2> values) => context.WriteMatrix3x2s(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<Matrix3x2> destination) => context.PeekMatrix3x2s(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<Matrix3x2> destination) => context.ReadMatrix3x2s(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<Matrix3x2> destination) => context.PeekMatrix3x2s(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<Matrix3x2> destination) => context.ReadMatrix3x2s(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<Matrix3x2> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<Matrix3x2> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<Matrix3x2> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<Matrix3x2> destination) { Assert.True(context.TryPeekMatrix3x2s(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<Matrix3x2> destination) { Assert.True(context.TryReadMatrix3x2s(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<Matrix3x2> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<Matrix3x2> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<Matrix3x2> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<Matrix3x2> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<Matrix3x2> destination) { Assert.True(context.TryPeekMatrix3x2s(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<Matrix3x2> destination) { Assert.True(context.TryReadMatrix3x2s(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<Matrix3x2> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<Matrix3x2> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<Matrix3x2> values) => context.WriteMatrix3x2sWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Matrix3x2> destination) => context.PeekMatrix3x2s(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Matrix3x2> destination) => context.ReadMatrix3x2s(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Matrix3x2> destination) => context.PeekMatrix3x2s(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Matrix3x2> destination) => context.ReadMatrix3x2s(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<Matrix3x2> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Matrix3x2> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Matrix3x2> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Matrix3x2> destination) { Assert.True(context.TryPeekMatrix3x2s(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Matrix3x2> destination) { Assert.True(context.TryReadMatrix3x2s(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Matrix3x2> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Matrix3x2> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Matrix3x2> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Matrix3x2> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Matrix3x2> destination) { Assert.True(context.TryPeekMatrix3x2s(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Matrix3x2> destination) { Assert.True(context.TryReadMatrix3x2s(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Matrix3x2> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Matrix3x2> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(Matrix3x2 value) => value.GetMatrix3x2SizeInBits();
     protected override bool IsFixedSizeStruct(Matrix3x2 value) => value.IsMatrix3x2FixedSizeStruct();
@@ -394,26 +394,26 @@ public class Matrix4x4Tests : StructTestSuite<Matrix4x4> {
     protected override Matrix4x4[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out Matrix4x4[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<Matrix4x4> values) => context.WriteMatrix4x4s(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<Matrix4x4> destination) => context.PeekMatrix4x4s(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<Matrix4x4> destination) => context.ReadMatrix4x4s(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<Matrix4x4> destination) => context.PeekMatrix4x4s(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<Matrix4x4> destination) => context.ReadMatrix4x4s(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<Matrix4x4> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<Matrix4x4> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<Matrix4x4> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<Matrix4x4> destination) { Assert.True(context.TryPeekMatrix4x4s(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<Matrix4x4> destination) { Assert.True(context.TryReadMatrix4x4s(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<Matrix4x4> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<Matrix4x4> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<Matrix4x4> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<Matrix4x4> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<Matrix4x4> destination) { Assert.True(context.TryPeekMatrix4x4s(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<Matrix4x4> destination) { Assert.True(context.TryReadMatrix4x4s(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<Matrix4x4> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<Matrix4x4> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<Matrix4x4> values) => context.WriteMatrix4x4sWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Matrix4x4> destination) => context.PeekMatrix4x4s(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Matrix4x4> destination) => context.ReadMatrix4x4s(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Matrix4x4> destination) => context.PeekMatrix4x4s(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Matrix4x4> destination) => context.ReadMatrix4x4s(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<Matrix4x4> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Matrix4x4> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Matrix4x4> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Matrix4x4> destination) { Assert.True(context.TryPeekMatrix4x4s(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Matrix4x4> destination) { Assert.True(context.TryReadMatrix4x4s(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Matrix4x4> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Matrix4x4> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Matrix4x4> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Matrix4x4> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Matrix4x4> destination) { Assert.True(context.TryPeekMatrix4x4s(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Matrix4x4> destination) { Assert.True(context.TryReadMatrix4x4s(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Matrix4x4> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Matrix4x4> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(Matrix4x4 value) => value.GetMatrix4x4SizeInBits();
     protected override bool IsFixedSizeStruct(Matrix4x4 value) => value.IsMatrix4x4FixedSizeStruct();
@@ -462,26 +462,26 @@ public class PlaneTests : StructTestSuite<Plane> {
     protected override Plane[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out Plane[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<Plane> values) => context.WritePlanes(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<Plane> destination) => context.PeekPlanes(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<Plane> destination) => context.ReadPlanes(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<Plane> destination) => context.PeekPlanes(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<Plane> destination) => context.ReadPlanes(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<Plane> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<Plane> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<Plane> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<Plane> destination) { Assert.True(context.TryPeekPlanes(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<Plane> destination) { Assert.True(context.TryReadPlanes(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<Plane> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<Plane> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<Plane> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<Plane> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<Plane> destination) { Assert.True(context.TryPeekPlanes(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<Plane> destination) { Assert.True(context.TryReadPlanes(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<Plane> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<Plane> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<Plane> values) => context.WritePlanesWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Plane> destination) => context.PeekPlanes(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Plane> destination) => context.ReadPlanes(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Plane> destination) => context.PeekPlanes(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Plane> destination) => context.ReadPlanes(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<Plane> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Plane> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Plane> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Plane> destination) { Assert.True(context.TryPeekPlanes(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<Plane> destination) { Assert.True(context.TryReadPlanes(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Plane> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<Plane> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Plane> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Plane> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<Plane> destination) { Assert.True(context.TryPeekPlanes(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<Plane> destination) { Assert.True(context.TryReadPlanes(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<Plane> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<Plane> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(Plane value) => value.GetPlaneSizeInBits();
     protected override bool IsFixedSizeStruct(Plane value) => value.IsPlaneFixedSizeStruct();

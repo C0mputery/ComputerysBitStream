@@ -584,10 +584,10 @@ internal static class RawTypeWrapperSourceEmitter {
         """;
     }
     
-    // 1. void Peek{Type}s(ref Span<{Type}> destination)
-    // 2. void Peek(ref Span<{Type}> destination)
-    // 3. bool TryPeek{Type}s(ref Span<{Type}> destination)
-    // 4. bool TryPeek(ref Span<{Type}> destination)
+    // 1. void Peek{Type}s(Span<{Type}> destination)
+    // 2. void Peek(Span<{Type}> destination)
+    // 3. bool TryPeek{Type}s(Span<{Type}> destination)
+    // 4. bool TryPeek(Span<{Type}> destination)
     private static string PeekSpanMethods(ParsedRawData type, ParsedRawData intHandler) {
         return $$"""
         /// <summary>
@@ -596,7 +596,7 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="context">The read context.</param>
         /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Peek{{type.Alias}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
+        public static void Peek{{type.Alias}}s(this ref ReadContext context, Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return; }
             
             int count = context.{{intHandler.Methods[BitStreamRawRole.Peek].MethodName}}();
@@ -605,7 +605,7 @@ internal static class RawTypeWrapperSourceEmitter {
             if (context.IsInsufficientSpace(bitsNeeded)) { return; }
             
             context.Position += {{intHandler.Size}};
-            context.{{type.Methods[BitStreamRawRole.PeekSpan].MethodName}}(count, ref destination);
+            context.{{type.Methods[BitStreamRawRole.PeekSpan].MethodName}}(count, destination);
             context.Position -= {{intHandler.Size}};
         }
 
@@ -615,7 +615,7 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="context">The read context.</param>
         /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Peek(this ref ReadContext context, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.Peek{{type.Alias}}s(ref destination);
+        public static void Peek(this ref ReadContext context, Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.Peek{{type.Alias}}s(destination);
 
         /// <summary>
         /// Attempts to peek at a length-prefixed sequence of <see cref="{{type.TargetTypeFullyQualifiedName}}"/> values into the specified destination span without advancing the bit stream.
@@ -624,7 +624,7 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="destination">The span that receives the values.</param>
         /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryPeek{{type.Alias}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
+        public static bool TryPeek{{type.Alias}}s(this ref ReadContext context, Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return false; }
             
             int count = context.{{intHandler.Methods[BitStreamRawRole.Peek].MethodName}}();
@@ -634,7 +634,7 @@ internal static class RawTypeWrapperSourceEmitter {
             if (context.IsInsufficientSpace(bitsNeeded)) { return false; }
             
             context.Position += {{intHandler.Size}};
-            context.{{type.Methods[BitStreamRawRole.PeekSpan].MethodName}}(count, ref destination);
+            context.{{type.Methods[BitStreamRawRole.PeekSpan].MethodName}}(count, destination);
             context.Position -= {{intHandler.Size}};
             
             return true;
@@ -647,14 +647,14 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="destination">The span that receives the values.</param>
         /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryPeek(this ref ReadContext context, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.TryPeek{{type.Alias}}s(ref destination);
+        public static bool TryPeek(this ref ReadContext context, Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.TryPeek{{type.Alias}}s(destination);
         """;
     }
     
-    // 1. void Peek{Type}s(int count, ref Span<{Type}> destination)
+    // 1. void Peek{Type}s(int count, Span<{Type}> destination)
     // 2. void Peek(int count, Span<{Type}> destination)
-    // 3. bool TryPeek{Type}s(int count, ref Span<{Type}> destination)
-    // 4. bool TryPeek(int count, ref Span<{Type}> destination)
+    // 3. bool TryPeek{Type}s(int count, Span<{Type}> destination)
+    // 4. bool TryPeek(int count, Span<{Type}> destination)
     private static string PeekSpanMethodsWithoutLengthMethods(ParsedRawData type) {
         return $$"""
         /// <summary>
@@ -664,13 +664,13 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="count">The number of values to peek.</param>
         /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Peek{{type.Alias}}s(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
+        public static void Peek{{type.Alias}}s(this ref ReadContext context, int count, Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
             if (0 > count || count > destination.Length) { return; }
             
             int bitsNeeded = count * {{type.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return; }
             
-            context.{{type.Methods[BitStreamRawRole.PeekSpan].MethodName}}(count, ref destination);
+            context.{{type.Methods[BitStreamRawRole.PeekSpan].MethodName}}(count, destination);
         }
 
         /// <summary>
@@ -680,7 +680,7 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="count">The number of values to peek.</param>
         /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Peek(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.Peek{{type.Alias}}s(count, ref destination);
+        public static void Peek(this ref ReadContext context, int count, Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.Peek{{type.Alias}}s(count, destination);
 
         /// <summary>
         /// Attempts to peek at a sequence of <see cref="{{type.TargetTypeFullyQualifiedName}}"/> values of the specified length into the destination span without advancing the bit stream.
@@ -690,12 +690,12 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="destination">The span that receives the values.</param>
         /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryPeek{{type.Alias}}s(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
+        public static bool TryPeek{{type.Alias}}s(this ref ReadContext context, int count, Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
             if (0 > count || count > destination.Length) { return false; }
             
             int bitsNeeded = count * {{type.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return false; }
-            context.{{type.Methods[BitStreamRawRole.PeekSpan].MethodName}}(count, ref destination);
+            context.{{type.Methods[BitStreamRawRole.PeekSpan].MethodName}}(count, destination);
             
             return true;
         }
@@ -708,13 +708,13 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="destination">The span that receives the values.</param>
         /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryPeek(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.TryPeek{{type.Alias}}s(count, ref destination);
+        public static bool TryPeek(this ref ReadContext context, int count, Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.TryPeek{{type.Alias}}s(count, destination);
         """;
     }
-    // 1. void Read{Type}s(ref Span<{Type}> destination)
-    // 2. void Read(ref Span<{Type}> destination)
-    // 3. bool TryRead{Type}s(ref Span<{Type}> destination)
-    // 4. bool TryRead(ref Span<{Type}> destination)
+    // 1. void Read{Type}s(Span<{Type}> destination)
+    // 2. void Read(Span<{Type}> destination)
+    // 3. bool TryRead{Type}s(Span<{Type}> destination)
+    // 4. bool TryRead(Span<{Type}> destination)
     private static string ReadSpanMethods(ParsedRawData type, ParsedRawData intHandler) {
         return $$"""
         /// <summary>
@@ -723,7 +723,7 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="context">The read context.</param>
         /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Read{{type.Alias}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
+        public static void Read{{type.Alias}}s(this ref ReadContext context, Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return; }
             
             int count = context.{{intHandler.Methods[BitStreamRawRole.Peek].MethodName}}();
@@ -733,7 +733,7 @@ internal static class RawTypeWrapperSourceEmitter {
             if (context.IsInsufficientSpace(bitsNeeded)) { return; }
             
             context.Position += {{intHandler.Size}};
-            context.{{type.Methods[BitStreamRawRole.ReadSpan].MethodName}}(count, ref destination);
+            context.{{type.Methods[BitStreamRawRole.ReadSpan].MethodName}}(count, destination);
         }
 
         /// <summary>
@@ -742,7 +742,7 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="context">The read context.</param>
         /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Read(this ref ReadContext context, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.Read{{type.Alias}}s(ref destination);
+        public static void Read(this ref ReadContext context, Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.Read{{type.Alias}}s(destination);
 
         /// <summary>
         /// Attempts to read a length-prefixed sequence of <see cref="{{type.TargetTypeFullyQualifiedName}}"/> values into the specified destination span and advance the bit stream.
@@ -751,7 +751,7 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="destination">The span that receives the values.</param>
         /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryRead{{type.Alias}}s(this ref ReadContext context, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
+        public static bool TryRead{{type.Alias}}s(this ref ReadContext context, Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
             if (context.IsInsufficientSpace({{intHandler.Size}})) { return false; }
             
             int count = context.{{intHandler.Methods[BitStreamRawRole.Peek].MethodName}}();
@@ -761,7 +761,7 @@ internal static class RawTypeWrapperSourceEmitter {
             if (context.IsInsufficientSpace(bitsNeeded)) { return false; }
             
             context.Position += {{intHandler.Size}};
-            context.{{type.Methods[BitStreamRawRole.ReadSpan].MethodName}}(count, ref destination);
+            context.{{type.Methods[BitStreamRawRole.ReadSpan].MethodName}}(count, destination);
             return true;
         }
 
@@ -772,14 +772,14 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="destination">The span that receives the values.</param>
         /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryRead(this ref ReadContext context, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.TryRead{{type.Alias}}s(ref destination);
+        public static bool TryRead(this ref ReadContext context, Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.TryRead{{type.Alias}}s(destination);
         """;
     }
     
-    // 1. void Read{Type}s(int count, ref Span<{Type}> destination)
-    // 2. void Read(int count, ref Span<{Type}> destination)
-    // 3. bool TryRead{Type}s(int count, ref Span<{Type}> destination)
-    // 4. bool TryRead(int count, ref Span<{Type}> destination)
+    // 1. void Read{Type}s(int count, Span<{Type}> destination)
+    // 2. void Read(int count, Span<{Type}> destination)
+    // 3. bool TryRead{Type}s(int count, Span<{Type}> destination)
+    // 4. bool TryRead(int count, Span<{Type}> destination)
     private static string ReadSpanMethodsWithoutLengthMethods(ParsedRawData type) {
         return $$"""
         /// <summary>
@@ -789,13 +789,13 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="count">The number of values to read.</param>
         /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Read{{type.Alias}}s(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
+        public static void Read{{type.Alias}}s(this ref ReadContext context, int count, Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
             if (0 > count || count > destination.Length) { return; }
 
             int bitsNeeded = count * {{type.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return; }
 
-            context.{{type.Methods[BitStreamRawRole.ReadSpan].MethodName}}(count, ref destination);
+            context.{{type.Methods[BitStreamRawRole.ReadSpan].MethodName}}(count, destination);
         }
 
         /// <summary>
@@ -805,7 +805,7 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="count">The number of values to read.</param>
         /// <param name="destination">The span that receives the values.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Read(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.Read{{type.Alias}}s(count, ref destination);
+        public static void Read(this ref ReadContext context, int count, Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.Read{{type.Alias}}s(count, destination);
 
         /// <summary>
         /// Attempts to read a sequence of <see cref="{{type.TargetTypeFullyQualifiedName}}"/> values of the specified length into the destination span and advance the bit stream.
@@ -815,13 +815,13 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="destination">The span that receives the values.</param>
         /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryRead{{type.Alias}}s(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
+        public static bool TryRead{{type.Alias}}s(this ref ReadContext context, int count, Span<{{type.TargetTypeFullyQualifiedName}}> destination) {
             if (0 > count || count > destination.Length) { return false; }
 
             int bitsNeeded = count * {{type.Size}};
             if (context.IsInsufficientSpace(bitsNeeded)) { return false; }
 
-            context.{{type.Methods[BitStreamRawRole.ReadSpan].MethodName}}(count, ref destination);
+            context.{{type.Methods[BitStreamRawRole.ReadSpan].MethodName}}(count, destination);
             return true;
         }
 
@@ -833,7 +833,7 @@ internal static class RawTypeWrapperSourceEmitter {
         /// <param name="destination">The span that receives the values.</param>
         /// <returns><see langword="true"/> if the values could be read; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryRead(this ref ReadContext context, int count, ref Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.TryRead{{type.Alias}}s(count, ref destination);
+        public static bool TryRead(this ref ReadContext context, int count, Span<{{type.TargetTypeFullyQualifiedName}}> destination) => context.TryRead{{type.Alias}}s(count, destination);
         """;
     }
 }

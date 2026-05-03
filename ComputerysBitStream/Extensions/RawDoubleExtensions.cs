@@ -42,7 +42,7 @@ namespace ComputerysBitStream {
         public static double[] PeekDoubleArrayRaw(this ref ReadContext context, int count) {
             double[] result = new double[count];
             Span<double> span = result.AsSpan();
-            context.PeekDoubleSpanRaw(count, ref span);
+            context.PeekDoubleSpanRaw(count, span);
             return result;
         }
 
@@ -52,23 +52,23 @@ namespace ComputerysBitStream {
         public static double[] ReadDoubleArrayRaw(this ref ReadContext context, int count) {
             double[] result = new double[count];
             Span<double> span = result.AsSpan();
-            context.ReadDoubleSpanRaw(count, ref span);
+            context.ReadDoubleSpanRaw(count, span);
             return result;
         }
     
         [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void PeekDoubleSpanRaw(this ref ReadContext context, int count, ref Span<double> destination) {
+        public static void PeekDoubleSpanRaw(this ref ReadContext context, int count, Span<double> destination) {
             int originalPosition = context.Position;
-            context.ReadDoubleSpanRaw(count, ref destination);
+            context.ReadDoubleSpanRaw(count, destination);
             context.Position = originalPosition;
         }
 
         [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ReadDoubleSpanRaw(this ref ReadContext context, int count, ref Span<double> destination) {
+        public static void ReadDoubleSpanRaw(this ref ReadContext context, int count, Span<double> destination) {
             Span<double> targetSpan = destination.Slice(0, count);
             Span<ulong> ulongs = MemoryMarshal.Cast<double, ulong>(targetSpan);
             context.ReadBitsRaw(ulongs.Length * BitHelper.ULongSize, ulongs);

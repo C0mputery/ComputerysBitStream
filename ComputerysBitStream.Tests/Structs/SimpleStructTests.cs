@@ -44,26 +44,26 @@ public class SimpleStructTests : StructTestSuite<SimpleStruct> {
     protected override SimpleStruct[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out SimpleStruct[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<SimpleStruct> values) => context.WriteSimpleStructs(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<SimpleStruct> destination) => context.PeekSimpleStructs(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<SimpleStruct> destination) => context.ReadSimpleStructs(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<SimpleStruct> destination) => context.PeekSimpleStructs(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<SimpleStruct> destination) => context.ReadSimpleStructs(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<SimpleStruct> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<SimpleStruct> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<SimpleStruct> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<SimpleStruct> destination) { Assert.True(context.TryPeekSimpleStructs(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<SimpleStruct> destination) { Assert.True(context.TryReadSimpleStructs(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<SimpleStruct> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<SimpleStruct> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<SimpleStruct> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<SimpleStruct> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<SimpleStruct> destination) { Assert.True(context.TryPeekSimpleStructs(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<SimpleStruct> destination) { Assert.True(context.TryReadSimpleStructs(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<SimpleStruct> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<SimpleStruct> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<SimpleStruct> values) => context.WriteSimpleStructsWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<SimpleStruct> destination) => context.PeekSimpleStructs(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<SimpleStruct> destination) => context.ReadSimpleStructs(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<SimpleStruct> destination) => context.PeekSimpleStructs(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<SimpleStruct> destination) => context.ReadSimpleStructs(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<SimpleStruct> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<SimpleStruct> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<SimpleStruct> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<SimpleStruct> destination) { Assert.True(context.TryPeekSimpleStructs(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<SimpleStruct> destination) { Assert.True(context.TryReadSimpleStructs(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<SimpleStruct> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<SimpleStruct> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<SimpleStruct> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<SimpleStruct> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<SimpleStruct> destination) { Assert.True(context.TryPeekSimpleStructs(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<SimpleStruct> destination) { Assert.True(context.TryReadSimpleStructs(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<SimpleStruct> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<SimpleStruct> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(SimpleStruct value) => value.GetSimpleStructSizeInBits();
     protected override bool IsFixedSizeStruct(SimpleStruct value) => value.IsSimpleStructFixedSizeStruct();

@@ -54,7 +54,7 @@ namespace ComputerysBitStream {
         public static char[] PeekCharArrayRaw(this ref ReadContext context, int count) {
             char[] result = new char[count];
             Span<char> span = result.AsSpan();
-            context.PeekCharSpanRaw(count, ref span);
+            context.PeekCharSpanRaw(count, span);
             return result;
         }
 
@@ -64,23 +64,23 @@ namespace ComputerysBitStream {
         public static char[] ReadCharArrayRaw(this ref ReadContext context, int count) {
             char[] result = new char[count];
             Span<char> span = result.AsSpan();
-            context.ReadCharSpanRaw(count, ref span);
+            context.ReadCharSpanRaw(count, span);
             return result;
         }
     
         [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void PeekCharSpanRaw(this ref ReadContext context, int count, ref Span<char> destination) {
+        public static void PeekCharSpanRaw(this ref ReadContext context, int count, Span<char> destination) {
             int originalPosition = context.Position;
-            context.ReadCharSpanRaw(count, ref destination);
+            context.ReadCharSpanRaw(count, destination);
             context.Position = originalPosition;
         }
 
         [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ReadCharSpanRaw(this ref ReadContext context, int count, ref Span<char> destination) {
+        public static void ReadCharSpanRaw(this ref ReadContext context, int count, Span<char> destination) {
             Span<char> targetSpan = destination.Slice(0, count);
             Span<ulong> ulongs = MemoryMarshal.Cast<char, ulong>(targetSpan);
             int totalUlongs = ulongs.Length;

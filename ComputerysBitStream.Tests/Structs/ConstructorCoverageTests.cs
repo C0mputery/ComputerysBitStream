@@ -44,26 +44,26 @@ public class AliasedStructTests : StructTestSuite<AliasedStruct> {
     protected override AliasedStruct[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out AliasedStruct[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<AliasedStruct> values) => context.WriteAliaseds(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<AliasedStruct> destination) => context.PeekAliaseds(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<AliasedStruct> destination) => context.ReadAliaseds(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<AliasedStruct> destination) => context.PeekAliaseds(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<AliasedStruct> destination) => context.ReadAliaseds(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<AliasedStruct> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<AliasedStruct> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<AliasedStruct> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<AliasedStruct> destination) { Assert.True(context.TryPeekAliaseds(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<AliasedStruct> destination) { Assert.True(context.TryReadAliaseds(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<AliasedStruct> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<AliasedStruct> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<AliasedStruct> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<AliasedStruct> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<AliasedStruct> destination) { Assert.True(context.TryPeekAliaseds(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<AliasedStruct> destination) { Assert.True(context.TryReadAliaseds(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<AliasedStruct> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<AliasedStruct> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<AliasedStruct> values) => context.WriteAliasedsWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedStruct> destination) => context.PeekAliaseds(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedStruct> destination) => context.ReadAliaseds(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedStruct> destination) => context.PeekAliaseds(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedStruct> destination) => context.ReadAliaseds(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<AliasedStruct> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedStruct> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedStruct> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedStruct> destination) { Assert.True(context.TryPeekAliaseds(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedStruct> destination) { Assert.True(context.TryReadAliaseds(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedStruct> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedStruct> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedStruct> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedStruct> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedStruct> destination) { Assert.True(context.TryPeekAliaseds(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedStruct> destination) { Assert.True(context.TryReadAliaseds(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedStruct> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedStruct> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(AliasedStruct value) => value.GetAliasedSizeInBits();
     protected override bool IsFixedSizeStruct(AliasedStruct value) => value.IsAliasedFixedSizeStruct();
@@ -111,26 +111,26 @@ public class AliasedExternalStructTests : StructTestSuite<AliasedExternalStruct>
     protected override AliasedExternalStruct[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out AliasedExternalStruct[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<AliasedExternalStruct> values) => context.WriteAliasedExts(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<AliasedExternalStruct> destination) => context.PeekAliasedExts(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<AliasedExternalStruct> destination) => context.ReadAliasedExts(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<AliasedExternalStruct> destination) => context.PeekAliasedExts(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<AliasedExternalStruct> destination) => context.ReadAliasedExts(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<AliasedExternalStruct> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<AliasedExternalStruct> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<AliasedExternalStruct> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<AliasedExternalStruct> destination) { Assert.True(context.TryPeekAliasedExts(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<AliasedExternalStruct> destination) { Assert.True(context.TryReadAliasedExts(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<AliasedExternalStruct> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<AliasedExternalStruct> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<AliasedExternalStruct> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<AliasedExternalStruct> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<AliasedExternalStruct> destination) { Assert.True(context.TryPeekAliasedExts(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<AliasedExternalStruct> destination) { Assert.True(context.TryReadAliasedExts(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<AliasedExternalStruct> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<AliasedExternalStruct> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<AliasedExternalStruct> values) => context.WriteAliasedExtsWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedExternalStruct> destination) => context.PeekAliasedExts(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedExternalStruct> destination) => context.ReadAliasedExts(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedExternalStruct> destination) => context.PeekAliasedExts(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedExternalStruct> destination) => context.ReadAliasedExts(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<AliasedExternalStruct> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedExternalStruct> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedExternalStruct> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedExternalStruct> destination) { Assert.True(context.TryPeekAliasedExts(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedExternalStruct> destination) { Assert.True(context.TryReadAliasedExts(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedExternalStruct> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedExternalStruct> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedExternalStruct> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedExternalStruct> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedExternalStruct> destination) { Assert.True(context.TryPeekAliasedExts(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedExternalStruct> destination) { Assert.True(context.TryReadAliasedExts(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedExternalStruct> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedExternalStruct> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(AliasedExternalStruct value) => value.GetAliasedExtSizeInBits();
     protected override bool IsFixedSizeStruct(AliasedExternalStruct value) => value.IsAliasedExtFixedSizeStruct();
@@ -178,26 +178,26 @@ public class AliasedIncludeExternalStructTests : StructTestSuite<AliasedIncludeE
     protected override AliasedIncludeExternalStruct[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out AliasedIncludeExternalStruct[] v)); return v; }
 
     protected override void WriteSpanNamed(WriteContext context, Span<AliasedIncludeExternalStruct> values) => context.WriteAliasedIncs(values);
-    protected override void PeekSpanNamed(ReadContext context, ref Span<AliasedIncludeExternalStruct> destination) => context.PeekAliasedIncs(ref destination);
-    protected override void ReadSpanNamed(ReadContext context, ref Span<AliasedIncludeExternalStruct> destination) => context.ReadAliasedIncs(ref destination);
+    protected override void PeekSpanNamed(ReadContext context, Span<AliasedIncludeExternalStruct> destination) => context.PeekAliasedIncs(destination);
+    protected override void ReadSpanNamed(ReadContext context, Span<AliasedIncludeExternalStruct> destination) => context.ReadAliasedIncs(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<AliasedIncludeExternalStruct> values) => context.Write(values);
-    protected override void PeekSpanAlias(ReadContext context, ref Span<AliasedIncludeExternalStruct> destination) => context.Peek(ref destination);
-    protected override void ReadSpanAlias(ReadContext context, ref Span<AliasedIncludeExternalStruct> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanNamed(ReadContext context, ref Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryPeekAliasedIncs(ref destination)); }
-    protected override void TryReadSpanNamed(ReadContext context, ref Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryReadAliasedIncs(ref destination)); }
-    protected override void TryPeekSpanAlias(ReadContext context, ref Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanAlias(ReadContext context, ref Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanAlias(ReadContext context, Span<AliasedIncludeExternalStruct> destination) => context.Peek(destination);
+    protected override void ReadSpanAlias(ReadContext context, Span<AliasedIncludeExternalStruct> destination) => context.Read(destination);
+    protected override void TryPeekSpanNamed(ReadContext context, Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryPeekAliasedIncs(destination)); }
+    protected override void TryReadSpanNamed(ReadContext context, Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryReadAliasedIncs(destination)); }
+    protected override void TryPeekSpanAlias(ReadContext context, Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanAlias(ReadContext context, Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteSpanWithoutLengthNamed(WriteContext context, Span<AliasedIncludeExternalStruct> values) => context.WriteAliasedIncsWithoutLength(values);
-    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedIncludeExternalStruct> destination) => context.PeekAliasedIncs(count, ref destination);
-    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedIncludeExternalStruct> destination) => context.ReadAliasedIncs(count, ref destination);
+    protected override void PeekSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedIncludeExternalStruct> destination) => context.PeekAliasedIncs(count, destination);
+    protected override void ReadSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedIncludeExternalStruct> destination) => context.ReadAliasedIncs(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<AliasedIncludeExternalStruct> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedIncludeExternalStruct> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedIncludeExternalStruct> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryPeekAliasedIncs(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, ref Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryReadAliasedIncs(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedIncludeExternalStruct> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedIncludeExternalStruct> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryPeekAliasedIncs(count, destination)); }
+    protected override void TryReadSpanWithoutLengthNamed(ReadContext context, int count, Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryReadAliasedIncs(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryRead(count, destination)); }
 
     protected override int GetSizeInBits(AliasedIncludeExternalStruct value) => value.GetAliasedIncSizeInBits();
     protected override bool IsFixedSizeStruct(AliasedIncludeExternalStruct value) => value.IsAliasedIncFixedSizeStruct();

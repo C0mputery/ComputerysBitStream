@@ -22,28 +22,28 @@ public class RawULongExtensionsTests : ExtensionTestSuite<ulong> {
     protected override ulong TryReadAlias(ReadContext context) { Assert.True(context.TryRead(out ulong v)); return v; }
 
     protected override void WriteSpanRaw(WriteContext context, Span<ulong> values) => context.WriteULongsRaw(values);
-    protected override void PeekSpanRaw(ReadContext context, int count, ref Span<ulong> destination) => context.PeekULongSpanRaw(count, ref destination);
-    protected override void ReadSpanRaw(ReadContext context, int count, ref Span<ulong> destination) => context.ReadULongSpanRaw(count, ref destination);
+    protected override void PeekSpanRaw(ReadContext context, int count, Span<ulong> destination) => context.PeekULongSpanRaw(count, destination);
+    protected override void ReadSpanRaw(ReadContext context, int count, Span<ulong> destination) => context.ReadULongSpanRaw(count, destination);
     protected override void WriteSpanWithoutLength(WriteContext context, Span<ulong> values) => context.WriteULongsWithoutLength(values);
-    protected override void PeekSpanWithoutLength(ReadContext context, int count, ref Span<ulong> destination) => context.PeekULongs(count, ref destination);
-    protected override void ReadSpanWithoutLength(ReadContext context, int count, ref Span<ulong> destination) => context.ReadULongs(count, ref destination);
+    protected override void PeekSpanWithoutLength(ReadContext context, int count, Span<ulong> destination) => context.PeekULongs(count, destination);
+    protected override void ReadSpanWithoutLength(ReadContext context, int count, Span<ulong> destination) => context.ReadULongs(count, destination);
     protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<ulong> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<ulong> destination) => context.Peek(count, ref destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<ulong> destination) => context.Read(count, ref destination);
-    protected override void TryPeekSpanWithoutLength(ReadContext context, int count, ref Span<ulong> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLength(ReadContext context, int count, ref Span<ulong> destination) { Assert.True(context.TryRead(count, ref destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, ref Span<ulong> destination) { Assert.True(context.TryPeek(count, ref destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, ref Span<ulong> destination) { Assert.True(context.TryRead(count, ref destination)); }
+    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<ulong> destination) => context.Peek(count, destination);
+    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<ulong> destination) => context.Read(count, destination);
+    protected override void TryPeekSpanWithoutLength(ReadContext context, int count, Span<ulong> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<ulong> destination) { Assert.True(context.TryRead(count, destination)); }
+    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<ulong> destination) { Assert.True(context.TryPeek(count, destination)); }
+    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<ulong> destination) { Assert.True(context.TryRead(count, destination)); }
     protected override void WriteSpan(WriteContext context, Span<ulong> values) => context.WriteULongs(values);
-    protected override void PeekSpanWithLength(ReadContext context, ref Span<ulong> destination) => context.PeekULongs(ref destination);
-    protected override void ReadSpanWithLength(ReadContext context, ref Span<ulong> destination) => context.ReadULongs(ref destination);
+    protected override void PeekSpanWithLength(ReadContext context, Span<ulong> destination) => context.PeekULongs(destination);
+    protected override void ReadSpanWithLength(ReadContext context, Span<ulong> destination) => context.ReadULongs(destination);
     protected override void WriteSpanAlias(WriteContext context, Span<ulong> values) => context.Write(values);
-    protected override void PeekSpanWithLengthAlias(ReadContext context, ref Span<ulong> destination) => context.Peek(ref destination);
-    protected override void ReadSpanWithLengthAlias(ReadContext context, ref Span<ulong> destination) => context.Read(ref destination);
-    protected override void TryPeekSpanWithLength(ReadContext context, ref Span<ulong> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanWithLength(ReadContext context, ref Span<ulong> destination) { Assert.True(context.TryRead(ref destination)); }
-    protected override void TryPeekSpanWithLengthAlias(ReadContext context, ref Span<ulong> destination) { Assert.True(context.TryPeek(ref destination)); }
-    protected override void TryReadSpanWithLengthAlias(ReadContext context, ref Span<ulong> destination) { Assert.True(context.TryRead(ref destination)); }
+    protected override void PeekSpanWithLengthAlias(ReadContext context, Span<ulong> destination) => context.Peek(destination);
+    protected override void ReadSpanWithLengthAlias(ReadContext context, Span<ulong> destination) => context.Read(destination);
+    protected override void TryPeekSpanWithLength(ReadContext context, Span<ulong> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanWithLength(ReadContext context, Span<ulong> destination) { Assert.True(context.TryRead(destination)); }
+    protected override void TryPeekSpanWithLengthAlias(ReadContext context, Span<ulong> destination) { Assert.True(context.TryPeek(destination)); }
+    protected override void TryReadSpanWithLengthAlias(ReadContext context, Span<ulong> destination) { Assert.True(context.TryRead(destination)); }
 
     protected override void WriteArrayRaw(WriteContext context, ulong[] values) => context.WriteULongsRaw(values);
     protected override ulong[] PeekArrayRaw(ReadContext context, int count) => context.PeekULongArrayRaw(count);

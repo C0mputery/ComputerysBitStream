@@ -51,7 +51,7 @@ namespace ComputerysBitStream {
         public static decimal[] PeekDecimalArrayRaw(this ref ReadContext context, int count) {
             decimal[] result = new decimal[count];
             Span<decimal> span = result;
-            context.PeekDecimalSpanRaw(count, ref span);
+            context.PeekDecimalSpanRaw(count, span);
             return result;
         }
 
@@ -61,23 +61,23 @@ namespace ComputerysBitStream {
         public static decimal[] ReadDecimalArrayRaw(this ref ReadContext context, int count) {
             decimal[] result = new decimal[count];
             Span<decimal> span = result;
-            context.ReadDecimalSpanRaw(count, ref span);
+            context.ReadDecimalSpanRaw(count, span);
             return result;
         }
 
         [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void PeekDecimalSpanRaw(this ref ReadContext context, int count, ref Span<decimal> destination) {
+        public static void PeekDecimalSpanRaw(this ref ReadContext context, int count, Span<decimal> destination) {
             int originalPosition = context.Position;
-            context.ReadDecimalSpanRaw(count, ref destination);
+            context.ReadDecimalSpanRaw(count, destination);
             context.Position = originalPosition;
         }
 
         [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ReadDecimalSpanRaw(this ref ReadContext context, int count, ref Span<decimal> destination) {
+        public static void ReadDecimalSpanRaw(this ref ReadContext context, int count, Span<decimal> destination) {
             Span<decimal> targetSpan = destination.Slice(0, count);
             Span<ulong> ulongs = MemoryMarshal.Cast<decimal, ulong>(targetSpan);
             context.ReadBitsRaw(ulongs.Length * BitHelper.ULongSize, ulongs);

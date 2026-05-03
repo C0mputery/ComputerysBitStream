@@ -129,8 +129,8 @@ internal static class RawTypeCollector {
                 return MatchesSignature(method, arrayOfTarget, new ParameterSpec(readContextType, RefKind.Ref), new ParameterSpec(intType, null));
             case BitStreamRawRole.PeekSpan:
             case BitStreamRawRole.ReadSpan:
-                expectedSignature = $"public static void MethodName(this ref ReadContext context, int count, ref Span<{typeName}> destination)";
-                return MatchesSignature(method, voidType, new ParameterSpec(readContextType, RefKind.Ref), new ParameterSpec(intType, null), new ParameterSpec(spanOfTarget, RefKind.Ref));
+                expectedSignature = $"public static void MethodName(this ref ReadContext context, int count, Span<{typeName}> destination)";
+                return MatchesSignature(method, voidType, new ParameterSpec(readContextType, RefKind.Ref), new ParameterSpec(intType, null), new ParameterSpec(spanOfTarget, null));
             default:
                 throw new ArgumentOutOfRangeException(nameof(role), role, null);
         }

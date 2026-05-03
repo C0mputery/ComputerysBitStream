@@ -55,7 +55,7 @@ namespace ComputerysBitStream {
         public static bool[] PeekBoolArrayRaw(this ref ReadContext context, int count) {
             bool[] result = new bool[count];
             Span<bool> span = result.AsSpan();
-            context.PeekBoolSpanRaw(count, ref span);
+            context.PeekBoolSpanRaw(count, span);
             return result;
         }
 
@@ -65,23 +65,23 @@ namespace ComputerysBitStream {
         public static bool[] ReadBoolArrayRaw(this ref ReadContext context, int count) {
             bool[] result = new bool[count];
             Span<bool> span = result.AsSpan();
-            context.ReadBoolSpanRaw(count, ref span);
+            context.ReadBoolSpanRaw(count, span);
             return result;
         }
     
         [BitStreamRawMethod(BitStreamRawRole.PeekSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void PeekBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> destination) {
+        public static void PeekBoolSpanRaw(this ref ReadContext context, int count, Span<bool> destination) {
             int originalPosition = context.Position;
-            context.ReadBoolSpanRaw(count, ref destination);
+            context.ReadBoolSpanRaw(count, destination);
             context.Position = originalPosition;
         }
 
         [BitStreamRawMethod(BitStreamRawRole.ReadSpan)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ReadBoolSpanRaw(this ref ReadContext context, int count, ref Span<bool> destination) {
+        public static void ReadBoolSpanRaw(this ref ReadContext context, int count, Span<bool> destination) {
             int processed = 0;
 
             while (processed + NumberOfValuesInUlong <= count) {

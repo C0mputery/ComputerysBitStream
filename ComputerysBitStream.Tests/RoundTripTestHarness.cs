@@ -24,9 +24,9 @@ public static class RoundTripTestHarness<T> {
 
         ReadContext readCtx = new(buffer, initialOffset);
         Span<T> peekValues = new T[values.Length];
-        peekSpan(readCtx, values.Length, ref peekValues);
+        peekSpan(readCtx, values.Length, peekValues);
         Span<T> readValues = new T[values.Length];
-        readSpan(readCtx, values.Length, ref readValues);
+        readSpan(readCtx, values.Length, readValues);
 
         Assert.Equal(values, peekValues.ToArray());
         Assert.Equal(values, readValues.ToArray());
@@ -41,9 +41,9 @@ public static class RoundTripTestHarness<T> {
 
         ReadContext readCtx = new(buffer, initialOffset);
         Span<T> peekValues = new T[values.Length];
-        peekSpan(readCtx, ref peekValues);
+        peekSpan(readCtx, peekValues);
         Span<T> readValues = new T[values.Length];
-        readSpan(readCtx, ref readValues);
+        readSpan(readCtx, readValues);
 
         Assert.Equal(values, peekValues.ToArray());
         Assert.Equal(values, readValues.ToArray());
@@ -84,9 +84,9 @@ public static class RoundTripTestHarness<T> {
         Assert.Equal(writeCtx.Position, readCtx.Position);
     }
     
-    public delegate void PeekSpanDelegate(ReadContext context, ref Span<T> destination);
-    public delegate void PeekSpanDelegateWithoutLength(ReadContext context, int count, ref Span<T> destination);
+    public delegate void PeekSpanDelegate(ReadContext context, Span<T> destination);
+    public delegate void PeekSpanDelegateWithoutLength(ReadContext context, int count, Span<T> destination);
 
-    public delegate void ReadSpanDelegate(ReadContext context, ref Span<T> destination);
-    public delegate void ReadSpanDelegateWithoutLength(ReadContext context, int count, ref Span<T> destination);
+    public delegate void ReadSpanDelegate(ReadContext context, Span<T> destination);
+    public delegate void ReadSpanDelegateWithoutLength(ReadContext context, int count, Span<T> destination);
 }
