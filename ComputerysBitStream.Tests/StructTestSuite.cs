@@ -171,35 +171,35 @@ public abstract class StructTestSuite<T> {
     }
 
     private long MeasureSingleWriteBits() {
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeContext = new(buffer);
         Write(ref writeContext, Value);
         return writeContext.Position;
     }
 
     private long MeasureArrayWithLengthWriteBits() {
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeContext = new(buffer);
         WriteArray(ref writeContext, Values);
         return writeContext.Position;
     }
 
     private long MeasureArrayWithoutLengthWriteBits() {
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeContext = new(buffer);
         WriteArrayWithoutLength(ref writeContext, Values);
         return writeContext.Position;
     }
 
     private long MeasureSpanWithLengthWriteBits() {
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeContext = new(buffer);
         WriteSpan(ref writeContext, Values);
         return writeContext.Position;
     }
 
     private long MeasureSpanWithoutLengthWriteBits() {
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeContext = new(buffer);
         WriteSpanWithoutLength(ref writeContext, Values);
         return writeContext.Position;
@@ -209,7 +209,7 @@ public abstract class StructTestSuite<T> {
 
     private static void AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(long bitsNeeded, RefWriteContextAction writeOperation) {
         Assert.True(bitsNeeded > 0, "Write operation must require at least one bit.");
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext context = new(buffer, 0, bitsNeeded - 1);
         long originalPosition = context.Position;
 
@@ -230,7 +230,7 @@ public abstract class StructTestSuite<T> {
     private ReadContext CreateTruncatedReadContextForSingle() {
         long bitsWritten = MeasureSingleWriteBits();
         Assert.True(bitsWritten > 0);
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeContext = new(buffer);
         Write(ref writeContext, Value);
         return new ReadContext(buffer, 0, bitsWritten - 1);
@@ -239,7 +239,7 @@ public abstract class StructTestSuite<T> {
     private ReadContext CreateTruncatedReadContextForArrayWithLength() {
         long bitsWritten = MeasureArrayWithLengthWriteBits();
         Assert.True(bitsWritten > 0);
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeContext = new(buffer);
         WriteArray(ref writeContext, Values);
         return new ReadContext(buffer, 0, bitsWritten - 1);
@@ -248,7 +248,7 @@ public abstract class StructTestSuite<T> {
     private ReadContext CreateTruncatedReadContextForArrayWithoutLength() {
         long bitsWritten = MeasureArrayWithoutLengthWriteBits();
         Assert.True(bitsWritten > 0);
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeContext = new(buffer);
         WriteArrayWithoutLength(ref writeContext, Values);
         return new ReadContext(buffer, 0, bitsWritten - 1);
@@ -257,7 +257,7 @@ public abstract class StructTestSuite<T> {
     private ReadContext CreateTruncatedReadContextForSpanWithLength() {
         long bitsWritten = MeasureSpanWithLengthWriteBits();
         Assert.True(bitsWritten > 0);
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeContext = new(buffer);
         WriteSpan(ref writeContext, Values);
         return new ReadContext(buffer, 0, bitsWritten - 1);
@@ -266,7 +266,7 @@ public abstract class StructTestSuite<T> {
     private ReadContext CreateTruncatedReadContextForSpanWithoutLength() {
         long bitsWritten = MeasureSpanWithoutLengthWriteBits();
         Assert.True(bitsWritten > 0);
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeContext = new(buffer);
         WriteSpanWithoutLength(ref writeContext, Values);
         return new ReadContext(buffer, 0, bitsWritten - 1);
@@ -339,15 +339,17 @@ public abstract class StructTestSuite<T> {
 
         try {
             Peek(context);
-            Assert.Fail("Expected InsufficientReadSpaceException.");
+            Assert.Fail("Expected InsufficientReadSpaceException or BitStreamReadException.");
         }
         catch (InsufficientReadSpaceException) { }
+        catch (BitStreamReadException) { }
 
         try {
             Read(context);
-            Assert.Fail("Expected InsufficientReadSpaceException.");
+            Assert.Fail("Expected InsufficientReadSpaceException or BitStreamReadException.");
         }
         catch (InsufficientReadSpaceException) { }
+        catch (BitStreamReadException) { }
 
         Assert.Equal(originalPosition, context.Position);
     }

@@ -6,7 +6,7 @@ public class ReadContextTests {
 
     [Fact]
     public void Constructor_WithBuffer_ShouldSetInitialState() {
-        ulong[] buffer = new ulong[3];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
 
         ReadContext context = new(buffer);
 
@@ -17,7 +17,7 @@ public class ReadContextTests {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void Constructor_WithPosition_ShouldSetPositionAndCapacity(int initialOffset) {
-        ulong[] buffer = new ulong[3];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
 
         ReadContext context = new(buffer, initialOffset);
 
@@ -28,7 +28,7 @@ public class ReadContextTests {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void Constructor_WithPositionAndCapacity_ShouldKeepProvidedValues(int initialOffset) {
-        ulong[] buffer = new ulong[3];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         int capacity = buffer.Length * BitHelper.ULongSize - 5;
 
         ReadContext context = new(buffer, initialOffset, capacity);
@@ -40,7 +40,7 @@ public class ReadContextTests {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void CapacityHelpers_ShouldReflectRemainingBits(int initialOffset) {
-        ulong[] buffer = new ulong[3];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         ReadContext context = new(buffer, initialOffset, 100);
 
         Assert.Equal(100 - initialOffset, context.GetRemainingCapacity());
@@ -81,7 +81,7 @@ public class ReadContextTests {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void PeekBitsPrimitive_ShouldReturnExpectedBitsWithoutAdvancing(int initialOffset) {
-        ulong[] buffer = CreatePatternBuffer(5);
+        ulong[] buffer = CreatePatternBuffer();
         ReadContext context = new(buffer, initialOffset);
 
         foreach (int count in ReadCounts) {
@@ -97,7 +97,7 @@ public class ReadContextTests {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void ReadBitsPrimitive_ShouldReturnExpectedBitsAndAdvance(int initialOffset) {
-        ulong[] buffer = CreatePatternBuffer(5);
+        ulong[] buffer = CreatePatternBuffer();
 
         foreach (int count in ReadCounts) {
             ReadContext context = new(buffer, initialOffset);
@@ -113,7 +113,7 @@ public class ReadContextTests {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void PeekBitsPrimitive_Span_ShouldFillDestinationWithoutAdvancing(int initialOffset) {
-        ulong[] buffer = CreatePatternBuffer(6);
+        ulong[] buffer = CreatePatternBuffer();
         const int count = 130;
         int expectedWords = (count + BitHelper.ULongSize - 1) / BitHelper.ULongSize;
 
@@ -134,7 +134,7 @@ public class ReadContextTests {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void ReadBitsPrimitive_Span_ShouldFillDestinationAndAdvance(int initialOffset) {
-        ulong[] buffer = CreatePatternBuffer(6);
+        ulong[] buffer = CreatePatternBuffer();
         const int count = 130;
         int expectedWords = (count + BitHelper.ULongSize - 1) / BitHelper.ULongSize;
 
@@ -154,8 +154,8 @@ public class ReadContextTests {
         Assert.Equal(initialOffset + count, context.Position);
     }
 
-    private static ulong[] CreatePatternBuffer(int length = 4) {
-        ulong[] buffer = new ulong[length];
+    private static ulong[] CreatePatternBuffer() {
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         const ulong seed = 0xF0E1D2C3B4A59687UL;
         const ulong stride = 0x9E3779B97F4A7C15UL;
 

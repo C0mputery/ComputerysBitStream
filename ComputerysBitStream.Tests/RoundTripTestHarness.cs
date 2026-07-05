@@ -7,7 +7,7 @@ public static class RoundTripTestHarness<T> {
 
     public static void AssertSingleValueRoundTrip(int initialOffset, T valueToWrite, WriteValueDelegate writeValue, Func<ReadContext, T> peekValue, Func<ReadContext, T> readValue, Action<T, T>? assertEqual = null) {
         Action<T, T> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeCtx = new(buffer, initialOffset);
 
         writeValue(ref writeCtx, valueToWrite);
@@ -22,7 +22,7 @@ public static class RoundTripTestHarness<T> {
 
     public static void AssertFixedLengthSpanRoundTrip(int initialOffset, T[] values, WriteSpanDelegate writeValues, PeekSpanDelegateWithoutLength peekSpan, ReadSpanDelegateWithoutLength readSpan, Action<T[], T[]>? assertEqual = null) {
         Action<T[], T[]> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeCtx = new(buffer, initialOffset);
 
         writeValues(ref writeCtx, values);
@@ -39,7 +39,7 @@ public static class RoundTripTestHarness<T> {
 
     public static void AssertSpanRoundTrip(int initialOffset, T[] values, WriteSpanDelegate writeValues, PeekSpanDelegate peekSpan, ReadSpanDelegate readSpan, Action<T[], T[]>? assertEqual = null) {
         Action<T[], T[]> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeCtx = new(buffer, initialOffset);
 
         writeValues(ref writeCtx, values);
@@ -56,7 +56,7 @@ public static class RoundTripTestHarness<T> {
 
     public static void AssertFixedLengthArrayRoundTrip(int initialOffset, T[] values, WriteArrayDelegate writeValues, Func<ReadContext, int, T[]> peekValues, Func<ReadContext, int, T[]> readValues, Action<T[], T[]>? assertEqual = null) {
         Action<T[], T[]> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeCtx = new(buffer, initialOffset);
 
         writeValues(ref writeCtx, values);
@@ -72,7 +72,7 @@ public static class RoundTripTestHarness<T> {
 
     public static void AssertArrayRoundTrip(int initialOffset, T[] values, WriteArrayDelegate writeValues, Func<ReadContext, T[]> peekValues, Func<ReadContext, T[]> readValues, Action<T[], T[]>? assertEqual = null) {
         Action<T[], T[]> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeCtx = new(buffer, initialOffset);
 
         writeValues(ref writeCtx, values);

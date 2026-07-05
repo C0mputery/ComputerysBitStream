@@ -6,7 +6,7 @@ public class WriteContextTests {
 
     [Fact]
     public void Constructor_WithBuffer_ShouldSetInitialState() {
-        ulong[] buffer = new ulong[3];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
 
         WriteContext context = new(buffer);
 
@@ -17,7 +17,7 @@ public class WriteContextTests {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void Constructor_WithPosition_ShouldSetPositionAndCapacity(int initialOffset) {
-        ulong[] buffer = new ulong[3];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
 
         WriteContext context = new(buffer, initialOffset);
 
@@ -28,7 +28,7 @@ public class WriteContextTests {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void Constructor_WithPositionAndCapacity_ShouldKeepProvidedValues(int initialOffset) {
-        ulong[] buffer = new ulong[3];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         int capacity = buffer.Length * BitHelper.ULongSize - 9;
 
         WriteContext context = new(buffer, initialOffset, capacity);
@@ -40,7 +40,7 @@ public class WriteContextTests {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteBitPrimitive_ShouldWriteExpectedBitAndAdvance(int initialOffset) {
-        ulong[] buffer = CreatePatternBuffer(4);
+        ulong[] buffer = CreatePatternBuffer();
         ulong[] expected = buffer.ToArray();
         bool value = (initialOffset & 1) == 0;
 
@@ -59,7 +59,7 @@ public class WriteContextTests {
         const ulong value = 0xFEDCBA9876543210UL;
 
         foreach (int count in WriteCounts) {
-            ulong[] buffer = CreatePatternBuffer(4);
+            ulong[] buffer = CreatePatternBuffer();
             ulong[] expected = buffer.ToArray();
             WriteContext context = new(buffer, initialOffset);
 
@@ -77,7 +77,7 @@ public class WriteContextTests {
         ulong[] source = [0x0123456789ABCDEFUL, 0xFEDCBA9876543210UL, 0x0F0F0F0F0F0F0F0FUL];
         const int count = 130;
 
-        ulong[] buffer = CreatePatternBuffer(6);
+        ulong[] buffer = CreatePatternBuffer();
         ulong[] expected = buffer.ToArray();
 
         WriteContext context = new(buffer, initialOffset);
@@ -202,8 +202,8 @@ public class WriteContextTests {
         Assert.Contains("Available bits: 2", captured.Message);
     }
 
-    private static ulong[] CreatePatternBuffer(int length = 4) {
-        ulong[] buffer = new ulong[length];
+    private static ulong[] CreatePatternBuffer() {
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         const ulong seed = 0xF0E1D2C3B4A59687UL;
         const ulong stride = 0x9E3779B97F4A7C15UL;
 

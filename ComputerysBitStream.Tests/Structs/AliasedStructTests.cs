@@ -151,7 +151,7 @@ public class AliasedIncludeExternalStructTests : StructTestSuite<AliasedIncludeE
         AliasedIncludeExternalStruct original = new() { Included = 42, Ignored = 100 };
         AliasedIncludeExternalStruct modified = new() { Included = 42, Ignored = 200 };
 
-        ulong[] buffer = new ulong[16];
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
         WriteContext writeCtx = new(buffer);
         writeCtx.WriteAliasedInc(original);
 
