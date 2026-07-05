@@ -114,9 +114,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     }
 
     private string EmitThrowIfTryReadFailedBody(string typeName, string tryExpression, string successBody) {
-        if (!IsQuantized) {
-            return GeneratedSourceSyntax.EmitThrowIfTryReadFailed(typeName, tryExpression, successBody);
-        }
+        if (!IsQuantized) { return GeneratedSourceSyntax.EmitThrowIfTryReadFailed(typeName, tryExpression, successBody); }
 
         return $$"""
                  {{BitCountValidationThrow}}

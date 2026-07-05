@@ -97,3 +97,11 @@ public struct AliasedIncludeExternalStruct {
 public static partial class AliasedIncludeExternalStructProxy {
     public static int Included;
 }
+
+[BitStreamStruct]
+public partial struct VariableLengthStruct {
+    [BitStreamSerializer(typeof(PrimitiveVariableLengthIntExtensions))]
+    public int A { get; set; }
+
+    public bool B { get; set; }
+}

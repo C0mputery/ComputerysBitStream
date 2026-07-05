@@ -13,12 +13,7 @@ internal readonly ref partial struct ExecutionContext {
         foreach (PrimitiveDefinition primitive in _primitivesArray) { usedAliases.Add(primitive.Alias); }
 
         SourceProductionContext context = _context;
-        StructResolver resolver = new(
-            diagnostic => context.ReportDiagnostic(diagnostic.ToDiagnostic()),
-            _globalSettings,
-            _localSettingsByInterface,
-            []
-        );
+        StructResolver resolver = new(diagnostic => context.ReportDiagnostic(diagnostic.ToDiagnostic()), _globalSettings, _localSettingsByInterface, []);
 
         ImmutableArray<PrimitiveDefinition>.Builder structPrimitives = ImmutableArray.CreateBuilder<PrimitiveDefinition>();
 
@@ -33,7 +28,7 @@ internal readonly ref partial struct ExecutionContext {
 
             context.AddSource(
                 GeneratedSourceSyntax.GetSourceHintFileName(structDefinition.Namespace, $"{structDefinition.Alias}StructPrimitiveExtensions"),
-                StructPrimitiveSourceEmitter.Emit(resolvedStruct)
+                StructPrimitiveSourceEmitter.EmitSource(resolvedStruct)
             );
 
             string metadataSource = StructMetadataSourceEmitter.Emit(resolvedStruct);
