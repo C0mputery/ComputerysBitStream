@@ -45,7 +45,7 @@ internal record SettingsDefinition(
     ValueTypeLocation? Location
 );
 
-internal record struct QuantizedRangeDefinition(
+internal record struct QuantizedDefinition(
     string MinExpression,
     string MaxExpression,
     int BitCount,
@@ -58,7 +58,8 @@ internal record struct StructMemberDefinition(
     bool IsProperty,
     bool IsInitOnly,
     string? SerializerExtensionClassFullyQualifiedName,
-    QuantizedRangeDefinition? QuantizedRange,
+    bool IsVariableLength,
+    QuantizedDefinition? Quantized,
     ValueTypeLocation? Location
 );
 
@@ -110,7 +111,7 @@ internal record struct ResolvedStructMember(
     string ReadExpression,
     MemberTryReadSpec TryRead,
     string SizeExpression,
-    QuantizedRangeDefinition? QuantizedRange
+    QuantizedDefinition? Quantized
 );
 
 internal record struct ResolvedStructDefinition(

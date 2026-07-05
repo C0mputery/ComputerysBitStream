@@ -155,7 +155,7 @@ internal static class Diagnostics {
         isEnabledByDefault: true
     );
 
-    public static readonly DiagnosticDescriptor InvalidQuantizedRangeBitCount = new(
+    public static readonly DiagnosticDescriptor InvalidQuantizedBitCount = new(
         id: "CBS017",
         title: "Invalid quantized bit count",
         messageFormat: "Bit count '{0}' on member '{1}' must be greater than 0",
@@ -164,10 +164,10 @@ internal static class Diagnostics {
         isEnabledByDefault: true
     );
 
-    public static readonly DiagnosticDescriptor InvalidQuantizedRangeMember = new(
+    public static readonly DiagnosticDescriptor InvalidQuantizedMember = new(
         id: "CBS018",
-        title: "Invalid quantized range member",
-        messageFormat: "Range member '{0}' on member '{1}' must refer to an accessible const or static readonly member",
+        title: "Invalid quantized member",
+        messageFormat: "Quantized member '{0}' on member '{1}' must refer to an accessible const or static readonly member",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -347,7 +347,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor QuantizedPrimitiveNotInSettings = new(
         id: "CBS038",
         title: "Quantized primitive not in settings",
-        messageFormat: "Member '{0}' uses [BitStreamStructQuantizedRange] but no Quantized serializer for type '{1}' is registered in settings. Register a Quantized primitive on your settings interface.",
+        messageFormat: "Member '{0}' uses [BitStreamStructQuantized] but no Quantized serializer for type '{1}' is registered in settings. Register a Quantized primitive on your settings interface.",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -380,10 +380,10 @@ internal static class Diagnostics {
         isEnabledByDefault: true
     );
 
-    public static readonly DiagnosticDescriptor ConflictingPrimitiveSerializationModes = new(
+    public static readonly DiagnosticDescriptor VariableLengthPrimitiveNotInSettings = new(
         id: "CBS042",
-        title: "Conflicting primitive serialization modes in settings",
-        messageFormat: "Type '{0}' has both a fixed-size serializer ('{1}') and a variable-length serializer ('{2}') in settings. Only one default serialization mode is allowed per type.",
+        title: "Variable-length primitive not in settings",
+        messageFormat: "Member '{0}' uses [BitStreamStructVariableLength] but no variable-length serializer for type '{1}' is registered in settings. Register a variable-length primitive on your settings interface.",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -392,7 +392,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor DefaultPrimitiveNotInSettings = new(
         id: "CBS043",
         title: "Default primitive not in settings",
-        messageFormat: "Member type '{0}' has no fixed-size or variable-length serializer registered in settings '{1}'. Register a matching primitive on your settings interface.",
+        messageFormat: "Member type '{0}' has no fixed-size serializer registered in settings '{1}'. Register a fixed-size primitive on your settings interface, or mark the member with [BitStreamStructVariableLength] and register a variable-length primitive.",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -400,8 +400,17 @@ internal static class Diagnostics {
 
     public static readonly DiagnosticDescriptor QuantizedPrimitiveRequiresAttribute = new(
         id: "CBS044",
-        title: "Quantized serializer requires [BitStreamStructQuantizedRange]",
-        messageFormat: "Member '{0}' of type '{1}' has a Quantized serializer in settings '{2}', but the member is missing [BitStreamStructQuantizedRange]. Add the attribute or register a fixed-size or variable-length serializer for this type.",
+        title: "Quantized serializer requires [BitStreamStructQuantized]",
+        messageFormat: "Member '{0}' of type '{1}' has a Quantized serializer in settings '{2}', but the member is missing [BitStreamStructQuantized]. Add the attribute or register a fixed-size serializer for this type.",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
+    public static readonly DiagnosticDescriptor ConflictingStructMemberSerializationAttributes = new(
+        id: "CBS045",
+        title: "Conflicting struct member serialization attributes",
+        messageFormat: "Member '{0}' cannot have both [BitStreamStructVariableLength] and [BitStreamStructQuantized]",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true

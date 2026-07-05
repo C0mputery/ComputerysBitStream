@@ -9,7 +9,8 @@ internal sealed class StructResolver {
     private readonly Action<DiagnosticValueType> _reportDiagnostic;
     private readonly SettingsDefinition _globalSettings;
     private readonly ImmutableDictionary<string, SettingsDefinition> _localSettingsByInterface;
-    private readonly Dictionary<string, PrimitiveDefinition> _primitivesByTargetType;
+    private readonly Dictionary<string, PrimitiveDefinition> _fixedPrimitivesByTargetType;
+    private readonly Dictionary<string, PrimitiveDefinition> _variablePrimitivesByTargetType;
     private readonly Dictionary<string, ResolvedStructDefinition?> _resolvedStructs = new();
     private readonly HashSet<string> _computingStructs = [];
 
@@ -20,7 +21,8 @@ internal sealed class StructResolver {
         _reportDiagnostic = reportDiagnostic;
         _globalSettings = globalSettings;
         _localSettingsByInterface = localSettingsByInterface;
-        _primitivesByTargetType = new Dictionary<string, PrimitiveDefinition>(StringComparer.Ordinal);
+        _fixedPrimitivesByTargetType = new Dictionary<string, PrimitiveDefinition>(StringComparer.Ordinal);
+        _variablePrimitivesByTargetType = new Dictionary<string, PrimitiveDefinition>(StringComparer.Ordinal);
 
         IndexPrimitives(globalSettings.Primitives);
         foreach (SettingsDefinition localSettings in localSettingsByInterface.Values) { IndexPrimitives(localSettings.Primitives); }
@@ -112,15 +114,15 @@ internal sealed class StructResolver {
             return TryCreatePrimitiveMember(member, serializerPrimitive, memberAccess, generatedNamespace, requiredUsings, out resolvedMember, out isVariableLength, out fixedBits);
         }
 
-        if (member.QuantizedRange is QuantizedRangeDefinition quantizedRange) {
+        if (member.Quantized is QuantizedDefinition quantized) {
             if (!TryFindPrimitiveByTargetType(effectiveSettings, memberType, PrimitiveSerializationMode.Quantized, out PrimitiveDefinition quantizedPrimitive)) {
-                _reportDiagnostic(new DiagnosticValueType(Diagnostics.QuantizedPrimitiveNotInSettings, member.Location ?? quantizedRange.Location, member.MemberName, memberType));
+                _reportDiagnostic(new DiagnosticValueType(Diagnostics.QuantizedPrimitiveNotInSettings, member.Location ?? quantized.Location, member.MemberName, memberType));
                 return false;
             }
 
-            string min = quantizedRange.MinExpression;
-            string max = quantizedRange.MaxExpression;
-            int bitCount = quantizedRange.BitCount;
+            string min = quantized.MinExpression;
+            string max = quantized.MaxExpression;
+            int bitCount = quantized.BitCount;
             string writeMethod = GetPrimitiveMethodName(quantizedPrimitive, BitStreamPrimitiveRole.Write);
             string readMethod = GetPrimitiveMethodName(quantizedPrimitive, BitStreamPrimitiveRole.Read);
             string extensionClass = QualifyPrimitiveExtension(quantizedPrimitive, generatedNamespace, requiredUsings);
@@ -136,7 +138,7 @@ internal sealed class StructResolver {
                 ReadExpression: readExpression,
                 TryRead: tryRead,
                 SizeExpression: bitCount.ToString(),
-                QuantizedRange: quantizedRange
+                Quantized: quantized
             );
             fixedBits = bitCount;
             return true;
@@ -175,7 +177,7 @@ internal sealed class StructResolver {
                 SizeExpression: nestedIsVariableLength
                     ? $"{nestedExtensionClass}.{nestedSize}({memberAccess})"
                     : (nested.FixedSize ?? 0).ToString(),
-                QuantizedRange: null
+                Quantized: null
             );
             isVariableLength = nestedIsVariableLength;
             fixedBits = isVariableLength ? 0 : (nested.FixedSize ?? 0);
@@ -212,15 +214,22 @@ internal sealed class StructResolver {
                 SizeExpression: isVariableLengthExternal
                     ? $"{externalExtensionClass}.{externalSize}({memberAccess})"
                     : externalStruct.Size.ToString(),
-                QuantizedRange: null
+                Quantized: null
             );
             isVariableLength = isVariableLengthExternal;
             fixedBits = isVariableLengthExternal ? 0 : externalStruct.Size;
             return true;
         }
 
-        if (TryFindPrimitiveByTargetType(effectiveSettings, memberType, out PrimitiveDefinition primitive)) {
+        PrimitiveSerializationMode primitiveMode = member.IsVariableLength ? PrimitiveSerializationMode.VariableLength : PrimitiveSerializationMode.FixedSize;
+
+        if (TryFindPrimitiveByTargetType(effectiveSettings, memberType, primitiveMode, out PrimitiveDefinition primitive)) {
             return TryCreatePrimitiveMember(member, primitive, memberAccess, generatedNamespace, requiredUsings, out resolvedMember, out isVariableLength, out fixedBits);
+        }
+
+        if (member.IsVariableLength) {
+            _reportDiagnostic(new DiagnosticValueType(Diagnostics.VariableLengthPrimitiveNotInSettings, member.Location, member.MemberName, memberType));
+            return false;
         }
 
         if (TryFindPrimitiveByTargetType(effectiveSettings, memberType, PrimitiveSerializationMode.Quantized, out _)) {
@@ -262,7 +271,7 @@ internal sealed class StructResolver {
             ReadExpression: readExpression,
             TryRead: tryRead,
             SizeExpression: isVariableLength ? $"{extensionClass}.{sizeMethod}({memberAccess})" : (primitive.FixedSize ?? 0).ToString(),
-            QuantizedRange: null
+            Quantized: null
         );
         return true;
     }
@@ -295,22 +304,7 @@ internal sealed class StructResolver {
         return namespaceName is null ? $"{nameof(ComputerysBitStream)}.{className}" : $"{namespaceName}.{className}";
     }
 
-    private bool TryFindPrimitiveByTargetType(SettingsDefinition settings, string targetTypeFqn, out PrimitiveDefinition primitive) {
-        foreach (KeyValuePair<string, PrimitiveDefinition> pair in settings.Primitives) {
-            PrimitiveDefinition candidate = pair.Value;
-            if (!IsFixedOrVariableLength(candidate.Mode)) { continue; }
-            if (string.Equals(candidate.TargetTypeFullyQualifiedName, targetTypeFqn, StringComparison.Ordinal)) {
-                primitive = candidate;
-                return true;
-            }
-        }
-
-        if (_primitivesByTargetType.TryGetValue(targetTypeFqn, out primitive)) { return true; }
-        primitive = default;
-        return false;
-    }
-
-    private static bool TryFindPrimitiveByTargetType(SettingsDefinition settings, string targetTypeFqn, PrimitiveSerializationMode mode, out PrimitiveDefinition primitive) {
+    private bool TryFindPrimitiveByTargetType(SettingsDefinition settings, string targetTypeFqn, PrimitiveSerializationMode mode, out PrimitiveDefinition primitive) {
         foreach (KeyValuePair<string, PrimitiveDefinition> pair in settings.Primitives) {
             PrimitiveDefinition candidate = pair.Value;
             if (candidate.Mode != mode) { continue; }
@@ -318,6 +312,12 @@ internal sealed class StructResolver {
                 primitive = candidate;
                 return true;
             }
+        }
+
+        if (IsFixedOrVariableLength(mode)) {
+            Dictionary<string, PrimitiveDefinition> fallbackIndex = mode == PrimitiveSerializationMode.VariableLength ? _variablePrimitivesByTargetType : _fixedPrimitivesByTargetType;
+
+            if (fallbackIndex.TryGetValue(targetTypeFqn, out primitive)) { return true; }
         }
 
         primitive = default;
@@ -380,7 +380,14 @@ internal sealed class StructResolver {
     }
 
     private void IndexPrimitive(in PrimitiveDefinition primitive) {
-        if (!string.IsNullOrEmpty(primitive.TargetTypeFullyQualifiedName) && IsFixedOrVariableLength(primitive.Mode)) { _primitivesByTargetType[primitive.TargetTypeFullyQualifiedName] = primitive; }
+        if (string.IsNullOrEmpty(primitive.TargetTypeFullyQualifiedName)) { return; }
+
+        if (primitive.Mode == PrimitiveSerializationMode.FixedSize) {
+            _fixedPrimitivesByTargetType[primitive.TargetTypeFullyQualifiedName] = primitive;
+        }
+        else if (primitive.Mode == PrimitiveSerializationMode.VariableLength) {
+            _variablePrimitivesByTargetType[primitive.TargetTypeFullyQualifiedName] = primitive;
+        }
     }
 
     private static bool IsFixedOrVariableLength(PrimitiveSerializationMode mode) { return mode is PrimitiveSerializationMode.FixedSize or PrimitiveSerializationMode.VariableLength; }

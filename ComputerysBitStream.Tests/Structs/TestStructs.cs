@@ -99,15 +99,38 @@ public static partial class AliasedIncludeExternalStructProxy {
 }
 
 [BitStreamSettings]
-[BitStreamSerializer(typeof(PrimitiveVariableLengthIntExtensions))]
-public interface IVariableLengthStructSettings { }
+public interface IVariableLengthStructSettings : IDefaultSettings { }
 
 [BitStreamStruct(typeof(IVariableLengthStructSettings))]
 public partial struct VariableLengthStruct {
-    [BitStreamSerializer(typeof(PrimitiveVariableLengthIntExtensions))]
+    [BitStreamStructVariableLength]
     public int A { get; set; }
 
     public bool B { get; set; }
+}
+
+[BitStreamSettings]
+public interface IMixedIntStructSettings : IDefaultSettings { }
+
+[BitStreamStruct(typeof(IMixedIntStructSettings))]
+public partial struct MixedIntStruct {
+    public int FixedValue { get; set; }
+
+    [BitStreamStructVariableLength]
+    public int VariableValue { get; set; }
+}
+
+[BitStreamSettings]
+public interface IMemberSerializerOverrideSettings : IDefaultSettings { }
+
+[BitStreamStruct(typeof(IMemberSerializerOverrideSettings))]
+public partial struct MemberSerializerOverrideStruct {
+    [BitStreamStructVariableLength]
+    public int VariableLengthValue { get; set; }
+
+    [BitStreamStructVariableLength]
+    [BitStreamSerializer(typeof(PrimitiveIntExtensions))]
+    public int FixedOverrideValue { get; set; }
 }
 
 [BitStreamStruct]
@@ -115,6 +138,6 @@ public partial struct QuantizedStruct {
     public const float Min = 0f;
     public const float Max = 100f;
 
-    [BitStreamStructQuantizedRange(nameof(Min), nameof(Max), 8)]
+    [BitStreamStructQuantized(nameof(Min), nameof(Max), 8)]
     public float Value { get; set; }
 }

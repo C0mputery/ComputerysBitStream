@@ -29,7 +29,8 @@ internal static class BitStreamMetadataNames {
     public static readonly string StructIgnore = typeof(BitStreamStructIgnoreAttribute).FullName!;
     public static readonly string ProxyStruct = typeof(BitStreamProxyStructAttribute).FullName!;
     public static readonly string StructMetadata = typeof(BitStreamStructMetadataAttribute).FullName!;
-    public static readonly string StructQuantizedRange = typeof(BitStreamStructQuantizedRangeAttribute).FullName!;
+    public static readonly string StructQuantized = typeof(BitStreamStructQuantizedAttribute).FullName!;
+    public static readonly string StructVariableLength = typeof(BitStreamStructVariableLengthAttribute).FullName!;
 
     public static readonly string Int32 = typeof(int).FullName!;
 

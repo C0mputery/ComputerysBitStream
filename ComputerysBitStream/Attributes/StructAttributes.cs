@@ -18,12 +18,15 @@ namespace ComputerysBitStream.Attributes {
     public sealed class BitStreamStructIgnoreAttribute : Attribute { }
 
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class BitStreamStructQuantizedRangeAttribute : Attribute {
-        public BitStreamStructQuantizedRangeAttribute(string minMember, string maxMember, int bitCount) { }
+    public sealed class BitStreamStructVariableLengthAttribute : Attribute { }
 
-        public BitStreamStructQuantizedRangeAttribute(Type source, string minMember, string maxMember, int bitCount) { }
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class BitStreamStructQuantizedAttribute : Attribute {
+        public BitStreamStructQuantizedAttribute(string minMember, string maxMember, int bitCount) { }
 
-        public BitStreamStructQuantizedRangeAttribute(Type minSource, string minMember, Type maxSource, string maxMember, int bitCount) { }
+        public BitStreamStructQuantizedAttribute(Type source, string minMember, string maxMember, int bitCount) { }
+
+        public BitStreamStructQuantizedAttribute(Type minSource, string minMember, Type maxSource, string maxMember, int bitCount) { }
     }
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]

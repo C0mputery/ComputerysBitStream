@@ -466,11 +466,17 @@ internal static class StructCollector {
             }
         }
 
-        QuantizedRangeDefinition? quantizedRange = null;
-        if (memberSymbol.TryGetAttribute(BitStreamMetadataNames.StructQuantizedRange, out AttributeData? rangeAttribute)) {
-            if (TryParseQuantizedRange(rangeAttribute, memberSymbol, diagnostics, out QuantizedRangeDefinition parsedRange)) {
-                quantizedRange = parsedRange;
+        QuantizedDefinition? quantized = null;
+        if (memberSymbol.TryGetAttribute(BitStreamMetadataNames.StructQuantized, out AttributeData? quantizedAttribute)) {
+            if (TryParseQuantized(quantizedAttribute, memberSymbol, diagnostics, out QuantizedDefinition parsedQuantized)) {
+                quantized = parsedQuantized;
             }
+        }
+
+        bool isVariableLength = memberSymbol.TryGetAttribute(BitStreamMetadataNames.StructVariableLength, out _);
+        if (isVariableLength && quantized is not null) {
+            diagnostics.Add(new DiagnosticValueType(Diagnostics.ConflictingStructMemberSerializationAttributes, memberSymbol.Locations.FirstOrDefault(), memberName));
+            isVariableLength = false;
         }
 
         return new StructMemberDefinition(
@@ -479,31 +485,32 @@ internal static class StructCollector {
             IsProperty: isProperty,
             IsInitOnly: isInitOnly,
             SerializerExtensionClassFullyQualifiedName: serializerExtensionClass,
-            QuantizedRange: quantizedRange,
+            IsVariableLength: isVariableLength,
+            Quantized: quantized,
             Location: memberSymbol.Locations.FirstOrDefault()
         );
     }
 
-    private static bool TryParseQuantizedRange(AttributeData attributeData, ISymbol memberSymbol, ImmutableArray<DiagnosticValueType>.Builder diagnostics, out QuantizedRangeDefinition rangeDefinition) {
-        rangeDefinition = default;
+    private static bool TryParseQuantized(AttributeData attributeData, ISymbol memberSymbol, ImmutableArray<DiagnosticValueType>.Builder diagnostics, out QuantizedDefinition quantizedDefinition) {
+        quantizedDefinition = default;
         Location? location = attributeData.GetLocation();
         ImmutableDictionary<string, TypedConstant> arguments = attributeData.GetConstructorArgumentsByName();
 
         if (!arguments.TryGetValue("minMember", out string? minMemberName) || !arguments.TryGetValue("maxMember", out string? maxMemberName) || !arguments.TryGetValue("bitCount", out int bitCount)) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedRangeMember, location, "unknown", memberSymbol.Name));
+            diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedMember, location, "unknown", memberSymbol.Name));
             return false;
         }
 
         ITypeSymbol? minSource;
         if (arguments.TryGetValue("minSource", out TypedConstant minSourceArgument)) {
             if (!minSourceArgument.TryGetValue(out minSource)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "minSource", "BitStreamStructQuantizedRange"));
+                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "minSource", "BitStreamStructQuantized"));
                 return false;
             }
         }
         else if (arguments.TryGetValue("source", out TypedConstant sourceArgument)) {
             if (!sourceArgument.TryGetValue(out minSource)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "source", "BitStreamStructQuantizedRange"));
+                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "source", "BitStreamStructQuantized"));
                 return false;
             }
         }
@@ -512,28 +519,28 @@ internal static class StructCollector {
         ITypeSymbol? maxSource;
         if (arguments.TryGetValue("maxSource", out TypedConstant maxSourceArgument)) {
             if (!maxSourceArgument.TryGetValue(out maxSource)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "maxSource", "BitStreamStructQuantizedRange"));
+                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "maxSource", "BitStreamStructQuantized"));
                 return false;
             }
         }
         else { maxSource = minSource; }
 
         if (bitCount <= 0) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedRangeBitCount, location, bitCount.ToString(), memberSymbol.Name));
+            diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedBitCount, location, bitCount.ToString(), memberSymbol.Name));
             return false;
         }
 
         if (!TryResolveRangeExpression(minSource, minMemberName, memberSymbol.Name, location, diagnostics, out string minExpression)) { return false; }
         if (!TryResolveRangeExpression(maxSource, maxMemberName, memberSymbol.Name, location, diagnostics, out string maxExpression)) { return false; }
 
-        rangeDefinition = new QuantizedRangeDefinition(minExpression, maxExpression, bitCount, location);
+        quantizedDefinition = new QuantizedDefinition(minExpression, maxExpression, bitCount, location);
         return true;
     }
 
     private static bool TryResolveRangeExpression(ITypeSymbol? sourceType, string memberName, string annotatedMemberName, Location? location, ImmutableArray<DiagnosticValueType>.Builder diagnostics, out string expression) {
         expression = string.Empty;
         if (sourceType is not INamedTypeSymbol namedType) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedRangeMember, location, memberName, annotatedMemberName));
+            diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedMember, location, memberName, annotatedMemberName));
             return false;
         }
 
@@ -553,7 +560,7 @@ internal static class StructCollector {
             return true;
         }
 
-        diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedRangeMember, location, memberName, annotatedMemberName));
+        diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedMember, location, memberName, annotatedMemberName));
         return false;
     }
 }
