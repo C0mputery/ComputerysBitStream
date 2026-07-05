@@ -1,5 +1,6 @@
 namespace ComputerysBitStream.Tests;
 
+[BitStreamPrimitiveContext]
 public class ReadContextTests {
     private static readonly int[] ReadCounts = [1, 2, 7, 8, 16, 31, 32, 63, 64];
 
@@ -51,13 +52,13 @@ public class ReadContextTests {
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void PeekBitRaw_ShouldReturnExpectedBitWithoutAdvancing(int initialOffset) {
+    public void PeekBitPrimitive_ShouldReturnExpectedBitWithoutAdvancing(int initialOffset) {
         ulong[] buffer = CreatePatternBuffer();
         ReadContext context = new(buffer, initialOffset);
 
         bool expected = ReadBit(buffer, initialOffset);
 
-        bool actual = context.PeekBitRaw();
+        bool actual = context.PeekBitPrimitive();
 
         Assert.Equal(expected, actual);
         Assert.Equal(initialOffset, context.Position);
@@ -65,13 +66,13 @@ public class ReadContextTests {
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void ReadBitRaw_ShouldReturnExpectedBitAndAdvance(int initialOffset) {
+    public void ReadBitPrimitive_ShouldReturnExpectedBitAndAdvance(int initialOffset) {
         ulong[] buffer = CreatePatternBuffer();
         ReadContext context = new(buffer, initialOffset);
 
         bool expected = ReadBit(buffer, initialOffset);
 
-        bool actual = context.ReadBitRaw();
+        bool actual = context.ReadBitPrimitive();
 
         Assert.Equal(expected, actual);
         Assert.Equal(initialOffset + 1, context.Position);
@@ -79,14 +80,14 @@ public class ReadContextTests {
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void PeekBitsRaw_ShouldReturnExpectedBitsWithoutAdvancing(int initialOffset) {
+    public void PeekBitsPrimitive_ShouldReturnExpectedBitsWithoutAdvancing(int initialOffset) {
         ulong[] buffer = CreatePatternBuffer(5);
         ReadContext context = new(buffer, initialOffset);
 
         foreach (int count in ReadCounts) {
             ulong expected = ReadBits(buffer, initialOffset, count) & MaskLowerBits(count);
 
-            ulong actual = context.PeekBitsRaw(count);
+            ulong actual = context.PeekBitsPrimitive(count);
 
             Assert.Equal(expected, actual);
             Assert.Equal(initialOffset, context.Position);
@@ -95,14 +96,14 @@ public class ReadContextTests {
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void ReadBitsRaw_ShouldReturnExpectedBitsAndAdvance(int initialOffset) {
+    public void ReadBitsPrimitive_ShouldReturnExpectedBitsAndAdvance(int initialOffset) {
         ulong[] buffer = CreatePatternBuffer(5);
 
         foreach (int count in ReadCounts) {
             ReadContext context = new(buffer, initialOffset);
             ulong expected = ReadBits(buffer, initialOffset, count) & MaskLowerBits(count);
 
-            ulong actual = context.ReadBitsRaw(count);
+            ulong actual = context.ReadBitsPrimitive(count);
 
             Assert.Equal(expected, actual);
             Assert.Equal(initialOffset + count, context.Position);
@@ -111,7 +112,7 @@ public class ReadContextTests {
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void PeekBitsRaw_Span_ShouldFillDestinationWithoutAdvancing(int initialOffset) {
+    public void PeekBitsPrimitive_Span_ShouldFillDestinationWithoutAdvancing(int initialOffset) {
         ulong[] buffer = CreatePatternBuffer(6);
         const int count = 130;
         int expectedWords = (count + BitHelper.ULongSize - 1) / BitHelper.ULongSize;
@@ -122,7 +123,7 @@ public class ReadContextTests {
 
         ulong[] expected = ReadBitsSpan(buffer, initialOffset, count);
 
-        context.PeekBitsRaw(count, destination);
+        context.PeekBitsPrimitive(count, destination);
 
         for (int i = 0; i < expectedWords; i++) { Assert.Equal(expected[i], destination[i]); }
 
@@ -132,7 +133,7 @@ public class ReadContextTests {
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void ReadBitsRaw_Span_ShouldFillDestinationAndAdvance(int initialOffset) {
+    public void ReadBitsPrimitive_Span_ShouldFillDestinationAndAdvance(int initialOffset) {
         ulong[] buffer = CreatePatternBuffer(6);
         const int count = 130;
         int expectedWords = (count + BitHelper.ULongSize - 1) / BitHelper.ULongSize;
@@ -143,7 +144,7 @@ public class ReadContextTests {
 
         ulong[] expected = ReadBitsSpan(buffer, initialOffset, count);
 
-        context.ReadBitsRaw(count, destination);
+        context.ReadBitsPrimitive(count, destination);
 
         for (int i = 0; i < expectedWords; i++) {
             Assert.Equal(expected[i], destination[i]);

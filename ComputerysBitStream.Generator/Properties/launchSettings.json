@@ -1,13 +1,13 @@
 {
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "Generators": {
+    "Core": {
       "commandName": "DebugRoslynComponent",
       "targetProject": "../ComputerysBitStream/ComputerysBitStream.csproj"
     },
-    "Generators (Tests)": {
+    "Extras": {
       "commandName": "DebugRoslynComponent",
-      "targetProject": "../ComputerysBitStream.Tests/ComputerysBitStream.Tests.csproj"
+      "targetProject": "../ComputerysBitStream.Extras\\ComputerysBitStream.Extras.csproj"
     }
   }
 }

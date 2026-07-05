@@ -1,99 +1,124 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-using ComputerysBitStream;
-using ComputerysBitStream.Generator;
-using Microsoft.CodeAnalysis;
+using ComputerysBitStream.Attributes;
+
+namespace ComputerysBitStream.Generator;
 
 internal readonly record struct AllCollectedData(
-    EquatableImmutableArray<SettingsData> GlobalSettings,
-    EquatableImmutableArray<SettingsData> Settings,
-    EquatableImmutableArray<RawData> RawTypes,
-    EquatableImmutableArray<StructData> Structs,
-    SettingsData FallbackGlobalSetting
+    EquatableImmutableArray<Collected<SettingsDefinition>> GlobalSettings,
+    EquatableImmutableArray<Collected<SettingsDefinition>> Settings,
+    EquatableImmutableArray<Collected<PrimitiveDefinition>> Primitives,
+    EquatableImmutableArray<Collected<StructDefinition>> Structs,
+    Collected<SettingsDefinition> FallbackGlobalSettings
 );
 
-internal record struct ParsedRawData(
-    string TargetTypeFullyQualifiedName,
-    string Alias,
-    int Size,
-    Dictionary<BitStreamRawRole, RawMethodData> Methods,
+internal record struct SettingsReference(
+    EquatableImmutableArray<string> LocalSettingsInterfaceFullyQualifiedNames,
+    SettingsDefinition? ExternalSettings,
     ValueTypeLocation? Location
 );
 
-internal record struct ParsedSettingsData(
-    string InterfaceFullyQualifiedName,
-    Dictionary<string, ParsedRawData> IncludedRawTypes,
-    Dictionary<string, StructData> IncludedLocalStructs,
-    Dictionary<string, ExternalStructData> IncludedExternalStructs,
-    ValueTypeLocation? Location
-);
-
-internal record struct RawData(
-    string TargetTypeFullyQualifiedName,
-    string Alias,
-    int Size,
-    EquatableImmutableArray<RawMethodData> Methods,
-    ValueTypeLocation? Location,
-    EquatableImmutableArray<DiagnosticData> Diagnostics = default
-);
-
-internal record struct RawMethodData(
-    BitStreamRawRole Role,
+internal record struct PrimitiveMethodDefinition(
     string MethodName,
+    bool IsValid
+);
+
+internal record struct PrimitiveDefinition(
+    string ExtensionClassFullyQualifiedName,
+    string TargetTypeFullyQualifiedName,
+    string? TargetTypeNamespace,
+    string TargetTypeEmitName,
+    string Alias,
+    string? Namespace,
+    PrimitiveSerializationMode Mode,
+    int? FixedSize,
+    int? MinBits,
+    int? MaxBits,
+    EquatableImmutableDictionary<BitStreamPrimitiveRole, PrimitiveMethodDefinition> Methods,
+    SettingsReference? Settings,
     ValueTypeLocation? Location
 );
 
-internal record struct SettingsData(
-    string InterfaceFullyQualifiedName,
-    EquatableImmutableArray<RawData> RawTypes,
-    EquatableImmutableArray<StructData> Structs,
-    EquatableImmutableArray<ExternalStructData> ExternalStructs,
-    ValueTypeLocation? Location,
-    EquatableImmutableArray<DiagnosticData> Diagnostics = default
+internal record SettingsDefinition(
+    EquatableImmutableArray<string> InterfaceFullyQualifiedNames,
+    EquatableImmutableDictionary<string, PrimitiveDefinition> Primitives,
+    EquatableImmutableDictionary<string, StructDefinition> Structs,
+    EquatableImmutableDictionary<string, ExternalStructDefinition> ExternalStructs,
+    ValueTypeLocation? Location
 );
 
+internal record struct QuantizedRangeDefinition(
+    string MinExpression,
+    string MaxExpression,
+    int BitCount,
+    ValueTypeLocation? Location
+);
 
-internal record struct StructMemberData(
+internal record struct StructMemberDefinition(
     string MemberName,
     string TypeFullyQualifiedFormat,
     bool IsProperty,
     bool IsInitOnly,
+    string? SerializerExtensionClassFullyQualifiedName,
+    QuantizedRangeDefinition? QuantizedRange,
     ValueTypeLocation? Location
 );
 
-internal record struct StructData(
+internal record struct StructDefinition(
     string TypeFullyQualifiedName,
     string Alias,
-    EquatableImmutableArray<StructMemberData> Members,
-    Accessibility Accessibility,
-    string? SettingsInterfaceFullyQualifiedName,
+    string? Namespace,
+    EquatableImmutableArray<StructMemberDefinition> Members,
     bool IsProxyClass,
     string DeclarationTypeFullyQualifiedName,
-    ValueTypeLocation? Location,
-    EquatableImmutableArray<DiagnosticData> Diagnostics = default
+    string DeclarationTypeEmitName,
+    SettingsReference? Settings,
+    ValueTypeLocation? Location
 );
 
-internal record struct ExternalStructData(
+internal record struct ExternalStructDefinition(
     string TypeFullyQualifiedName,
     string Alias,
-    bool FixedSize,
     int Size,
-    ValueTypeLocation? Location
+    string? ExtensionNamespace
+) {
+    public bool IsVariableLength => StructMetadataConstants.IsVariableLength(Size);
+}
+
+internal enum ResolvedStructMemberKind {
+    Primitive,
+    NestedStruct,
+    ExternalStruct,
+    Quantized
+}
+
+internal enum MemberTryReadKind {
+    TryReadOut,
+    PreflightThenRead
+}
+
+internal readonly record struct MemberTryReadSpec(
+    MemberTryReadKind Kind,
+    string? TryReadCall,
+    int FixedBits
 );
 
 internal record struct ResolvedStructMember(
     string MemberName,
     string TypeFullyQualifiedName,
-    string Alias,
-    int Size,
-    bool IsFixedSize
+    bool IsInitOnly,
+    ResolvedStructMemberKind Kind,
+    string WriteCall,
+    string ReadExpression,
+    MemberTryReadSpec TryRead,
+    string SizeExpression,
+    QuantizedRangeDefinition? QuantizedRange
 );
 
-internal record struct ParsedStructData(
-    string TypeFullyQualifiedName,
-    string Alias,
-    Accessibility Accessibility,
-    bool IsFixedSize,
-    int FixedSize,
-    ImmutableArray<ResolvedStructMember> Members
+internal record struct ResolvedStructDefinition(
+    StructDefinition Source,
+    PrimitiveSerializationMode Mode,
+    int? FixedSize,
+    EquatableImmutableArray<ResolvedStructMember> Members,
+    string PrimitiveExtensionClassFqn,
+    EquatableImmutableDictionary<BitStreamPrimitiveRole, PrimitiveMethodDefinition> Methods,
+    EquatableImmutableArray<string> RequiredUsings
 );

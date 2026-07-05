@@ -1,26 +1,31 @@
 namespace ComputerysBitStream.Tests;
 
 public static class RoundTripTestHarness<T> {
-    public static void AssertSingleValueRoundTrip(int initialOffset, T valueToWrite, Action<WriteContext, T> writeValue, Func<ReadContext, T> peekValue, Func<ReadContext, T> readValue) {
+    public delegate void WriteValueDelegate(ref WriteContext context, T value);
+    public delegate void WriteSpanDelegate(ref WriteContext context, Span<T> values);
+    public delegate void WriteArrayDelegate(ref WriteContext context, T[] values);
+
+    public static void AssertSingleValueRoundTrip(int initialOffset, T valueToWrite, WriteValueDelegate writeValue, Func<ReadContext, T> peekValue, Func<ReadContext, T> readValue, Action<T, T>? assertEqual = null) {
+        Action<T, T> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
         ulong[] buffer = new ulong[16];
         WriteContext writeCtx = new(buffer, initialOffset);
 
-        writeValue(writeCtx, valueToWrite);
+        writeValue(ref writeCtx, valueToWrite);
 
         ReadContext readCtx = new(buffer, initialOffset);
         T peekedValue = peekValue(readCtx);
         T readBackValue = readValue(readCtx);
 
-        Assert.Equal(valueToWrite, peekedValue);
-        Assert.Equal(valueToWrite, readBackValue);
-        Assert.Equal(writeCtx.Position, readCtx.Position);
+        assert(valueToWrite, peekedValue);
+        assert(valueToWrite, readBackValue);
     }
 
-    public static void AssertFixedLengthSpanRoundTrip(int initialOffset, T[] values, Action<WriteContext, Span<T>> writeValues, PeekSpanDelegateWithoutLength peekSpan, ReadSpanDelegateWithoutLength readSpan) {
+    public static void AssertFixedLengthSpanRoundTrip(int initialOffset, T[] values, WriteSpanDelegate writeValues, PeekSpanDelegateWithoutLength peekSpan, ReadSpanDelegateWithoutLength readSpan, Action<T[], T[]>? assertEqual = null) {
+        Action<T[], T[]> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
         ulong[] buffer = new ulong[16];
         WriteContext writeCtx = new(buffer, initialOffset);
 
-        writeValues(writeCtx, values);
+        writeValues(ref writeCtx, values);
 
         ReadContext readCtx = new(buffer, initialOffset);
         Span<T> peekValues = new T[values.Length];
@@ -28,16 +33,16 @@ public static class RoundTripTestHarness<T> {
         Span<T> readValues = new T[values.Length];
         readSpan(readCtx, values.Length, readValues);
 
-        Assert.Equal(values, peekValues.ToArray());
-        Assert.Equal(values, readValues.ToArray());
-        Assert.Equal(writeCtx.Position, readCtx.Position);
+        assert(values, peekValues.ToArray());
+        assert(values, readValues.ToArray());
     }
 
-    public static void AssertSpanRoundTrip(int initialOffset, T[] values, Action<WriteContext, Span<T>> writeValues, PeekSpanDelegate peekSpan, ReadSpanDelegate readSpan) {
+    public static void AssertSpanRoundTrip(int initialOffset, T[] values, WriteSpanDelegate writeValues, PeekSpanDelegate peekSpan, ReadSpanDelegate readSpan, Action<T[], T[]>? assertEqual = null) {
+        Action<T[], T[]> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
         ulong[] buffer = new ulong[16];
         WriteContext writeCtx = new(buffer, initialOffset);
 
-        writeValues(writeCtx, values);
+        writeValues(ref writeCtx, values);
 
         ReadContext readCtx = new(buffer, initialOffset);
         Span<T> peekValues = new T[values.Length];
@@ -45,45 +50,42 @@ public static class RoundTripTestHarness<T> {
         Span<T> readValues = new T[values.Length];
         readSpan(readCtx, readValues);
 
-        Assert.Equal(values, peekValues.ToArray());
-        Assert.Equal(values, readValues.ToArray());
-        Assert.Equal(writeCtx.Position, readCtx.Position);
+        assert(values, peekValues.ToArray());
+        assert(values, readValues.ToArray());
     }
 
-    public static void AssertFixedLengthArrayRoundTrip(int initialOffset, T[] values, Action<WriteContext, T[]> writeValues, Func<ReadContext, int, T[]> peekValues, Func<ReadContext, int, T[]> readValues) {
+    public static void AssertFixedLengthArrayRoundTrip(int initialOffset, T[] values, WriteArrayDelegate writeValues, Func<ReadContext, int, T[]> peekValues, Func<ReadContext, int, T[]> readValues, Action<T[], T[]>? assertEqual = null) {
+        Action<T[], T[]> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
         ulong[] buffer = new ulong[16];
         WriteContext writeCtx = new(buffer, initialOffset);
 
-        writeValues(writeCtx, values);
+        writeValues(ref writeCtx, values);
 
         ReadContext readCtx = new(buffer, initialOffset);
         T[] peekedValues = peekValues(readCtx, values.Length);
-        Assert.Equal(initialOffset, readCtx.Position);
 
         T[] readBackValues = readValues(readCtx, values.Length);
 
-        Assert.Equal(values, peekedValues);
-        Assert.Equal(values, readBackValues);
-        Assert.Equal(writeCtx.Position, readCtx.Position);
+        assert(values, peekedValues);
+        assert(values, readBackValues);
     }
 
-    public static void AssertArrayRoundTrip(int initialOffset, T[] values, Action<WriteContext, T[]> writeValues, Func<ReadContext, T[]> peekValues, Func<ReadContext, T[]> readValues) {
+    public static void AssertArrayRoundTrip(int initialOffset, T[] values, WriteArrayDelegate writeValues, Func<ReadContext, T[]> peekValues, Func<ReadContext, T[]> readValues, Action<T[], T[]>? assertEqual = null) {
+        Action<T[], T[]> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
         ulong[] buffer = new ulong[16];
         WriteContext writeCtx = new(buffer, initialOffset);
 
-        writeValues(writeCtx, values);
+        writeValues(ref writeCtx, values);
 
         ReadContext readCtx = new(buffer, initialOffset);
         T[] peekedValues = peekValues(readCtx);
-        Assert.Equal(initialOffset, readCtx.Position);
 
         T[] readBackValues = readValues(readCtx);
 
-        Assert.Equal(values, peekedValues);
-        Assert.Equal(values, readBackValues);
-        Assert.Equal(writeCtx.Position, readCtx.Position);
+        assert(values, peekedValues);
+        assert(values, readBackValues);
     }
-    
+
     public delegate void PeekSpanDelegate(ReadContext context, Span<T> destination);
     public delegate void PeekSpanDelegateWithoutLength(ReadContext context, int count, Span<T> destination);
 

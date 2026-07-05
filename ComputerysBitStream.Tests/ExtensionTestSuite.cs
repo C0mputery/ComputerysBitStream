@@ -1,81 +1,53 @@
 namespace ComputerysBitStream.Tests;
 
-public class BitOffsetRange : TheoryData<int> { 
-    public BitOffsetRange() { AddRange(Enumerable.Range(0, 16)); }
-}
-
 public abstract class ExtensionTestSuite<T> {
     protected abstract T Value { get; }
     protected abstract T[] Values { get; }
+    protected abstract TryReadOperationSet<T> TryOperations { get; }
 
-    protected abstract void WriteRaw(WriteContext context, T value);
-    protected abstract T PeekRaw(ReadContext context);
-    protected abstract T ReadRaw(ReadContext context);
-    protected abstract void Write(WriteContext context, T value);
+    protected abstract void WritePrimitive(ref WriteContext context, T value);
+    protected abstract T PeekPrimitive(ReadContext context);
+    protected abstract T ReadPrimitive(ReadContext context);
+    protected abstract void Write(ref WriteContext context, T value);
     protected abstract T Peek(ReadContext context);
     protected abstract T Read(ReadContext context);
-    protected abstract void WriteAlias(WriteContext context, T value);
-    protected abstract T PeekAlias(ReadContext context);
-    protected abstract T ReadAlias(ReadContext context);
     protected abstract T TryPeek(ReadContext context);
     protected abstract T TryRead(ReadContext context);
-    protected abstract T TryPeekAlias(ReadContext context);
-    protected abstract T TryReadAlias(ReadContext context);
 
-    protected abstract void WriteSpanRaw(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanRaw(ReadContext context, int count, Span<T> destination);
-    protected abstract void ReadSpanRaw(ReadContext context, int count, Span<T> destination);
-    protected abstract void WriteSpanWithoutLength(WriteContext context, Span<T> values);
+    protected abstract void WriteSpanPrimitive(ref WriteContext context, Span<T> values);
+    protected abstract void PeekSpanPrimitive(ReadContext context, int count, Span<T> destination);
+    protected abstract void ReadSpanPrimitive(ReadContext context, int count, Span<T> destination);
+    protected abstract void WriteSpanWithoutLength(ref WriteContext context, Span<T> values);
     protected abstract void PeekSpanWithoutLength(ReadContext context, int count, Span<T> destination);
     protected abstract void ReadSpanWithoutLength(ReadContext context, int count, Span<T> destination);
-    protected abstract void WriteSpanWithoutLengthAlias(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
-    protected abstract void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
     protected abstract void TryPeekSpanWithoutLength(ReadContext context, int count, Span<T> destination);
     protected abstract void TryReadSpanWithoutLength(ReadContext context, int count, Span<T> destination);
-    protected abstract void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
-    protected abstract void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<T> destination);
 
-    protected abstract void WriteArrayRaw(WriteContext context, T[] values);
-    protected abstract T[] PeekArrayRaw(ReadContext context, int count);
-    protected abstract T[] ReadArrayRaw(ReadContext context, int count);
-    protected abstract void WriteArrayWithoutLength(WriteContext context, T[] values);
+    protected abstract void WriteArrayPrimitive(ref WriteContext context, T[] values);
+    protected abstract T[] PeekArrayPrimitive(ReadContext context, int count);
+    protected abstract T[] ReadArrayPrimitive(ReadContext context, int count);
+    protected abstract void WriteArrayWithoutLength(ref WriteContext context, T[] values);
     protected abstract T[] PeekArrayWithoutLength(ReadContext context, int count);
     protected abstract T[] ReadArrayWithoutLength(ReadContext context, int count);
-    protected abstract void WriteArrayWithoutLengthAlias(WriteContext context, T[] values);
-    protected abstract T[] PeekArrayWithoutLengthAlias(ReadContext context, int count);
-    protected abstract T[] ReadArrayWithoutLengthAlias(ReadContext context, int count);
     protected abstract T[] TryPeekArrayWithoutLength(ReadContext context, int count);
     protected abstract T[] TryReadArrayWithoutLength(ReadContext context, int count);
-    protected abstract T[] TryPeekArrayWithoutLengthAlias(ReadContext context, int count);
-    protected abstract T[] TryReadArrayWithoutLengthAlias(ReadContext context, int count);
 
-    protected abstract void WriteArray(WriteContext context, T[] values);
+    protected abstract void WriteArray(ref WriteContext context, T[] values);
     protected abstract T[] PeekArrayWithLength(ReadContext context);
     protected abstract T[] ReadArrayWithLength(ReadContext context);
-    protected abstract void WriteArrayAlias(WriteContext context, T[] values);
-    protected abstract T[] PeekArrayWithLengthAlias(ReadContext context);
-    protected abstract T[] ReadArrayWithLengthAlias(ReadContext context);
     protected abstract T[] TryPeekArrayWithLength(ReadContext context);
     protected abstract T[] TryReadArrayWithLength(ReadContext context);
-    protected abstract T[] TryPeekArrayWithLengthAlias(ReadContext context);
-    protected abstract T[] TryReadArrayWithLengthAlias(ReadContext context);
 
-    protected abstract void WriteSpan(WriteContext context, Span<T> values);
+    protected abstract void WriteSpan(ref WriteContext context, Span<T> values);
     protected abstract void PeekSpanWithLength(ReadContext context, Span<T> destination);
     protected abstract void ReadSpanWithLength(ReadContext context, Span<T> destination);
-    protected abstract void WriteSpanAlias(WriteContext context, Span<T> values);
-    protected abstract void PeekSpanWithLengthAlias(ReadContext context, Span<T> destination);
-    protected abstract void ReadSpanWithLengthAlias(ReadContext context, Span<T> destination);
     protected abstract void TryPeekSpanWithLength(ReadContext context, Span<T> destination);
     protected abstract void TryReadSpanWithLength(ReadContext context, Span<T> destination);
-    protected abstract void TryPeekSpanWithLengthAlias(ReadContext context, Span<T> destination);
-    protected abstract void TryReadSpanWithLengthAlias(ReadContext context, Span<T> destination);
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void WriteAndReadSingle_Raw_ShouldReturnIdenticalValue(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, Value, WriteRaw, PeekRaw, ReadRaw);
+    public void WriteAndReadSingle_Primitive_ShouldReturnIdenticalValue(int initialOffset) {
+        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, Value, WritePrimitive, PeekPrimitive, ReadPrimitive);
     }
 
     [Theory]
@@ -87,7 +59,7 @@ public abstract class ExtensionTestSuite<T> {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSingle_Alias_ShouldReturnIdenticalValue(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, Value, WriteAlias, PeekAlias, ReadAlias);
+        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, Value, Write, Peek, Read);
     }
 
     [Theory]
@@ -99,13 +71,13 @@ public abstract class ExtensionTestSuite<T> {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSingle_TryAlias_ShouldReturnIdenticalValue(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, Value, Write, TryPeekAlias, TryReadAlias);
+        RoundTripTestHarness<T>.AssertSingleValueRoundTrip(initialOffset, Value, Write, TryPeek, TryRead);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void WriteAndReadSpanWithoutLength_Raw_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, Values, WriteSpanRaw, PeekSpanRaw, ReadSpanRaw);
+    public void WriteAndReadSpanWithoutLength_Primitive_ShouldReturnIdenticalSpan(int initialOffset) {
+        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, Values, WriteSpanPrimitive, PeekSpanPrimitive, ReadSpanPrimitive);
     }
 
     [Theory]
@@ -117,7 +89,7 @@ public abstract class ExtensionTestSuite<T> {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSpanWithoutLength_Alias_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, Values, WriteSpanWithoutLengthAlias, PeekSpanWithoutLengthAlias, ReadSpanWithoutLengthAlias);
+        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, Values, WriteSpanWithoutLength, PeekSpanWithoutLength, ReadSpanWithoutLength);
     }
 
     [Theory]
@@ -129,13 +101,13 @@ public abstract class ExtensionTestSuite<T> {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadSpanWithoutLength_TryAlias_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, Values, WriteSpanWithoutLength, TryPeekSpanWithoutLengthAlias, TryReadSpanWithoutLengthAlias);
+        RoundTripTestHarness<T>.AssertFixedLengthSpanRoundTrip(initialOffset, Values, WriteSpanWithoutLength, TryPeekSpanWithoutLength, TryReadSpanWithoutLength);
     }
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void WriteAndReadArrayWithoutLength_Raw_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, Values, WriteArrayRaw, PeekArrayRaw, ReadArrayRaw);
+    public void WriteAndReadArrayWithoutLength_Primitive_ShouldReturnIdenticalArray(int initialOffset) {
+        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, Values, WriteArrayPrimitive, PeekArrayPrimitive, ReadArrayPrimitive);
     }
 
     [Theory]
@@ -147,7 +119,7 @@ public abstract class ExtensionTestSuite<T> {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArrayWithoutLength_Alias_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, Values, WriteArrayWithoutLengthAlias, PeekArrayWithoutLengthAlias, ReadArrayWithoutLengthAlias);
+        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, Values, WriteArrayWithoutLength, PeekArrayWithoutLength, ReadArrayWithoutLength);
     }
 
     [Theory]
@@ -159,7 +131,7 @@ public abstract class ExtensionTestSuite<T> {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArrayWithoutLength_TryAlias_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, Values, WriteArrayWithoutLength, TryPeekArrayWithoutLengthAlias, TryReadArrayWithoutLengthAlias);
+        RoundTripTestHarness<T>.AssertFixedLengthArrayRoundTrip(initialOffset, Values, WriteArrayWithoutLength, TryPeekArrayWithoutLength, TryReadArrayWithoutLength);
     }
 
     [Theory]
@@ -171,7 +143,7 @@ public abstract class ExtensionTestSuite<T> {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndRead_Alias_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, Values, WriteSpanAlias, PeekSpanWithLengthAlias, ReadSpanWithLengthAlias);
+        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, Values, WriteSpan, PeekSpanWithLength, ReadSpanWithLength);
     }
 
     [Theory]
@@ -183,7 +155,7 @@ public abstract class ExtensionTestSuite<T> {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndRead_TryAlias_ShouldReturnIdenticalSpan(int initialOffset) {
-        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, Values, WriteSpan, TryPeekSpanWithLengthAlias, TryReadSpanWithLengthAlias);
+        RoundTripTestHarness<T>.AssertSpanRoundTrip(initialOffset, Values, WriteSpan, TryPeekSpanWithLength, TryReadSpanWithLength);
     }
 
     [Theory]
@@ -195,7 +167,7 @@ public abstract class ExtensionTestSuite<T> {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArray_Alias_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, Values, WriteArrayAlias, PeekArrayWithLengthAlias, ReadArrayWithLengthAlias);
+        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, Values, WriteArray, PeekArrayWithLength, ReadArrayWithLength);
     }
 
     [Theory]
@@ -207,147 +179,274 @@ public abstract class ExtensionTestSuite<T> {
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
     public void WriteAndReadArray_TryAlias_ShouldReturnIdenticalArray(int initialOffset) {
-        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, Values, WriteArray, TryPeekArrayWithLengthAlias, TryReadArrayWithLengthAlias);
+        RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, Values, WriteArray, TryPeekArrayWithLength, TryReadArrayWithLength);
     }
 
-    private static int MeasureBitsNeeded(Action<WriteContext> writeOperation) {
-        ulong[] probeBuffer = new ulong[16];
-        WriteContext probeContext = new(probeBuffer);
-        writeOperation(probeContext);
-        return probeContext.Position;
-    }
-
-    private static void AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(int bitsNeeded, Action<WriteContext> writeOperation) {
-        ulong[] buffer = new ulong[16];
-        WriteContext context = new(buffer, 0, bitsNeeded - 1);
-        int originalPosition = context.Position;
-
-        try {
-            writeOperation(context);
-            Assert.Fail("Expected an InsufficientWriteSpaceException.");
-        }
-        catch (InsufficientWriteSpaceException) { }
-
-        Assert.Equal(originalPosition, context.Position);
-    }
-
-    private void AssertSingleWriteOutOfBoundsThrowsAndDoesNotAdvance(Action<WriteContext, T> writeOperation) {
-        int bitsNeeded = MeasureBitsNeeded(context => writeOperation(context, Value));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(bitsNeeded, context => writeOperation(context, Value));
-    }
-
-    private ReadContext CreateTruncatedReadContext(Action<WriteContext> writeOperation) {
+    private long MeasureSingleWriteBits() {
         ulong[] buffer = new ulong[16];
         WriteContext writeContext = new(buffer);
-        writeOperation(writeContext);
-        return new ReadContext(buffer, 0, writeContext.Position - 1);
+        Write(ref writeContext, Value);
+        return writeContext.Position;
     }
 
-    private static void AssertReadArrayOutOfBoundsAndPositionUnchanged(ReadContext context, params Func<ReadContext, T[]>[] operations) {
-        int originalPosition = context.Position;
+    private long MeasureArrayWithLengthWriteBits() {
+        ulong[] buffer = new ulong[16];
+        WriteContext writeContext = new(buffer);
+        WriteArray(ref writeContext, Values);
+        return writeContext.Position;
+    }
 
-        foreach (Func<ReadContext, T[]> operation in operations) { Assert.Empty(operation(context)); }
+    private long MeasureArrayWithoutLengthWriteBits() {
+        ulong[] buffer = new ulong[16];
+        WriteContext writeContext = new(buffer);
+        WriteArrayWithoutLength(ref writeContext, Values);
+        return writeContext.Position;
+    }
+
+    private long MeasureSpanWithLengthWriteBits() {
+        ulong[] buffer = new ulong[16];
+        WriteContext writeContext = new(buffer);
+        WriteSpan(ref writeContext, Values);
+        return writeContext.Position;
+    }
+
+    private long MeasureSpanWithoutLengthWriteBits() {
+        ulong[] buffer = new ulong[16];
+        WriteContext writeContext = new(buffer);
+        WriteSpanWithoutLength(ref writeContext, Values);
+        return writeContext.Position;
+    }
+
+    private delegate void RefWriteContextAction(ref WriteContext context);
+
+    private static void AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(long bitsNeeded, RefWriteContextAction writeOperation) {
+        Assert.True(bitsNeeded > 0, "Write operation must require at least one bit.");
+        ulong[] buffer = new ulong[16];
+        WriteContext context = new(buffer, 0, bitsNeeded - 1);
+        long originalPosition = context.Position;
+
+        try {
+            writeOperation(ref context);
+            Assert.Fail("Expected an InsufficientWriteCapacityException.");
+        }
+        catch (InsufficientWriteCapacityException) { }
 
         Assert.Equal(originalPosition, context.Position);
     }
 
-    private static void AssertReadArrayOutOfBoundsAndPositionUnchanged(ReadContext context, int count, params Func<ReadContext, int, T[]>[] operations) {
-        int originalPosition = context.Position;
+    private void AssertSingleWriteOutOfBoundsThrowsAndDoesNotAdvance() {
+        long bitsNeeded = MeasureSingleWriteBits();
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(bitsNeeded, (ref WriteContext context) => Write(ref context, Value));
+    }
 
-        foreach (Func<ReadContext, int, T[]> operation in operations) { Assert.Empty(operation(context, count)); }
+    private ReadContext CreateTruncatedReadContextForSingle() {
+        long bitsWritten = MeasureSingleWriteBits();
+        Assert.True(bitsWritten > 0);
+        ulong[] buffer = new ulong[16];
+        WriteContext writeContext = new(buffer);
+        Write(ref writeContext, Value);
+        return new ReadContext(buffer, 0, bitsWritten - 1);
+    }
+
+    private ReadContext CreateTruncatedReadContextForArrayWithLength() {
+        long bitsWritten = MeasureArrayWithLengthWriteBits();
+        Assert.True(bitsWritten > 0);
+        ulong[] buffer = new ulong[16];
+        WriteContext writeContext = new(buffer);
+        WriteArray(ref writeContext, Values);
+        return new ReadContext(buffer, 0, bitsWritten - 1);
+    }
+
+    private ReadContext CreateTruncatedReadContextForArrayWithoutLength() {
+        long bitsWritten = MeasureArrayWithoutLengthWriteBits();
+        Assert.True(bitsWritten > 0);
+        ulong[] buffer = new ulong[16];
+        WriteContext writeContext = new(buffer);
+        WriteArrayWithoutLength(ref writeContext, Values);
+        return new ReadContext(buffer, 0, bitsWritten - 1);
+    }
+
+    private ReadContext CreateTruncatedReadContextForSpanWithLength() {
+        long bitsWritten = MeasureSpanWithLengthWriteBits();
+        Assert.True(bitsWritten > 0);
+        ulong[] buffer = new ulong[16];
+        WriteContext writeContext = new(buffer);
+        WriteSpan(ref writeContext, Values);
+        return new ReadContext(buffer, 0, bitsWritten - 1);
+    }
+
+    private ReadContext CreateTruncatedReadContextForSpanWithoutLength() {
+        long bitsWritten = MeasureSpanWithoutLengthWriteBits();
+        Assert.True(bitsWritten > 0);
+        ulong[] buffer = new ulong[16];
+        WriteContext writeContext = new(buffer);
+        WriteSpanWithoutLength(ref writeContext, Values);
+        return new ReadContext(buffer, 0, bitsWritten - 1);
+    }
+
+    private static void AssertReadArrayOutOfBoundsThrows(ReadContext context, params Func<ReadContext, T[]>[] operations) {
+        long originalPosition = context.Position;
+
+        foreach (Func<ReadContext, T[]> operation in operations) {
+            try {
+                operation(context);
+                Assert.Fail("Expected BitStreamReadException.");
+            }
+            catch (BitStreamReadException) { }
+        }
 
         Assert.Equal(originalPosition, context.Position);
     }
 
-    private static void AssertReadSpanOutOfBoundsAndPositionUnchanged(ReadContext context, T[] initialValues, params SpanReadOperation[] operations) {
-        int originalPosition = context.Position;
-        T[] expected = initialValues.ToArray();
+    private static void AssertReadArrayOutOfBoundsThrows(ReadContext context, int count, params Func<ReadContext, int, T[]>[] operations) {
+        long originalPosition = context.Position;
+
+        foreach (Func<ReadContext, int, T[]> operation in operations) {
+            try {
+                operation(context, count);
+                Assert.Fail("Expected BitStreamReadException.");
+            }
+            catch (BitStreamReadException) { }
+        }
+
+        Assert.Equal(originalPosition, context.Position);
+    }
+
+    private static void AssertReadSpanOutOfBoundsThrows(ReadContext context, T[] initialValues, params SpanReadOperation[] operations) {
+        long originalPosition = context.Position;
         Span<T> destination = initialValues.ToArray();
 
-        foreach (SpanReadOperation operation in operations) { operation(context, destination); }
+        foreach (SpanReadOperation operation in operations) {
+            try {
+                operation(context, destination);
+                Assert.Fail("Expected BitStreamReadException.");
+            }
+            catch (BitStreamReadException) { }
+        }
 
-        Assert.Equal(expected, destination.ToArray());
         Assert.Equal(originalPosition, context.Position);
     }
 
-    private static void AssertReadSpanOutOfBoundsAndPositionUnchanged(ReadContext context, T[] initialValues, int count, params FixedLengthSpanReadOperation[] operations) {
-        int originalPosition = context.Position;
-        T[] expected = initialValues.ToArray();
+    private static void AssertReadSpanOutOfBoundsThrows(ReadContext context, T[] initialValues, int count, params FixedLengthSpanReadOperation[] operations) {
+        long originalPosition = context.Position;
         Span<T> destination = initialValues.ToArray();
 
-        foreach (FixedLengthSpanReadOperation operation in operations) { operation(context, count, destination); }
+        foreach (FixedLengthSpanReadOperation operation in operations) {
+            try {
+                operation(context, count, destination);
+                Assert.Fail("Expected BitStreamReadException.");
+            }
+            catch (BitStreamReadException) { }
+        }
 
-        Assert.Equal(expected, destination.ToArray());
         Assert.Equal(originalPosition, context.Position);
     }
 
     [Fact]
     public void WriteSingle_WhenOutOfBounds_ShouldThrow() {
-        AssertSingleWriteOutOfBoundsThrowsAndDoesNotAdvance(Write);
+        AssertSingleWriteOutOfBoundsThrowsAndDoesNotAdvance();
     }
 
     [Fact]
     public void WriteSingleAlias_WhenOutOfBounds_ShouldThrow() {
-        AssertSingleWriteOutOfBoundsThrowsAndDoesNotAdvance(WriteAlias);
+        AssertSingleWriteOutOfBoundsThrowsAndDoesNotAdvance();
     }
 
     [Fact]
-    public void ReadSingle_WhenOutOfBounds_ShouldReturnDefaultAndNotAdvance() {
-        ReadContext context = CreateTruncatedReadContext(writeContext => Write(writeContext, Value));
-        int originalPosition = context.Position;
+    public void ReadSingle_WhenOutOfBounds_ShouldThrowAndNotAdvance() {
+        ReadContext context = CreateTruncatedReadContextForSingle();
+        long originalPosition = context.Position;
 
-        Assert.Equal(default, Peek(context));
-        Assert.Equal(default, Read(context));
-        Assert.Equal(default, PeekAlias(context));
-        Assert.Equal(default, ReadAlias(context));
+        try {
+            Peek(context);
+            Assert.Fail("Expected InsufficientReadSpaceException.");
+        }
+        catch (InsufficientReadSpaceException) { }
+
+        try {
+            Read(context);
+            Assert.Fail("Expected InsufficientReadSpaceException.");
+        }
+        catch (InsufficientReadSpaceException) { }
+
         Assert.Equal(originalPosition, context.Position);
     }
 
     [Fact]
+    public void TryReadSingle_WhenOutOfBounds_ShouldReturnFalseAndNotAdvance() {
+        ReadContext context = CreateTruncatedReadContextForSingle();
+        TryReadOutOfBoundsAssertions<T>.AssertSingleFailsWithoutAdvancing(context, TryOperations);
+    }
+
+    [Fact]
     public void WriteSpanAndArray_WhenOutOfBounds_ShouldThrow() {
-        int spanWithoutLengthBits = MeasureBitsNeeded(context => WriteSpanWithoutLength(context, Values));
-        int spanWithLengthBits = MeasureBitsNeeded(context => WriteSpan(context, Values));
-        int arrayWithoutLengthBits = MeasureBitsNeeded(context => WriteArrayWithoutLength(context, Values));
-        int arrayWithLengthBits = MeasureBitsNeeded(context => WriteArray(context, Values));
+        long spanWithoutLengthBits = MeasureSpanWithoutLengthWriteBits();
+        long spanWithLengthBits = MeasureSpanWithLengthWriteBits();
+        long arrayWithoutLengthBits = MeasureArrayWithoutLengthWriteBits();
+        long arrayWithLengthBits = MeasureArrayWithLengthWriteBits();
 
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithoutLengthBits, context => WriteSpanWithoutLength(context, Values));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithoutLengthBits, context => WriteSpanWithoutLengthAlias(context, Values));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithLengthBits, context => WriteSpan(context, Values));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithLengthBits, context => WriteSpanAlias(context, Values));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithoutLengthBits, context => WriteArrayWithoutLength(context, Values));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithoutLengthBits, context => WriteArrayWithoutLengthAlias(context, Values));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithLengthBits, context => WriteArray(context, Values));
-        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithLengthBits, context => WriteArrayAlias(context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithoutLengthBits, (ref WriteContext context) => WriteSpanWithoutLength(ref context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithoutLengthBits, (ref WriteContext context) => WriteSpanWithoutLength(ref context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithLengthBits, (ref WriteContext context) => WriteSpan(ref context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(spanWithLengthBits, (ref WriteContext context) => WriteSpan(ref context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithoutLengthBits, (ref WriteContext context) => WriteArrayWithoutLength(ref context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithoutLengthBits, (ref WriteContext context) => WriteArrayWithoutLength(ref context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithLengthBits, (ref WriteContext context) => WriteArray(ref context, Values));
+        AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(arrayWithLengthBits, (ref WriteContext context) => WriteArray(ref context, Values));
     }
 
     [Fact]
-    public void ReadArray_WhenOutOfBounds_ShouldReturnEmptyAndNotAdvance() {
-        ReadContext context = CreateTruncatedReadContext(writeContext => WriteArray(writeContext, Values));
+    public void ReadArray_WhenOutOfBounds_ShouldThrowAndNotAdvance() {
+        ReadContext context = CreateTruncatedReadContextForArrayWithLength();
 
-        AssertReadArrayOutOfBoundsAndPositionUnchanged(context, PeekArrayWithLength, ReadArrayWithLength, PeekArrayWithLengthAlias, ReadArrayWithLengthAlias);
+        AssertReadArrayOutOfBoundsThrows(context, PeekArrayWithLength, ReadArrayWithLength, PeekArrayWithLength, ReadArrayWithLength);
     }
 
     [Fact]
-    public void ReadFixedLengthArray_WhenOutOfBounds_ShouldReturnEmptyAndNotAdvance() {
-        ReadContext context = CreateTruncatedReadContext(writeContext => WriteArrayWithoutLength(writeContext, Values));
+    public void TryReadArray_WhenOutOfBounds_ShouldReturnFalseAndNotAdvance() {
+        ReadContext context = CreateTruncatedReadContextForArrayWithLength();
+        TryReadOutOfBoundsAssertions<T>.AssertArrayWithLengthFailsWithoutAdvancing(context, TryOperations);
+    }
+
+    [Fact]
+    public void ReadFixedLengthArray_WhenOutOfBounds_ShouldThrowAndNotAdvance() {
+        ReadContext context = CreateTruncatedReadContextForArrayWithoutLength();
         int count = Values.Length;
 
-        AssertReadArrayOutOfBoundsAndPositionUnchanged(context, count, PeekArrayWithoutLength, ReadArrayWithoutLength, PeekArrayWithoutLengthAlias, ReadArrayWithoutLengthAlias);
+        AssertReadArrayOutOfBoundsThrows(context, count, PeekArrayWithoutLength, ReadArrayWithoutLength, PeekArrayWithoutLength, ReadArrayWithoutLength);
     }
 
     [Fact]
-    public void ReadSpan_WhenOutOfBounds_ShouldLeaveDestinationUnchangedAndNotAdvance() {
-        ReadContext context = CreateTruncatedReadContext(writeContext => WriteSpan(writeContext, Values));
-
-        AssertReadSpanOutOfBoundsAndPositionUnchanged(context, Values, PeekSpanWithLength, ReadSpanWithLength, PeekSpanWithLengthAlias, ReadSpanWithLengthAlias);
+    public void TryReadFixedLengthArray_WhenOutOfBounds_ShouldReturnFalseAndNotAdvance() {
+        ReadContext context = CreateTruncatedReadContextForArrayWithoutLength();
+        TryReadOutOfBoundsAssertions<T>.AssertFixedLengthArrayFailsWithoutAdvancing(context, Values.Length, TryOperations);
     }
 
     [Fact]
-    public void ReadFixedLengthSpan_WhenOutOfBounds_ShouldLeaveDestinationUnchangedAndNotAdvance() {
-        ReadContext context = CreateTruncatedReadContext(writeContext => WriteSpanWithoutLength(writeContext, Values));
+    public void ReadSpan_WhenOutOfBounds_ShouldThrowAndNotAdvance() {
+        ReadContext context = CreateTruncatedReadContextForSpanWithLength();
+
+        AssertReadSpanOutOfBoundsThrows(context, Values, PeekSpanWithLength, ReadSpanWithLength, PeekSpanWithLength, ReadSpanWithLength);
+    }
+
+    [Fact]
+    public void TryReadSpan_WhenOutOfBounds_ShouldReturnFalseAndNotAdvance() {
+        ReadContext context = CreateTruncatedReadContextForSpanWithLength();
+        TryReadOutOfBoundsAssertions<T>.AssertSpanWithLengthFailsWithoutAdvancing(context, Values, TryOperations);
+    }
+
+    [Fact]
+    public void ReadFixedLengthSpan_WhenOutOfBounds_ShouldThrowAndNotAdvance() {
+        ReadContext context = CreateTruncatedReadContextForSpanWithoutLength();
         int count = Values.Length;
 
-        AssertReadSpanOutOfBoundsAndPositionUnchanged(context, Values, count, PeekSpanWithoutLength, ReadSpanWithoutLength, PeekSpanWithoutLengthAlias, ReadSpanWithoutLengthAlias);
+        AssertReadSpanOutOfBoundsThrows(context, Values, count, PeekSpanWithoutLength, ReadSpanWithoutLength, PeekSpanWithoutLength, ReadSpanWithoutLength);
+    }
+
+    [Fact]
+    public void TryReadFixedLengthSpan_WhenOutOfBounds_ShouldReturnFalseAndNotAdvance() {
+        ReadContext context = CreateTruncatedReadContextForSpanWithoutLength();
+        TryReadOutOfBoundsAssertions<T>.AssertFixedLengthSpanFailsWithoutAdvancing(context, Values, Values.Length, TryOperations);
     }
 
     private delegate void SpanReadOperation(ReadContext context, Span<T> destination);

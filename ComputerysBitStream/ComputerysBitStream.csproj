@@ -1,10 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
-        <LangVersion>9.0</LangVersion>
+        <TargetFrameworks>netstandard2.1;net10.0</TargetFrameworks>
+        <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
+        <RootNamespace>ComputerysBitStream</RootNamespace>
+        <DefineConstants>$(DefineConstants);$(BitStreamDefineConstants)</DefineConstants>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <BitStreamUsesUnsafePackage Condition="$(DefineConstants.Contains('BITSTREAM_INCLUDES_SYSTEM_RUNTIME_COMPILER_SERVICES_UNSAFE'))">true</BitStreamUsesUnsafePackage>
     </PropertyGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1' and '$(BitStreamUsesUnsafePackage)' == 'true'">
+        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0"/>
+    </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\ComputerysBitStream.Generator\ComputerysBitStream.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\ComputerysBitStream.Generator\ComputerysBitStream.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
     </ItemGroup>
 </Project>

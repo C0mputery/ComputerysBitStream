@@ -1,0 +1,41 @@
+using System;
+using ComputerysBitStream.Attributes;
+
+namespace ComputerysBitStream.Generator;
+
+internal static class StructMetadataConstants {
+    /// <summary>Metadata size value indicating a variable-length struct.</summary>
+    internal const int VariableLengthSize = -1;
+
+    internal static bool IsValidSize(int size) => size == VariableLengthSize || size > 0;
+
+    internal static bool IsVariableLength(int size) => size == VariableLengthSize;
+}
+
+internal static class BitStreamMetadataNames {
+    public static readonly string DefaultSettings = typeof(DefaultBitStreamSettingsAttribute).FullName!;
+    public static readonly string Settings = typeof(BitStreamSettingsAttribute).FullName!;
+    public static readonly string Serializer = typeof(BitStreamSerializerAttribute).FullName!;
+
+    public static readonly string Primitive = typeof(BitStreamPrimitiveAttribute).FullName!;
+    public static readonly string RestrictedPrimitiveMethod = typeof(BitStreamRestrictedPrimitiveMethodAttribute).FullName!;
+    public static readonly string PrimitiveMethod = typeof(BitStreamPrimitiveMethodAttribute).FullName!;
+    public static readonly string PrimitiveContext = typeof(BitStreamPrimitiveContextAttribute).FullName!;
+    public static readonly string FixedSizePrimitive = typeof(BitStreamFixedSizePrimitiveAttribute).FullName!;
+    public static readonly string QuantizedPrimitive = typeof(BitStreamQuantizedPrimitiveAttribute).FullName!;
+
+    public static readonly string Struct = typeof(BitStreamStructAttribute).FullName!;
+    public static readonly string StructInclude = typeof(BitStreamStructIncludeAttribute).FullName!;
+    public static readonly string StructIgnore = typeof(BitStreamStructIgnoreAttribute).FullName!;
+    public static readonly string ProxyStruct = typeof(BitStreamProxyStructAttribute).FullName!;
+    public static readonly string StructMetadata = typeof(BitStreamStructMetadataAttribute).FullName!;
+    public static readonly string StructQuantizedRange = typeof(BitStreamStructQuantizedRangeAttribute).FullName!;
+
+    public static readonly string Int32 = typeof(int).FullName!;
+
+    public static readonly string WriteContext = typeof(WriteContext).FullName!;
+    public static readonly string ReadContext = typeof(ReadContext).FullName!;
+    public static readonly string DefaultSettingsInterface = typeof(IDefaultSettings).FullName!;
+    public static readonly string ReadOnlySpan = typeof(ReadOnlySpan<>).FullName!;
+    public static readonly string Span = typeof(Span<>).FullName!;
+}

@@ -1,5 +1,6 @@
 namespace ComputerysBitStream.Tests;
 
+[BitStreamPrimitiveContext]
 public class WriteContextTests {
     private static readonly int[] WriteCounts = [1, 3, 7, 8, 17, 32, 63, 64];
 
@@ -38,7 +39,7 @@ public class WriteContextTests {
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void WriteBitRaw_ShouldWriteExpectedBitAndAdvance(int initialOffset) {
+    public void WriteBitPrimitive_ShouldWriteExpectedBitAndAdvance(int initialOffset) {
         ulong[] buffer = CreatePatternBuffer(4);
         ulong[] expected = buffer.ToArray();
         bool value = (initialOffset & 1) == 0;
@@ -46,7 +47,7 @@ public class WriteContextTests {
         WriteContext context = new(buffer, initialOffset);
         WriteBits(expected, initialOffset, value ? 1UL : 0UL, 1);
 
-        context.WriteBitRaw(value);
+        context.WriteBitPrimitive(value);
 
         Assert.Equal(expected, buffer);
         Assert.Equal(initialOffset + 1, context.Position);
@@ -54,7 +55,7 @@ public class WriteContextTests {
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void WriteBitsRaw_Value_ShouldWriteExpectedBitsAndAdvance(int initialOffset) {
+    public void WriteBitsPrimitive_Value_ShouldWriteExpectedBitsAndAdvance(int initialOffset) {
         const ulong value = 0xFEDCBA9876543210UL;
 
         foreach (int count in WriteCounts) {
@@ -63,7 +64,7 @@ public class WriteContextTests {
             WriteContext context = new(buffer, initialOffset);
 
             WriteBits(expected, initialOffset, value, count);
-            context.WriteBitsRaw(value, count);
+            context.WriteBitsPrimitive(value, count);
 
             Assert.Equal(expected, buffer);
             Assert.Equal(initialOffset + count, context.Position);
@@ -72,7 +73,7 @@ public class WriteContextTests {
 
     [Theory]
     [ClassData(typeof(BitOffsetRange))]
-    public void WriteBitsRaw_Span_ShouldWriteExpectedBitsAndAdvance(int initialOffset) {
+    public void WriteBitsPrimitive_Span_ShouldWriteExpectedBitsAndAdvance(int initialOffset) {
         ulong[] source = [0x0123456789ABCDEFUL, 0xFEDCBA9876543210UL, 0x0F0F0F0F0F0F0F0FUL];
         const int count = 130;
 
@@ -82,28 +83,28 @@ public class WriteContextTests {
         WriteContext context = new(buffer, initialOffset);
         WriteBits(expected, initialOffset, source, count);
 
-        context.WriteBitsRaw(source, count);
+        context.WriteBitsPrimitive(source, count);
 
         Assert.Equal(expected, buffer);
         Assert.Equal(initialOffset + count, context.Position);
     }
 
     [Fact]
-    public void ReserveBitsRaw_ShouldAdvancePosition() {
+    public void ReserveBitsPrimitive_ShouldAdvancePosition() {
         ulong[] buffer = new ulong[2];
         WriteContext context = new(buffer, 5);
 
-        context.ReserveBitsRaw(12);
+        context.ReserveBitsPrimitive(12);
 
         Assert.Equal(17, context.Position);
     }
 
     [Fact]
-    public void SetPositionRaw_ShouldSetPosition() {
+    public void SetPositionPrimitive_ShouldSetPosition() {
         ulong[] buffer = new ulong[2];
         WriteContext context = new(buffer);
 
-        context.SetPositionRaw(23);
+        context.SetPositionPrimitive(23);
 
         Assert.Equal(23, context.Position);
     }
@@ -114,7 +115,7 @@ public class WriteContextTests {
         buffer[0] = ulong.MaxValue;
 
         WriteContext context = new(buffer, 10);
-        Span<byte> bytes = context.ToBytesRaw();
+        Span<byte> bytes = context.WrittenBytesSpanPrimitive();
 
         Assert.Equal(2, bytes.Length);
         Assert.Equal((byte)0xFF, bytes[1]);
@@ -133,7 +134,7 @@ public class WriteContextTests {
         buffer[0] = ulong.MaxValue;
 
         WriteContext context = new(buffer, position);
-        Span<byte> bytes = context.ToBytes();
+        Span<byte> bytes = context.GetWrittenBytes();
 
         Assert.Equal(BitHelper.BitsToBytes(position), bytes.Length);
         Assert.Equal((byte)0xFF, bytes[0]);
@@ -148,7 +149,7 @@ public class WriteContextTests {
         buffer[0] = ulong.MaxValue;
 
         WriteContext context = new(buffer, position);
-        Span<byte> bytes = context.ToBytes();
+        Span<byte> bytes = context.GetWrittenBytes();
 
         Assert.Equal(BitHelper.BitsToBytes(position), bytes.Length);
         Assert.Equal((byte)0xFF, bytes[^1]);
@@ -160,7 +161,7 @@ public class WriteContextTests {
         buffer[0] = ulong.MaxValue;
 
         WriteContext context = new(buffer, 0);
-        Span<byte> bytes = context.ToBytes();
+        Span<byte> bytes = context.GetWrittenBytes();
 
         Assert.Equal(0, bytes.Length);
     }
@@ -170,31 +171,31 @@ public class WriteContextTests {
         ulong[] buffer = [ulong.MaxValue, ulong.MaxValue];
 
         WriteContext context = new(buffer, 71);
-        Span<byte> bytes = context.ToBytes();
+        Span<byte> bytes = context.GetWrittenBytes();
 
         Assert.Equal(BitHelper.BitsToBytes(71), bytes.Length);
         Assert.Equal((byte)0x7F, bytes[^1]);
     }
 
     [Fact]
-    public void ThrowIfNoSpace_WhenEnoughCapacity_ShouldNotThrow() {
+    public void ThrowIfInsufficientSpace_WhenEnoughCapacity_ShouldNotThrow() {
         ulong[] buffer = new ulong[1];
         WriteContext context = new(buffer, 60, 64);
 
-        context.ThrowIfNoSpace("UInt", 4);
+        context.ThrowIfInsufficientSpace("UInt", 4);
     }
 
     [Fact]
-    public void ThrowIfNoSpace_WhenInsufficientCapacity_ShouldThrowWithDetails() {
+    public void ThrowIfInsufficientSpace_WhenInsufficientCapacity_ShouldThrowWithDetails() {
         ulong[] buffer = new ulong[1];
         WriteContext context = new(buffer, 62, 64);
 
-        InsufficientWriteSpaceException? exception = null;
-        try { context.ThrowIfNoSpace("UInt", 3); }
-        catch (InsufficientWriteSpaceException caughtException) { exception = caughtException; }
+        InsufficientWriteCapacityException? exception = null;
+        try { context.ThrowIfInsufficientSpace("UInt", 3); }
+        catch (InsufficientWriteCapacityException caughtException) { exception = caughtException; }
 
         Assert.NotNull(exception);
-        InsufficientWriteSpaceException captured = exception;
+        InsufficientWriteCapacityException captured = exception;
 
         Assert.Contains("UInt", captured.Message);
         Assert.Contains("Required bits: 3", captured.Message);

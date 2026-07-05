@@ -1,10 +1,12 @@
-using ComputerysBitStream;
+using ComputerysBitStream.Attributes;
+using ComputerysBitStream.Primitives.FixedSize;
 
 namespace ComputerysBitStream.Tests;
 
 [BitStreamStruct]
 public partial struct SimpleStruct {
     public int X { get; set; }
+    [BitStreamSerializer(typeof(PrimitiveFloatExtensions))]
     public float Y { get; set; }
     public bool Z { get; set; }
 }
@@ -15,7 +17,11 @@ public struct ExternalPlainStruct {
 }
 
 [BitStreamProxyStruct(typeof(ExternalPlainStruct))]
-public static partial class ExternalPlainStructProxy { }
+public static partial class ExternalPlainStructProxy {
+    public static int X;
+    [BitStreamSerializer(typeof(PrimitiveFloatExtensions))]
+    public static float Y;
+}
 
 [BitStreamStruct]
 public partial struct NestedStruct {
@@ -23,7 +29,7 @@ public partial struct NestedStruct {
 }
 
 [BitStreamSettings]
-[BitStreamSetting(typeof(RawIntExtensions))]
+[BitStreamSerializer(typeof(PrimitiveIntExtensions))]
 public interface ICustomSettings { }
 
 [BitStreamStruct(typeof(ICustomSettings))]
@@ -41,11 +47,13 @@ public struct AnotherExternalStruct {
 }
 
 [BitStreamProxyStruct(typeof(AnotherExternalStruct))]
-public static partial class AnotherExternalStructProxy { }
+public static partial class AnotherExternalStructProxy {
+    public static bool Flag;
+}
 
 [BitStreamSettings]
-[BitStreamSetting(typeof(RawIntExtensions))]
-[BitStreamSetting(typeof(NestedStruct))]
+[BitStreamSerializer(typeof(PrimitiveIntExtensions))]
+[BitStreamSerializer(typeof(NestedStruct))]
 public interface IContainerSettings { }
 
 [BitStreamStruct(typeof(IContainerSettings))]
@@ -54,37 +62,38 @@ public partial struct ContainerStruct {
     public NestedStruct Nested { get; set; }
 }
 
-// Case-sensitivity test struct with a field so includes are effective
 public struct CaseTestStruct {
+    [BitStreamStructInclude]
     public int Value;
 }
 
-[BitStreamProxyStruct(typeof(CaseTestStruct), ["Value"], null)]
+[BitStreamProxyStruct(typeof(CaseTestStruct))]
 public static partial class CaseTestStructProxyCorrect { }
 
-// Covers BitStreamStructAttribute(string alias, Type? settings = null)
 [BitStreamStruct("Aliased")]
 public partial struct AliasedStruct {
     public int A { get; set; }
+    [BitStreamSerializer(typeof(PrimitiveFloatExtensions))]
     public float B { get; set; }
 }
 
-// Covers BitStreamProxyStructAttribute(Type targetType, string alias, Type? settings = null)
 public struct AliasedExternalStruct {
     public int X { get; set; }
     public bool Y { get; set; }
 }
 
 [BitStreamProxyStruct(typeof(AliasedExternalStruct), "AliasedExt")]
-public static partial class AliasedExternalStructProxy { }
+public static partial class AliasedExternalStructProxy {
+    public static int X;
+    public static bool Y;
+}
 
-// Covers BitStreamProxyStructAttribute(Type, string[]? includes, string[]? ignores, string alias, Type? settings)
 public struct AliasedIncludeExternalStruct {
     public int Included { get; set; }
     public int Ignored { get; set; }
 }
 
-[BitStreamProxyStruct(typeof(AliasedIncludeExternalStruct), [nameof(AliasedIncludeExternalStruct.Included)], [nameof(AliasedIncludeExternalStruct.Ignored)], "AliasedInc")]
-public static partial class AliasedIncludeExternalStructProxy { }
-
-
+[BitStreamProxyStruct(typeof(AliasedIncludeExternalStruct), "AliasedInc")]
+public static partial class AliasedIncludeExternalStructProxy {
+    public static int Included;
+}

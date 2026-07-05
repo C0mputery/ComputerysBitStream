@@ -1,72 +1,57 @@
-using System;
-using Xunit;
-
 namespace ComputerysBitStream.Tests.Extensions;
 
+[BitStreamPrimitiveContext]
 public class DoubleExtensionsTests : ExtensionTestSuite<double> {
-    protected override double Value => 1.23;
-    protected override double[] Values => [1.23, 4.56, 1.23, 1.23, 4.56];
+        protected override double Value => 1.23;
+        protected override double[] Values => [1.23, 4.56, 1.23, 1.23, 4.56];
 
-    protected override void WriteRaw(WriteContext context, double value) => context.WriteDoubleRaw(value);
-    protected override double PeekRaw(ReadContext context) => context.PeekDoubleRaw();
-    protected override double ReadRaw(ReadContext context) => context.ReadDoubleRaw();
-    protected override void Write(WriteContext context, double value) => context.WriteDouble(value);
+    protected override void WritePrimitive(ref WriteContext context, double value) => context.WriteDoublePrimitive(value);
+    protected override double PeekPrimitive(ReadContext context) => context.PeekDoublePrimitive();
+    protected override double ReadPrimitive(ReadContext context) => context.ReadDoublePrimitive();
+    protected override void Write(ref WriteContext context, double value) => context.WriteDouble(value);
     protected override double Peek(ReadContext context) => context.PeekDouble();
     protected override double Read(ReadContext context) => context.ReadDouble();
-    protected override void WriteAlias(WriteContext context, double value) => context.Write(value);
-    protected override double PeekAlias(ReadContext context) { context.Peek(out double v); return v; }
-    protected override double ReadAlias(ReadContext context) { context.Read(out double v); return v; }
-    protected override double TryPeek(ReadContext context) { Assert.True(context.TryPeek(out double v)); return v; }
-    protected override double TryRead(ReadContext context) { Assert.True(context.TryRead(out double v)); return v; }
-    protected override double TryPeekAlias(ReadContext context) { Assert.True(context.TryPeek(out double v)); return v; }
-    protected override double TryReadAlias(ReadContext context) { Assert.True(context.TryRead(out double v)); return v; }
+    protected override double TryPeek(ReadContext context) { Assert.True(context.TryPeekDouble(out double v)); return v; }
+    protected override double TryRead(ReadContext context) { Assert.True(context.TryReadDouble(out double v)); return v; }
 
-    protected override void WriteSpanRaw(WriteContext context, Span<double> values) => context.WriteDoublesRaw(values);
-    protected override void PeekSpanRaw(ReadContext context, int count, Span<double> destination) => context.PeekDoubleSpanRaw(count, destination);
-    protected override void ReadSpanRaw(ReadContext context, int count, Span<double> destination) => context.ReadDoubleSpanRaw(count, destination);
-    protected override void WriteSpanWithoutLength(WriteContext context, Span<double> values) => context.WriteDoublesWithoutLength(values);
+    protected override void WriteSpanPrimitive(ref WriteContext context, Span<double> values) => context.WriteDoublesPrimitive(values);
+    protected override void PeekSpanPrimitive(ReadContext context, int count, Span<double> destination) => context.PeekDoubleSpanPrimitive(count, destination);
+    protected override void ReadSpanPrimitive(ReadContext context, int count, Span<double> destination) => context.ReadDoubleSpanPrimitive(count, destination);
+    protected override void WriteSpanWithoutLength(ref WriteContext context, Span<double> values) => context.WriteDoublesWithoutLength(values);
     protected override void PeekSpanWithoutLength(ReadContext context, int count, Span<double> destination) => context.PeekDoubles(count, destination);
     protected override void ReadSpanWithoutLength(ReadContext context, int count, Span<double> destination) => context.ReadDoubles(count, destination);
-    protected override void WriteSpanWithoutLengthAlias(WriteContext context, Span<double> values) => context.WriteWithoutLength(values);
-    protected override void PeekSpanWithoutLengthAlias(ReadContext context, int count, Span<double> destination) => context.Peek(count, destination);
-    protected override void ReadSpanWithoutLengthAlias(ReadContext context, int count, Span<double> destination) => context.Read(count, destination);
-    protected override void TryPeekSpanWithoutLength(ReadContext context, int count, Span<double> destination) { Assert.True(context.TryPeek(count, destination)); }
-    protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<double> destination) { Assert.True(context.TryRead(count, destination)); }
-    protected override void TryPeekSpanWithoutLengthAlias(ReadContext context, int count, Span<double> destination) { Assert.True(context.TryPeek(count, destination)); }
-    protected override void TryReadSpanWithoutLengthAlias(ReadContext context, int count, Span<double> destination) { Assert.True(context.TryRead(count, destination)); }
-    protected override void WriteSpan(WriteContext context, Span<double> values) => context.WriteDoubles(values);
+    protected override void TryPeekSpanWithoutLength(ReadContext context, int count, Span<double> destination) { Assert.True(context.TryPeekDoubles(count, destination)); }
+    protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<double> destination) { Assert.True(context.TryReadDoubles(count, destination)); }
+    protected override void WriteSpan(ref WriteContext context, Span<double> values) => context.WriteDoubles(values);
     protected override void PeekSpanWithLength(ReadContext context, Span<double> destination) => context.PeekDoubles(destination);
     protected override void ReadSpanWithLength(ReadContext context, Span<double> destination) => context.ReadDoubles(destination);
-    protected override void WriteSpanAlias(WriteContext context, Span<double> values) => context.Write(values);
-    protected override void PeekSpanWithLengthAlias(ReadContext context, Span<double> destination) => context.Peek(destination);
-    protected override void ReadSpanWithLengthAlias(ReadContext context, Span<double> destination) => context.Read(destination);
-    protected override void TryPeekSpanWithLength(ReadContext context, Span<double> destination) { Assert.True(context.TryPeek(destination)); }
-    protected override void TryReadSpanWithLength(ReadContext context, Span<double> destination) { Assert.True(context.TryRead(destination)); }
-    protected override void TryPeekSpanWithLengthAlias(ReadContext context, Span<double> destination) { Assert.True(context.TryPeek(destination)); }
-    protected override void TryReadSpanWithLengthAlias(ReadContext context, Span<double> destination) { Assert.True(context.TryRead(destination)); }
+    protected override void TryPeekSpanWithLength(ReadContext context, Span<double> destination) { Assert.True(context.TryPeekDoubles(destination)); }
+    protected override void TryReadSpanWithLength(ReadContext context, Span<double> destination) { Assert.True(context.TryReadDoubles(destination)); }
 
-    protected override void WriteArrayRaw(WriteContext context, double[] values) => context.WriteDoublesRaw(values);
-    protected override double[] PeekArrayRaw(ReadContext context, int count) => context.PeekDoubleArrayRaw(count);
-    protected override double[] ReadArrayRaw(ReadContext context, int count) => context.ReadDoubleArrayRaw(count);
-    protected override void WriteArrayWithoutLength(WriteContext context, double[] values) => context.WriteDoublesWithoutLength(values);
+    protected override void WriteArrayPrimitive(ref WriteContext context, double[] values) => context.WriteDoublesPrimitive(values);
+    protected override double[] PeekArrayPrimitive(ReadContext context, int count) => context.PeekDoubleArrayPrimitive(count);
+    protected override double[] ReadArrayPrimitive(ReadContext context, int count) => context.ReadDoubleArrayPrimitive(count);
+    protected override void WriteArrayWithoutLength(ref WriteContext context, double[] values) => context.WriteDoublesWithoutLength(values);
     protected override double[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekDoubles(count);
     protected override double[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadDoubles(count);
-    protected override void WriteArrayWithoutLengthAlias(WriteContext context, double[] values) => context.WriteWithoutLength(values);
-    protected override double[] PeekArrayWithoutLengthAlias(ReadContext context, int count) { context.Peek(count, out double[] values); return values; }
-    protected override double[] ReadArrayWithoutLengthAlias(ReadContext context, int count) { context.Read(count, out double[] values); return values; }
     protected override double[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekDoubles(count, out double[] values)); return values; }
     protected override double[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadDoubles(count, out double[] values)); return values; }
-    protected override double[] TryPeekArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryPeek(count, out double[] values)); return values; }
-    protected override double[] TryReadArrayWithoutLengthAlias(ReadContext context, int count) { Assert.True(context.TryRead(count, out double[] values)); return values; }
 
-    protected override void WriteArray(WriteContext context, double[] values) => context.WriteDoubles(values);
+    protected override void WriteArray(ref WriteContext context, double[] values) => context.WriteDoubles(values);
     protected override double[] PeekArrayWithLength(ReadContext context) => context.PeekDoubles();
     protected override double[] ReadArrayWithLength(ReadContext context) => context.ReadDoubles();
-    protected override void WriteArrayAlias(WriteContext context, double[] values) => context.Write(values);
-    protected override double[] PeekArrayWithLengthAlias(ReadContext context) { context.Peek(out double[] values); return values; }
-    protected override double[] ReadArrayWithLengthAlias(ReadContext context) { context.Read(out double[] values); return values; }
     protected override double[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekDoubles(out double[] values)); return values; }
     protected override double[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadDoubles(out double[] values)); return values; }
-    protected override double[] TryPeekArrayWithLengthAlias(ReadContext context) { Assert.True(context.TryPeek(out double[] values)); return values; }
-    protected override double[] TryReadArrayWithLengthAlias(ReadContext context) { Assert.True(context.TryRead(out double[] values)); return values; }
+    protected override TryReadOperationSet<double> TryOperations => new() {
+        TryPeekValue = (ReadContext c, out double v) => c.TryPeekDouble(out v),
+        TryReadValue = (ReadContext c, out double v) => c.TryReadDouble(out v),
+        TryPeekArrayWithLength = (ReadContext c, out double[] v) => c.TryPeekDoubles(out v),
+        TryReadArrayWithLength = (ReadContext c, out double[] v) => c.TryReadDoubles(out v),
+        TryPeekArrayWithoutLength = (ReadContext c, int count, out double[] v) => c.TryPeekDoubles(count, out v),
+        TryReadArrayWithoutLength = (ReadContext c, int count, out double[] v) => c.TryReadDoubles(count, out v),
+        TryPeekSpanWithLength = (ReadContext c, Span<double> d) => c.TryPeekDoubles(d),
+        TryReadSpanWithLength = (ReadContext c, Span<double> d) => c.TryReadDoubles(d),
+        TryPeekSpanWithoutLength = (ReadContext c, int count, Span<double> d) => c.TryPeekDoubles(count, d),
+        TryReadSpanWithoutLength = (ReadContext c, int count, Span<double> d) => c.TryReadDoubles(count, d),
+    };
 }

@@ -1,25 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsRoslynComponent>true</IsRoslynComponent>
-        <DefineConstants>$(DefineConstants);COMPUTERYS_BITSTREAM_GENERATOR</DefineConstants>
+        <DefineConstants>$(DefineConstants);BITSTREAM_SOURCE_GENERATOR</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0" PrivateAssets="all" />
-        <PackageReference Include="System.Memory" Version="4.6.3" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0" PrivateAssets="all"/>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="..\ComputerysBitStream\Attributes.cs" Link="ComputerysBitStream\Attributes.cs" />
-        <Compile Include="..\ComputerysBitStream\DefaultSettings.cs" Link="ComputerysBitStream\DefaultSettings.cs" />
-        <Compile Include="..\ComputerysBitStream\BitHelper.cs" Link="ComputerysBitStream\BitHelper.cs" />
-        <Compile Include="..\ComputerysBitStream\WriteContext.cs" Link="ComputerysBitStream\WriteContext.cs" />
-        <Compile Include="..\ComputerysBitStream\ReadContext.cs" Link="ComputerysBitStream\ReadContext.cs" />
+        <Compile Include="..\ComputerysBitStream\Attributes\*.cs" Link="ComputerysBitStream\%(RecursiveDir)%(FileName)%(Extension)"/>
+        <Compile Include="..\ComputerysBitStream\Core\Helpers\BitHelper.cs" Link="ComputerysBitStream\Core\Helpers\BitHelper.cs"/>
+        <Compile Include="..\ComputerysBitStream\Settings\DefaultSettings.cs" Link="ComputerysBitStream\Settings\DefaultSettings.cs"/>
+        <Compile Include="..\ComputerysBitStream\Core\ReadContext\*.cs" Link="ComputerysBitStream\Core\ReadContext\%(RecursiveDir)%(FileName)%(Extension)"/>
+        <Compile Include="..\ComputerysBitStream\Core\WriteContext\*.cs" Link="ComputerysBitStream\Core\WriteContext\%(RecursiveDir)%(FileName)%(Extension)"/>
+        <Compile Include="..\ComputerysBitStream\Documentation\*.cs" Link="ComputerysBitStream\Documentation\%(RecursiveDir)%(FileName)%(Extension)"/>
+    </ItemGroup>
+    <ItemGroup>
+      <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
+      <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
     </ItemGroup>
 </Project>
