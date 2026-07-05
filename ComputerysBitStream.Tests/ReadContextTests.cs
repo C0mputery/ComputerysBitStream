@@ -41,13 +41,13 @@ public class ReadContextTests {
     [ClassData(typeof(BitOffsetRange))]
     public void CapacityHelpers_ShouldReflectRemainingBits(int initialOffset) {
         ulong[] buffer = new ulong[TestConstants.BufferWordCount];
-        ReadContext context = new(buffer, initialOffset, 100);
+        ReadContext context = new(buffer, initialOffset, 128);
 
-        Assert.Equal(100 - initialOffset, context.GetRemainingCapacity());
-        Assert.True(context.HasSpaceRemaining(100 - initialOffset));
-        Assert.False(context.IsInsufficientSpace(100 - initialOffset));
-        Assert.False(context.HasSpaceRemaining((100 - initialOffset) + 1));
-        Assert.True(context.IsInsufficientSpace((100 - initialOffset) + 1));
+        Assert.Equal(128 - initialOffset, context.GetRemainingCapacity());
+        Assert.True(context.HasSpaceRemaining(128 - initialOffset));
+        Assert.False(context.IsInsufficientSpace(128 - initialOffset));
+        Assert.False(context.HasSpaceRemaining((128 - initialOffset) + 1));
+        Assert.True(context.IsInsufficientSpace((128 - initialOffset) + 1));
     }
 
     [Theory]
