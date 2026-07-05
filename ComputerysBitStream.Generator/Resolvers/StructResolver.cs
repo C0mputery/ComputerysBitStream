@@ -118,12 +118,7 @@ internal sealed class StructResolver {
 
         if (member.QuantizedRange is QuantizedRangeDefinition quantizedRange) {
             if (!TryFindPrimitiveByTargetType(effectiveSettings, memberType, PrimitiveSerializationMode.Quantized, out PrimitiveDefinition quantizedPrimitive)) {
-                _reportDiagnostic(new DiagnosticValueType(
-                    Diagnostics.QuantizedPrimitiveNotInSettings,
-                    member.Location ?? quantizedRange.Location,
-                    member.MemberName,
-                    memberType
-                ));
+                _reportDiagnostic(new DiagnosticValueType(Diagnostics.QuantizedPrimitiveNotInSettings, member.Location ?? quantizedRange.Location, member.MemberName, memberType));
                 return false;
             }
 
@@ -232,7 +227,12 @@ internal sealed class StructResolver {
             return TryCreatePrimitiveMember(member, primitive, memberAccess, generatedNamespace, requiredUsings, out resolvedMember, out isVariableLength, out fixedBits);
         }
 
-        _reportDiagnostic(new DiagnosticValueType(Diagnostics.StructMemberNotSerializable, member.Location, memberType, settingsLabel));
+        if (TryFindPrimitiveByTargetType(effectiveSettings, memberType, PrimitiveSerializationMode.Quantized, out _)) {
+            _reportDiagnostic(new DiagnosticValueType(Diagnostics.QuantizedPrimitiveRequiresAttribute, member.Location, member.MemberName, memberType, settingsLabel));
+            return false;
+        }
+
+        _reportDiagnostic(new DiagnosticValueType(Diagnostics.DefaultPrimitiveNotInSettings, member.Location, memberType, settingsLabel));
         return false;
     }
 
@@ -320,8 +320,10 @@ internal sealed class StructResolver {
 
     private bool TryFindPrimitiveByTargetType(SettingsDefinition settings, string targetTypeFqn, out PrimitiveDefinition primitive) {
         foreach (KeyValuePair<string, PrimitiveDefinition> pair in settings.Primitives) {
-            if (string.Equals(pair.Value.TargetTypeFullyQualifiedName, targetTypeFqn, StringComparison.Ordinal)) {
-                primitive = pair.Value;
+            PrimitiveDefinition candidate = pair.Value;
+            if (!IsFixedOrVariableLength(candidate.Mode)) { continue; }
+            if (string.Equals(candidate.TargetTypeFullyQualifiedName, targetTypeFqn, StringComparison.Ordinal)) {
+                primitive = candidate;
                 return true;
             }
         }
@@ -409,8 +411,12 @@ internal sealed class StructResolver {
             _primitivesByExtensionClass[primitive.ExtensionClassFullyQualifiedName] = primitive;
         }
 
-        if (!string.IsNullOrEmpty(primitive.TargetTypeFullyQualifiedName)) {
+        if (!string.IsNullOrEmpty(primitive.TargetTypeFullyQualifiedName) && IsFixedOrVariableLength(primitive.Mode)) {
             _primitivesByTargetType[primitive.TargetTypeFullyQualifiedName] = primitive;
         }
+    }
+
+    private static bool IsFixedOrVariableLength(PrimitiveSerializationMode mode) {
+        return mode is PrimitiveSerializationMode.FixedSize or PrimitiveSerializationMode.VariableLength;
     }
 }

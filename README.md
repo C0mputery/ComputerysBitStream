@@ -55,6 +55,8 @@ Array helpers come in two forms: with a length prefix (`WriteInts`, `ReadInts`) 
 
 Variable-length serializers live in `ComputerysBitStream.Primitives.VariableLength` (`WriteVariableLengthUInt`, etc. after registration). Quantized serializers live in `ComputerysBitStream.Primitives.Quantized` (`WriteQuantizedFloat`, etc. after registration) and take `min`, `max`, and `bitCount` to store a float in fewer than 32 bits. Register their extension classes on a `[BitStreamSettings]` interface; they are not part of `IDefaultSettings`.
 
+A settings interface (including interfaces it inherits) may register fixed-size **or** variable-length for a given CLR type, not both. Registering `PrimitiveUIntExtensions` and `PrimitiveVariableLengthUIntExtensions` on the same chain reports `CBS042`. That check runs per settings interface at compile time; merging assembly-wide `[DefaultBitStreamSettings]` with per-struct settings does not run it again, so both serializers can end up in the effective set unless you avoid the overlap (for example, omit `IDefaultSettings` when variable-length `uint` is the default). Quantized serializers are separate: `PrimitiveQuantizedFloatExtensions` can sit on the same settings chain as `PrimitiveFloatExtensions` because quantized members require `[BitStreamStructQuantizedRange]`.
+
 ## Defining structs
 
 Mark a `partial struct` with `[BitStreamStruct]`. The generator emits `Write{StructName}` and `Read{StructName}` as extension methods on the contexts. Extension methods can only access public members.
@@ -85,7 +87,16 @@ write.WritePlayerState(state);
 var copy = read.ReadPlayerState();
 ```
 
-Per-member serializer overrides apply to primitives only: `[BitStreamSerializer(typeof(PrimitiveFloatExtensions))]` on a field or property. Custom aliases (`[BitStreamStruct("Alias")]`) are in `ComputerysBitStream.Tests/Structs/TestStructs.cs`. `[BitStreamStructQuantizedRange(...)]` binds a member to a registered quantized primitive; register the matching extension class (for example `PrimitiveQuantizedFloatExtensions`) on your settings interface. A missing quantized primitive reports `CBS038`. Nested structs use settings registration instead; see below.
+Per-member serializer overrides apply to primitives only: `[BitStreamSerializer(typeof(PrimitiveFloatExtensions))]` on a field or property. Custom aliases (`[BitStreamStruct("Alias")]`) are in `ComputerysBitStream.Tests/Structs/TestStructs.cs`.
+
+For struct members without an override, the generator picks a serializer from settings in this order:
+
+1. `[BitStreamStructQuantizedRange(...)]` on the member -> look up a **Quantized** primitive for that type (`CBS038` if none is registered).
+2. Otherwise -> look up a **fixed-size or variable-length** primitive for that type. If one is registered, the generator uses it; a Quantized serializer on the same chain is ignored when the member has no `[BitStreamStructQuantizedRange]`.
+3. If step 2 finds nothing and only a Quantized serializer is registered for that type -> `CBS044`.
+4. If step 2 finds nothing and no Quantized serializer is registered -> `CBS043`.
+
+Register the matching Quantized extension class (for example `PrimitiveQuantizedFloatExtensions`) on your settings interface when you use `[BitStreamStructQuantizedRange]`. Nested structs use settings registration instead; see below.
 
 ## Nested structs
 
@@ -93,7 +104,7 @@ Per-member serializer overrides apply to primitives only: `[BitStreamSerializer(
 
 Add `[BitStreamSerializer(typeof(NestedStruct))]` to a `[BitStreamSettings]` interface, using the struct type rather than the generated extension class. That line can live on the interface passed to the parent's `[BitStreamStruct(typeof(...))]`, on a base interface in that settings chain, or in assembly-wide `[DefaultBitStreamSettings(...)]`. The generator merges global settings, inherited interfaces, and per-struct settings into one effective set.
 
-A missing nested type produces error `CBS036` (`Member type '...' is not serializable with current settings`). If any member fails to resolve, the parent struct is not generated. Cyclic nesting (for example, A holds B and B holds A) produces error `CBS035`.
+An unregistered nested struct produces `CBS043` (the message names fixed-size or variable-length primitives even when the member is a struct). `CBS036` is reported when the nested type is registered on a settings interface but its own resolution fails, for example because a member inside the nested struct cannot be serialized. If any member fails to resolve, the parent struct is not generated. Cyclic nesting (for example, A holds B and B holds A) produces error `CBS035`.
 
 Each nesting level needs its own registration. If `Container` holds `Inner` and `Inner` holds `Core`, settings for `Container` must list `Inner`, and settings for `Inner` must list `Core`.
 
@@ -124,12 +135,25 @@ Serializers are grouped behind `[BitStreamSettings]` interfaces. Primitives use 
 [assembly: DefaultBitStreamSettings(typeof(IMySettings))]
 
 [BitStreamSettings]
-[BitStreamSerializer(typeof(PrimitiveIntExtensions))]
-[BitStreamSerializer(typeof(PrimitiveVariableLengthUIntExtensions))]
+[BitStreamSerializer(typeof(PrimitiveDateTimeExtensions))]
+[BitStreamSerializer(typeof(PrimitiveQuantizedFloatExtensions))]
 public interface IMySettings : IDefaultSettings { }
 ```
 
-`IDefaultSettings` already wires the standard fixed-size primitives. Inherit from it unless you intend to replace the defaults entirely.
+`IDefaultSettings` already wires the standard fixed-size primitives. Inherit from it when those defaults are what you want. To use variable-length as the default for a type, register it on a settings interface that does not also include the fixed-size serializer for that type:
+
+```csharp
+[BitStreamSettings]
+[BitStreamSerializer(typeof(PrimitiveVariableLengthUIntExtensions))]
+public interface IVariableUIntSettings { }
+
+[BitStreamStruct(typeof(IVariableUIntSettings))]
+public partial struct VarUIntStruct {
+    public uint Value { get; set; }
+}
+```
+
+Inheriting `IDefaultSettings` and also registering `PrimitiveVariableLengthUIntExtensions` puts both fixed-size and variable-length `uint` on the same settings chain and reports `CBS042`.
 
 ## Serializing types you do not own
 

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using ComputerysBitStream.Attributes;
 using Microsoft.CodeAnalysis;
 
 namespace ComputerysBitStream.Generator.Collectors;
@@ -106,6 +108,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
             ExternalStructs: externalStructs.ToImmutableDictionary(),
             Location: location
         );
+        ValidateConflictingPrimitiveSerializationModes(includedPrimitives, location, diagnostics);
         return new Collected<SettingsDefinition>(settings, diagnostics.ToImmutable());
     }
 
@@ -145,6 +148,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                             diagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateIncludedPrimitive, attributeData.GetLocation(), primitiveKey));
                         }
                         else {
+                            TryReportConflictingPrimitiveSerializationMode(includedPrimitives, collectedPrimitive.Value, attributeData.GetLocation(), diagnostics);
                             includedPrimitives[primitiveKey] = collectedPrimitive.Value;
                         }
                     }
@@ -228,6 +232,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
             ExternalStructs: externalStructs.ToImmutableDictionary(),
             Location: location
         );
+        ValidateConflictingPrimitiveSerializationModes(includedPrimitives, location, diagnostics);
         return new Collected<SettingsDefinition>(settings, diagnostics.ToImmutable());
     }
 
@@ -243,6 +248,71 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
             ExternalStructs: ImmutableDictionary<string, ExternalStructDefinition>.Empty,
             Location: location
         );
+    }
+
+    private static void TryReportConflictingPrimitiveSerializationMode(
+        Dictionary<string, PrimitiveDefinition> includedPrimitives, in PrimitiveDefinition incoming,
+        Location? incomingLocation, ImmutableArray<DiagnosticValueType>.Builder diagnostics
+    ) {
+        if (string.IsNullOrEmpty(incoming.TargetTypeFullyQualifiedName)) { return; }
+        if (!IsFixedOrVariableLength(incoming.Mode)) { return; }
+
+        foreach (PrimitiveDefinition existing in includedPrimitives.Values) {
+            if (!string.Equals(existing.TargetTypeFullyQualifiedName, incoming.TargetTypeFullyQualifiedName, StringComparison.Ordinal)) { continue; }
+            if (!IsFixedOrVariableLength(existing.Mode)) { continue; }
+            if (existing.Mode == incoming.Mode) { continue; }
+
+            diagnostics.Add(new DiagnosticValueType(Diagnostics.ConflictingPrimitiveSerializationModes, incomingLocation, incoming.TargetTypeFullyQualifiedName, existing.ExtensionClassFullyQualifiedName, incoming.ExtensionClassFullyQualifiedName));
+            return;
+        }
+    }
+
+    private static void ValidateConflictingPrimitiveSerializationModes(Dictionary<string, PrimitiveDefinition> includedPrimitives, Location? location, ImmutableArray<DiagnosticValueType>.Builder diagnostics) {
+        Dictionary<string, PrimitiveDefinition> fixedByTargetType = new(StringComparer.Ordinal);
+        Dictionary<string, PrimitiveDefinition> variableByTargetType = new(StringComparer.Ordinal);
+
+        foreach (PrimitiveDefinition primitive in includedPrimitives.Values) {
+            if (string.IsNullOrEmpty(primitive.TargetTypeFullyQualifiedName)) { continue; }
+
+            string targetType = primitive.TargetTypeFullyQualifiedName;
+            if (primitive.Mode == PrimitiveSerializationMode.FixedSize) {
+                if (variableByTargetType.TryGetValue(targetType, out PrimitiveDefinition variable)) {
+                    ReportConflictingPrimitiveSerializationModes(targetType, primitive, variable, location, diagnostics);
+                }
+                else { fixedByTargetType[targetType] = primitive; }
+            }
+            else if (primitive.Mode == PrimitiveSerializationMode.VariableLength) {
+                if (fixedByTargetType.TryGetValue(targetType, out PrimitiveDefinition fixedSize)) {
+                    ReportConflictingPrimitiveSerializationModes(targetType, fixedSize, primitive, location, diagnostics);
+                }
+                else { variableByTargetType[targetType] = primitive; }
+            }
+        }
+    }
+
+    private static void ReportConflictingPrimitiveSerializationModes(
+        string targetType, in PrimitiveDefinition fixedSize, in PrimitiveDefinition variableLength,
+        Location? location, ImmutableArray<DiagnosticValueType>.Builder diagnostics
+    ) {
+        foreach (DiagnosticValueType diagnostic in diagnostics) {
+            if (diagnostic.Descriptor == Diagnostics.ConflictingPrimitiveSerializationModes
+                && diagnostic.MessageArgs.Length > 0
+                && string.Equals(diagnostic.MessageArgs[0] as string, targetType, StringComparison.Ordinal)) {
+                return;
+            }
+        }
+
+        diagnostics.Add(new DiagnosticValueType(
+            Diagnostics.ConflictingPrimitiveSerializationModes,
+            location,
+            targetType,
+            fixedSize.ExtensionClassFullyQualifiedName,
+            variableLength.ExtensionClassFullyQualifiedName
+        ));
+    }
+
+    private static bool IsFixedOrVariableLength(PrimitiveSerializationMode mode) {
+        return mode is PrimitiveSerializationMode.FixedSize or PrimitiveSerializationMode.VariableLength;
     }
 
     private static void MergeUniquePrimitives(Dictionary<string, PrimitiveDefinition> destination, EquatableImmutableDictionary<string, PrimitiveDefinition> source, ImmutableArray<DiagnosticValueType>.Builder diagnostics) {

@@ -46,3 +46,6 @@ CBS038 | BitStream | Error | Diagnostics
 CBS039 | BitStream | Error | Diagnostics
 CBS040 | BitStream | Error | Diagnostics
 CBS041 | BitStream | Error | Diagnostics
+CBS042 | BitStream | Error | Diagnostics
+CBS043 | BitStream | Error | Diagnostics
+CBS044 | BitStream | Error | Diagnostics
