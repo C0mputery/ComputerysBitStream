@@ -98,10 +98,23 @@ public static partial class AliasedIncludeExternalStructProxy {
     public static int Included;
 }
 
-[BitStreamStruct]
+[BitStreamSettings]
+[BitStreamSerializer(typeof(PrimitiveVariableLengthIntExtensions))]
+public interface IVariableLengthStructSettings { }
+
+[BitStreamStruct(typeof(IVariableLengthStructSettings))]
 public partial struct VariableLengthStruct {
     [BitStreamSerializer(typeof(PrimitiveVariableLengthIntExtensions))]
     public int A { get; set; }
 
     public bool B { get; set; }
+}
+
+[BitStreamStruct]
+public partial struct QuantizedStruct {
+    public const float Min = 0f;
+    public const float Max = 100f;
+
+    [BitStreamStructQuantizedRange(nameof(Min), nameof(Max), 8)]
+    public float Value { get; set; }
 }
