@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using ComputerysBitStream.Attributes;
 using ComputerysBitStream.Primitives.Quantized;
+
 // ReSharper disable InconsistentNaming
 
 namespace ComputerysBitStream.Extras.Primitives.Quantized {

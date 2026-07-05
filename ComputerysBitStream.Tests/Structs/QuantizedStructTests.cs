@@ -3,6 +3,7 @@ namespace ComputerysBitStream.Tests.Structs;
 public class QuantizedStructTests {
     private const int Precision = 0;
     private static readonly QuantizedStruct Value = new() { Value = 50f };
+
     private static readonly QuantizedStruct[] Values = [
         new() { Value = 0f },
         new() { Value = 50f },
