@@ -3,7 +3,7 @@ namespace ComputerysBitStream.Tests.VariableLength;
 [BitStreamPrimitiveContext]
 public class VariableLengthByteExtensionsTests : VariableLengthExtensionTestSuite<byte> {
     protected override byte Value => 42;
-    protected override byte[] Values => [42, (byte)0, (byte)200];
+    protected override byte[] Values => [42, 0, 200];
     protected override int GetSize(byte value) => PrimitiveVariableLengthByteExtensions.GetVariableLengthByteSize(value);
 
     protected override void WritePrimitive(ref WriteContext context, byte value) => context.WriteVariableLengthBytePrimitive(value);
@@ -12,8 +12,16 @@ public class VariableLengthByteExtensionsTests : VariableLengthExtensionTestSuit
     protected override void Write(ref WriteContext context, byte value) => context.WriteVariableLengthByte(value);
     protected override byte Peek(ReadContext context) => context.PeekVariableLengthByte();
     protected override byte Read(ReadContext context) => context.ReadVariableLengthByte();
-    protected override byte TryPeek(ReadContext context) { Assert.True(context.TryPeekVariableLengthByte(out byte v)); return v; }
-    protected override byte TryRead(ReadContext context) { Assert.True(context.TryReadVariableLengthByte(out byte v)); return v; }
+
+    protected override byte TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekVariableLengthByte(out byte v));
+        return v;
+    }
+
+    protected override byte TryRead(ReadContext context) {
+        Assert.True(context.TryReadVariableLengthByte(out byte v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<byte> values) => context.WriteVariableLengthBytesPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<byte> destination) => context.PeekVariableLengthByteSpanPrimitive(count, destination);
@@ -35,14 +43,31 @@ public class VariableLengthByteExtensionsTests : VariableLengthExtensionTestSuit
     protected override void WriteArrayWithoutLength(ref WriteContext context, byte[] values) => context.WriteVariableLengthBytesWithoutLength(values);
     protected override byte[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekVariableLengthBytes(count);
     protected override byte[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadVariableLengthBytes(count);
-    protected override byte[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekVariableLengthBytes(count, out byte[] values)); return values; }
-    protected override byte[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadVariableLengthBytes(count, out byte[] values)); return values; }
+
+    protected override byte[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekVariableLengthBytes(count, out byte[] values));
+        return values;
+    }
+
+    protected override byte[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadVariableLengthBytes(count, out byte[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, byte[] values) => context.WriteVariableLengthBytes(values);
     protected override byte[] PeekArrayWithLength(ReadContext context) => context.PeekVariableLengthBytes();
     protected override byte[] ReadArrayWithLength(ReadContext context) => context.ReadVariableLengthBytes();
-    protected override byte[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekVariableLengthBytes(out byte[] values)); return values; }
-    protected override byte[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadVariableLengthBytes(out byte[] values)); return values; }
+
+    protected override byte[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekVariableLengthBytes(out byte[] values));
+        return values;
+    }
+
+    protected override byte[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadVariableLengthBytes(out byte[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<byte> TryOperations => new() {
         TryPeekValue = (ReadContext c, out byte v) => c.TryPeekVariableLengthByte(out v),
         TryReadValue = (ReadContext c, out byte v) => c.TryReadVariableLengthByte(out v),

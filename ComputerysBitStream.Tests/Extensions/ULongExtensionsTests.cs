@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class ULongExtensionsTests : ExtensionTestSuite<ulong> {
-        protected override ulong Value => 42ul;
-        protected override ulong[] Values => [42ul, 100ul, 42ul, 42ul, 100ul];
+    protected override ulong Value => 42ul;
+    protected override ulong[] Values => [42ul, 100ul, 42ul, 42ul, 100ul];
 
     protected override void WritePrimitive(ref WriteContext context, ulong value) => context.WriteULongPrimitive(value);
     protected override ulong PeekPrimitive(ReadContext context) => context.PeekULongPrimitive();
@@ -11,8 +11,16 @@ public class ULongExtensionsTests : ExtensionTestSuite<ulong> {
     protected override void Write(ref WriteContext context, ulong value) => context.WriteULong(value);
     protected override ulong Peek(ReadContext context) => context.PeekULong();
     protected override ulong Read(ReadContext context) => context.ReadULong();
-    protected override ulong TryPeek(ReadContext context) { Assert.True(context.TryPeekULong(out ulong v)); return v; }
-    protected override ulong TryRead(ReadContext context) { Assert.True(context.TryReadULong(out ulong v)); return v; }
+
+    protected override ulong TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekULong(out ulong v));
+        return v;
+    }
+
+    protected override ulong TryRead(ReadContext context) {
+        Assert.True(context.TryReadULong(out ulong v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<ulong> values) => context.WriteULongsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<ulong> destination) => context.PeekULongSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class ULongExtensionsTests : ExtensionTestSuite<ulong> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, ulong[] values) => context.WriteULongsWithoutLength(values);
     protected override ulong[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekULongs(count);
     protected override ulong[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadULongs(count);
-    protected override ulong[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekULongs(count, out ulong[] values)); return values; }
-    protected override ulong[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadULongs(count, out ulong[] values)); return values; }
+
+    protected override ulong[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekULongs(count, out ulong[] values));
+        return values;
+    }
+
+    protected override ulong[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadULongs(count, out ulong[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, ulong[] values) => context.WriteULongs(values);
     protected override ulong[] PeekArrayWithLength(ReadContext context) => context.PeekULongs();
     protected override ulong[] ReadArrayWithLength(ReadContext context) => context.ReadULongs();
-    protected override ulong[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekULongs(out ulong[] values)); return values; }
-    protected override ulong[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadULongs(out ulong[] values)); return values; }
+
+    protected override ulong[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekULongs(out ulong[] values));
+        return values;
+    }
+
+    protected override ulong[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadULongs(out ulong[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<ulong> TryOperations => new() {
         TryPeekValue = (ReadContext c, out ulong v) => c.TryPeekULong(out v),
         TryReadValue = (ReadContext c, out ulong v) => c.TryReadULong(out v),

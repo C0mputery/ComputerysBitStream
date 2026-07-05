@@ -20,8 +20,16 @@ public class QuantizedDecimalExtensionsTests : QuantizedExtensionTestSuite<decim
     protected override void Write(ref WriteContext context, decimal value) => context.WriteQuantizedDecimal(value, Min, Max, BitCount);
     protected override decimal Peek(ReadContext context) => context.PeekQuantizedDecimal(Min, Max, BitCount);
     protected override decimal Read(ReadContext context) => context.ReadQuantizedDecimal(Min, Max, BitCount);
-    protected override decimal TryPeek(ReadContext context) { Assert.True(context.TryPeekQuantizedDecimal(Min, Max, BitCount, out decimal v)); return v; }
-    protected override decimal TryRead(ReadContext context) { Assert.True(context.TryReadQuantizedDecimal(Min, Max, BitCount, out decimal v)); return v; }
+
+    protected override decimal TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedDecimal(Min, Max, BitCount, out decimal v));
+        return v;
+    }
+
+    protected override decimal TryRead(ReadContext context) {
+        Assert.True(context.TryReadQuantizedDecimal(Min, Max, BitCount, out decimal v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<decimal> values) => context.WriteQuantizedDecimalsPrimitive(values, Min, Max, BitCount);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<decimal> destination) => context.PeekQuantizedDecimalSpanPrimitive(count, destination, Min, Max, BitCount);
@@ -43,14 +51,31 @@ public class QuantizedDecimalExtensionsTests : QuantizedExtensionTestSuite<decim
     protected override void WriteArrayWithoutLength(ref WriteContext context, decimal[] values) => context.WriteQuantizedDecimalsWithoutLength(values, Min, Max, BitCount);
     protected override decimal[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekQuantizedDecimals(count, Min, Max, BitCount);
     protected override decimal[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadQuantizedDecimals(count, Min, Max, BitCount);
-    protected override decimal[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekQuantizedDecimals(count, Min, Max, BitCount, out decimal[] values)); return values; }
-    protected override decimal[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadQuantizedDecimals(count, Min, Max, BitCount, out decimal[] values)); return values; }
+
+    protected override decimal[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekQuantizedDecimals(count, Min, Max, BitCount, out decimal[] values));
+        return values;
+    }
+
+    protected override decimal[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadQuantizedDecimals(count, Min, Max, BitCount, out decimal[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, decimal[] values) => context.WriteQuantizedDecimals(values, Min, Max, BitCount);
     protected override decimal[] PeekArrayWithLength(ReadContext context) => context.PeekQuantizedDecimals(Min, Max, BitCount);
     protected override decimal[] ReadArrayWithLength(ReadContext context) => context.ReadQuantizedDecimals(Min, Max, BitCount);
-    protected override decimal[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekQuantizedDecimals(Min, Max, BitCount, out decimal[] values)); return values; }
-    protected override decimal[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadQuantizedDecimals(Min, Max, BitCount, out decimal[] values)); return values; }
+
+    protected override decimal[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedDecimals(Min, Max, BitCount, out decimal[] values));
+        return values;
+    }
+
+    protected override decimal[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadQuantizedDecimals(Min, Max, BitCount, out decimal[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<decimal> TryOperations => new() {
         TryPeekValue = (ReadContext c, out decimal v) => c.TryPeekQuantizedDecimal(Min, Max, BitCount, out v),
         TryReadValue = (ReadContext c, out decimal v) => c.TryReadQuantizedDecimal(Min, Max, BitCount, out v),

@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class LongExtensionsTests : ExtensionTestSuite<long> {
-        protected override long Value => 42L;
-        protected override long[] Values => [42L, -42L, 42L, 42L, -42L];
+    protected override long Value => 42L;
+    protected override long[] Values => [42L, -42L, 42L, 42L, -42L];
 
     protected override void WritePrimitive(ref WriteContext context, long value) => context.WriteLongPrimitive(value);
     protected override long PeekPrimitive(ReadContext context) => context.PeekLongPrimitive();
@@ -11,8 +11,16 @@ public class LongExtensionsTests : ExtensionTestSuite<long> {
     protected override void Write(ref WriteContext context, long value) => context.WriteLong(value);
     protected override long Peek(ReadContext context) => context.PeekLong();
     protected override long Read(ReadContext context) => context.ReadLong();
-    protected override long TryPeek(ReadContext context) { Assert.True(context.TryPeekLong(out long v)); return v; }
-    protected override long TryRead(ReadContext context) { Assert.True(context.TryReadLong(out long v)); return v; }
+
+    protected override long TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekLong(out long v));
+        return v;
+    }
+
+    protected override long TryRead(ReadContext context) {
+        Assert.True(context.TryReadLong(out long v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<long> values) => context.WriteLongsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<long> destination) => context.PeekLongSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class LongExtensionsTests : ExtensionTestSuite<long> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, long[] values) => context.WriteLongsWithoutLength(values);
     protected override long[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekLongs(count);
     protected override long[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadLongs(count);
-    protected override long[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekLongs(count, out long[] values)); return values; }
-    protected override long[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadLongs(count, out long[] values)); return values; }
+
+    protected override long[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekLongs(count, out long[] values));
+        return values;
+    }
+
+    protected override long[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadLongs(count, out long[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, long[] values) => context.WriteLongs(values);
     protected override long[] PeekArrayWithLength(ReadContext context) => context.PeekLongs();
     protected override long[] ReadArrayWithLength(ReadContext context) => context.ReadLongs();
-    protected override long[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekLongs(out long[] values)); return values; }
-    protected override long[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadLongs(out long[] values)); return values; }
+
+    protected override long[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekLongs(out long[] values));
+        return values;
+    }
+
+    protected override long[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadLongs(out long[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<long> TryOperations => new() {
         TryPeekValue = (ReadContext c, out long v) => c.TryPeekLong(out v),
         TryReadValue = (ReadContext c, out long v) => c.TryReadLong(out v),

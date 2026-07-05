@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class DecimalExtensionsTests : ExtensionTestSuite<decimal> {
-        protected override decimal Value => 1.23m;
-        protected override decimal[] Values => [1.23m, 4.56m, 1.23m, 1.23m, 4.56m];
+    protected override decimal Value => 1.23m;
+    protected override decimal[] Values => [1.23m, 4.56m, 1.23m, 1.23m, 4.56m];
 
     protected override void WritePrimitive(ref WriteContext context, decimal value) => context.WriteDecimalPrimitive(value);
     protected override decimal PeekPrimitive(ReadContext context) => context.PeekDecimalPrimitive();
@@ -11,8 +11,16 @@ public class DecimalExtensionsTests : ExtensionTestSuite<decimal> {
     protected override void Write(ref WriteContext context, decimal value) => context.WriteDecimal(value);
     protected override decimal Peek(ReadContext context) => context.PeekDecimal();
     protected override decimal Read(ReadContext context) => context.ReadDecimal();
-    protected override decimal TryPeek(ReadContext context) { Assert.True(context.TryPeekDecimal(out decimal v)); return v; }
-    protected override decimal TryRead(ReadContext context) { Assert.True(context.TryReadDecimal(out decimal v)); return v; }
+
+    protected override decimal TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekDecimal(out decimal v));
+        return v;
+    }
+
+    protected override decimal TryRead(ReadContext context) {
+        Assert.True(context.TryReadDecimal(out decimal v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<decimal> values) => context.WriteDecimalsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<decimal> destination) => context.PeekDecimalSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class DecimalExtensionsTests : ExtensionTestSuite<decimal> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, decimal[] values) => context.WriteDecimalsWithoutLength(values);
     protected override decimal[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekDecimals(count);
     protected override decimal[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadDecimals(count);
-    protected override decimal[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekDecimals(count, out decimal[] values)); return values; }
-    protected override decimal[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadDecimals(count, out decimal[] values)); return values; }
+
+    protected override decimal[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekDecimals(count, out decimal[] values));
+        return values;
+    }
+
+    protected override decimal[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadDecimals(count, out decimal[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, decimal[] values) => context.WriteDecimals(values);
     protected override decimal[] PeekArrayWithLength(ReadContext context) => context.PeekDecimals();
     protected override decimal[] ReadArrayWithLength(ReadContext context) => context.ReadDecimals();
-    protected override decimal[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekDecimals(out decimal[] values)); return values; }
-    protected override decimal[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadDecimals(out decimal[] values)); return values; }
+
+    protected override decimal[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekDecimals(out decimal[] values));
+        return values;
+    }
+
+    protected override decimal[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadDecimals(out decimal[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<decimal> TryOperations => new() {
         TryPeekValue = (ReadContext c, out decimal v) => c.TryPeekDecimal(out v),
         TryReadValue = (ReadContext c, out decimal v) => c.TryReadDecimal(out v),

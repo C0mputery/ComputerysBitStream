@@ -106,9 +106,11 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string QuantizedFailPrefix => IsQuantized ? $"bitCount < {MinBits} || bitCount > {MaxBits} || " : "";
 
     private string QuantizedBitCountValidationPrefix() {
-        return IsQuantized ? $$"""
-                               {{BitCountValidationThrow}}
-                               """ : "";
+        return IsQuantized
+            ? $$"""
+                {{BitCountValidationThrow}}
+                """
+            : "";
     }
 
     private string EmitThrowIfTryReadFailedBody(string typeName, string tryExpression, string successBody) {

@@ -239,7 +239,3 @@ public class WriteContextTests {
         else { buffer[ulongIndex] &= ~mask; }
     }
 }
-
-
-
-

@@ -1,16 +1,15 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using ComputerysBitStream.Attributes;
 using ComputerysBitStream.Generator.Emitters;
 using Microsoft.CodeAnalysis;
 
 namespace ComputerysBitStream.Generator;
 
-internal ref partial struct ExecutionContext {
+internal readonly ref partial struct ExecutionContext {
     private ImmutableArray<PrimitiveDefinition> ResolveAndEmitStructs() {
         if (_structDataArray.IsDefaultOrEmpty) { return ImmutableArray<PrimitiveDefinition>.Empty; }
 
-        HashSet<string> usedAliases = new();
+        HashSet<string> usedAliases = [];
         foreach (PrimitiveDefinition primitive in _primitivesArray) { usedAliases.Add(primitive.Alias); }
 
         SourceProductionContext context = _context;
@@ -28,11 +27,7 @@ internal ref partial struct ExecutionContext {
             if (resolved is not ResolvedStructDefinition resolvedStruct) { continue; }
 
             if (!usedAliases.Add(structDefinition.Alias)) {
-                context.ReportDiagnostic(new DiagnosticValueType(
-                    Diagnostics.DuplicateAlias,
-                    structDefinition.Location,
-                    structDefinition.Alias
-                ).ToDiagnostic());
+                context.ReportDiagnostic(new DiagnosticValueType(Diagnostics.DuplicateAlias, structDefinition.Location, structDefinition.Alias).ToDiagnostic());
                 continue;
             }
 

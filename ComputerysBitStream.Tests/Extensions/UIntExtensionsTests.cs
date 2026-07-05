@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class UIntExtensionsTests : ExtensionTestSuite<uint> {
-        protected override uint Value => 42u;
-        protected override uint[] Values => [42u, 100u, 42u, 42u, 100u];
+    protected override uint Value => 42u;
+    protected override uint[] Values => [42u, 100u, 42u, 42u, 100u];
 
     protected override void WritePrimitive(ref WriteContext context, uint value) => context.WriteUIntPrimitive(value);
     protected override uint PeekPrimitive(ReadContext context) => context.PeekUIntPrimitive();
@@ -11,8 +11,16 @@ public class UIntExtensionsTests : ExtensionTestSuite<uint> {
     protected override void Write(ref WriteContext context, uint value) => context.WriteUInt(value);
     protected override uint Peek(ReadContext context) => context.PeekUInt();
     protected override uint Read(ReadContext context) => context.ReadUInt();
-    protected override uint TryPeek(ReadContext context) { Assert.True(context.TryPeekUInt(out uint v)); return v; }
-    protected override uint TryRead(ReadContext context) { Assert.True(context.TryReadUInt(out uint v)); return v; }
+
+    protected override uint TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekUInt(out uint v));
+        return v;
+    }
+
+    protected override uint TryRead(ReadContext context) {
+        Assert.True(context.TryReadUInt(out uint v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<uint> values) => context.WriteUIntsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<uint> destination) => context.PeekUIntSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class UIntExtensionsTests : ExtensionTestSuite<uint> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, uint[] values) => context.WriteUIntsWithoutLength(values);
     protected override uint[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekUInts(count);
     protected override uint[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadUInts(count);
-    protected override uint[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekUInts(count, out uint[] values)); return values; }
-    protected override uint[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadUInts(count, out uint[] values)); return values; }
+
+    protected override uint[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekUInts(count, out uint[] values));
+        return values;
+    }
+
+    protected override uint[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadUInts(count, out uint[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, uint[] values) => context.WriteUInts(values);
     protected override uint[] PeekArrayWithLength(ReadContext context) => context.PeekUInts();
     protected override uint[] ReadArrayWithLength(ReadContext context) => context.ReadUInts();
-    protected override uint[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekUInts(out uint[] values)); return values; }
-    protected override uint[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadUInts(out uint[] values)); return values; }
+
+    protected override uint[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekUInts(out uint[] values));
+        return values;
+    }
+
+    protected override uint[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadUInts(out uint[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<uint> TryOperations => new() {
         TryPeekValue = (ReadContext c, out uint v) => c.TryPeekUInt(out v),
         TryReadValue = (ReadContext c, out uint v) => c.TryReadUInt(out v),

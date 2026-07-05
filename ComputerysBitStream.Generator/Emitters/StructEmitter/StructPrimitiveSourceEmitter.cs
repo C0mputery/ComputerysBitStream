@@ -257,9 +257,7 @@ internal static class StructPrimitiveSourceEmitter {
         ImmutableArray<ResolvedStructMember> memberArray = members;
         if (memberArray.Length == 0) { return "0"; }
         List<string> parts = [];
-        foreach (ResolvedStructMember member in memberArray) {
-            parts.Add(member.SizeExpression);
-        }
+        foreach (ResolvedStructMember member in memberArray) { parts.Add(member.SizeExpression); }
         return string.Join(" + ", parts);
     }
 }

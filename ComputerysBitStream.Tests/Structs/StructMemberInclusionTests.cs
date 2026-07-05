@@ -1,4 +1,4 @@
-namespace ComputerysBitStream.Tests;
+namespace ComputerysBitStream.Tests.Structs;
 
 public class StructMemberInclusionTests {
     [Fact]
@@ -17,14 +17,17 @@ public class StructMemberInclusionTests {
             static (ref WriteContext context, MemberInclusionStruct value) => context.WriteMemberInclusionStruct(value),
             static context => context.PeekMemberInclusionStruct(),
             static context => context.ReadMemberInclusionStruct(),
-            static (expected, actual) => {
-                Assert.Equal(expected.Health, actual.Health);
-                Assert.Equal(expected.Speed, actual.Speed);
-                Assert.Equal(0, actual.DebugOnly);
-                Assert.Equal(0, actual.PublicField);
-                Assert.Equal(expected.IncludedField, actual.IncludedField);
-            }
+            AssertEqual
         );
+        return;
+
+        static void AssertEqual(MemberInclusionStruct expected, MemberInclusionStruct actual) {
+            Assert.Equal(expected.Health, actual.Health);
+            Assert.Equal(expected.Speed, actual.Speed);
+            Assert.Equal(0, actual.DebugOnly);
+            Assert.Equal(0, actual.PublicField);
+            Assert.Equal(expected.IncludedField, actual.IncludedField);
+        }
     }
 
     [Fact]

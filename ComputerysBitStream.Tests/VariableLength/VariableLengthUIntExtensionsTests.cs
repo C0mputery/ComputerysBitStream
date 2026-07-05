@@ -12,8 +12,16 @@ public class VariableLengthUIntExtensionsTests : VariableLengthExtensionTestSuit
     protected override void Write(ref WriteContext context, uint value) => context.WriteVariableLengthUInt(value);
     protected override uint Peek(ReadContext context) => context.PeekVariableLengthUInt();
     protected override uint Read(ReadContext context) => context.ReadVariableLengthUInt();
-    protected override uint TryPeek(ReadContext context) { Assert.True(context.TryPeekVariableLengthUInt(out uint v)); return v; }
-    protected override uint TryRead(ReadContext context) { Assert.True(context.TryReadVariableLengthUInt(out uint v)); return v; }
+
+    protected override uint TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekVariableLengthUInt(out uint v));
+        return v;
+    }
+
+    protected override uint TryRead(ReadContext context) {
+        Assert.True(context.TryReadVariableLengthUInt(out uint v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<uint> values) => context.WriteVariableLengthUIntsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<uint> destination) => context.PeekVariableLengthUIntSpanPrimitive(count, destination);
@@ -35,14 +43,31 @@ public class VariableLengthUIntExtensionsTests : VariableLengthExtensionTestSuit
     protected override void WriteArrayWithoutLength(ref WriteContext context, uint[] values) => context.WriteVariableLengthUIntsWithoutLength(values);
     protected override uint[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekVariableLengthUInts(count);
     protected override uint[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadVariableLengthUInts(count);
-    protected override uint[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekVariableLengthUInts(count, out uint[] values)); return values; }
-    protected override uint[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadVariableLengthUInts(count, out uint[] values)); return values; }
+
+    protected override uint[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekVariableLengthUInts(count, out uint[] values));
+        return values;
+    }
+
+    protected override uint[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadVariableLengthUInts(count, out uint[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, uint[] values) => context.WriteVariableLengthUInts(values);
     protected override uint[] PeekArrayWithLength(ReadContext context) => context.PeekVariableLengthUInts();
     protected override uint[] ReadArrayWithLength(ReadContext context) => context.ReadVariableLengthUInts();
-    protected override uint[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekVariableLengthUInts(out uint[] values)); return values; }
-    protected override uint[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadVariableLengthUInts(out uint[] values)); return values; }
+
+    protected override uint[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekVariableLengthUInts(out uint[] values));
+        return values;
+    }
+
+    protected override uint[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadVariableLengthUInts(out uint[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<uint> TryOperations => new() {
         TryPeekValue = (ReadContext c, out uint v) => c.TryPeekVariableLengthUInt(out v),
         TryReadValue = (ReadContext c, out uint v) => c.TryReadVariableLengthUInt(out v),

@@ -3,6 +3,7 @@ namespace ComputerysBitStream.Tests.Extensions;
 [BitStreamPrimitiveContext]
 public class DateTimeExtensionsTests : ExtensionTestSuite<DateTime> {
     protected override DateTime Value => new(2024, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+
     protected override DateTime[] Values => [
         new(2024, 1, 1, 12, 0, 0, DateTimeKind.Utc),
         new(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified),
@@ -17,8 +18,16 @@ public class DateTimeExtensionsTests : ExtensionTestSuite<DateTime> {
     protected override void Write(ref WriteContext context, DateTime value) => context.WriteDateTime(value);
     protected override DateTime Peek(ReadContext context) => context.PeekDateTime();
     protected override DateTime Read(ReadContext context) => context.ReadDateTime();
-    protected override DateTime TryPeek(ReadContext context) { Assert.True(context.TryPeekDateTime(out DateTime v)); return v; }
-    protected override DateTime TryRead(ReadContext context) { Assert.True(context.TryReadDateTime(out DateTime v)); return v; }
+
+    protected override DateTime TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekDateTime(out DateTime v));
+        return v;
+    }
+
+    protected override DateTime TryRead(ReadContext context) {
+        Assert.True(context.TryReadDateTime(out DateTime v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<DateTime> values) => context.WriteDateTimesPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<DateTime> destination) => context.PeekDateTimeSpanPrimitive(count, destination);
@@ -40,14 +49,31 @@ public class DateTimeExtensionsTests : ExtensionTestSuite<DateTime> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, DateTime[] values) => context.WriteDateTimesWithoutLength(values);
     protected override DateTime[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekDateTimes(count);
     protected override DateTime[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadDateTimes(count);
-    protected override DateTime[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekDateTimes(count, out DateTime[] values)); return values; }
-    protected override DateTime[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadDateTimes(count, out DateTime[] values)); return values; }
+
+    protected override DateTime[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekDateTimes(count, out DateTime[] values));
+        return values;
+    }
+
+    protected override DateTime[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadDateTimes(count, out DateTime[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, DateTime[] values) => context.WriteDateTimes(values);
     protected override DateTime[] PeekArrayWithLength(ReadContext context) => context.PeekDateTimes();
     protected override DateTime[] ReadArrayWithLength(ReadContext context) => context.ReadDateTimes();
-    protected override DateTime[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekDateTimes(out DateTime[] values)); return values; }
-    protected override DateTime[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadDateTimes(out DateTime[] values)); return values; }
+
+    protected override DateTime[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekDateTimes(out DateTime[] values));
+        return values;
+    }
+
+    protected override DateTime[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadDateTimes(out DateTime[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<DateTime> TryOperations => new() {
         TryPeekValue = (ReadContext c, out DateTime v) => c.TryPeekDateTime(out v),
         TryReadValue = (ReadContext c, out DateTime v) => c.TryReadDateTime(out v),

@@ -24,6 +24,7 @@ namespace ComputerysBitStream.Extras.Primitives.Quantized {
 
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.WriteSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // ReSharper disable once InconsistentNaming
         public static void WriteQuantizedVector4sPrimitive(this ref WriteContext context, ReadOnlySpan<Vector4> values, Vector4 min, Vector4 max, int bitCount) {
             for (int i = 0; i < values.Length; i++) {
                 context.WriteQuantizedVector4Primitive(values[i], min, max, bitCount);

@@ -71,16 +71,12 @@ internal static class PrimitiveCollector {
                     if (!quantizedArguments.TryGetValue("minimumBits", out int parsedMinBits)) {
                         diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, attributeLocation, "minimumBits", "BitStreamQuantizedPrimitive"));
                     }
-                    else {
-                        minBits = parsedMinBits;
-                    }
+                    else { minBits = parsedMinBits; }
 
                     if (!quantizedArguments.TryGetValue("maximumBits", out int parsedMaxBits)) {
                         diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, attributeLocation, "maximumBits", "BitStreamQuantizedPrimitive"));
                     }
-                    else {
-                        maxBits = parsedMaxBits;
-                    }
+                    else { maxBits = parsedMaxBits; }
 
                     if (minBits is not null && maxBits is not null && (minBits <= 0 || maxBits < minBits)) {
                         diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedBitRange, attributeLocation, minBits.ToString(), maxBits.ToString()));

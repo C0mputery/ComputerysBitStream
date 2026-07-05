@@ -20,8 +20,16 @@ public class QuantizedDoubleExtensionsTests : QuantizedExtensionTestSuite<double
     protected override void Write(ref WriteContext context, double value) => context.WriteQuantizedDouble(value, Min, Max, BitCount);
     protected override double Peek(ReadContext context) => context.PeekQuantizedDouble(Min, Max, BitCount);
     protected override double Read(ReadContext context) => context.ReadQuantizedDouble(Min, Max, BitCount);
-    protected override double TryPeek(ReadContext context) { Assert.True(context.TryPeekQuantizedDouble(Min, Max, BitCount, out double v)); return v; }
-    protected override double TryRead(ReadContext context) { Assert.True(context.TryReadQuantizedDouble(Min, Max, BitCount, out double v)); return v; }
+
+    protected override double TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedDouble(Min, Max, BitCount, out double v));
+        return v;
+    }
+
+    protected override double TryRead(ReadContext context) {
+        Assert.True(context.TryReadQuantizedDouble(Min, Max, BitCount, out double v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<double> values) => context.WriteQuantizedDoublesPrimitive(values, Min, Max, BitCount);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<double> destination) => context.PeekQuantizedDoubleSpanPrimitive(count, destination, Min, Max, BitCount);
@@ -43,14 +51,31 @@ public class QuantizedDoubleExtensionsTests : QuantizedExtensionTestSuite<double
     protected override void WriteArrayWithoutLength(ref WriteContext context, double[] values) => context.WriteQuantizedDoublesWithoutLength(values, Min, Max, BitCount);
     protected override double[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekQuantizedDoubles(count, Min, Max, BitCount);
     protected override double[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadQuantizedDoubles(count, Min, Max, BitCount);
-    protected override double[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekQuantizedDoubles(count, Min, Max, BitCount, out double[] values)); return values; }
-    protected override double[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadQuantizedDoubles(count, Min, Max, BitCount, out double[] values)); return values; }
+
+    protected override double[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekQuantizedDoubles(count, Min, Max, BitCount, out double[] values));
+        return values;
+    }
+
+    protected override double[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadQuantizedDoubles(count, Min, Max, BitCount, out double[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, double[] values) => context.WriteQuantizedDoubles(values, Min, Max, BitCount);
     protected override double[] PeekArrayWithLength(ReadContext context) => context.PeekQuantizedDoubles(Min, Max, BitCount);
     protected override double[] ReadArrayWithLength(ReadContext context) => context.ReadQuantizedDoubles(Min, Max, BitCount);
-    protected override double[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekQuantizedDoubles(Min, Max, BitCount, out double[] values)); return values; }
-    protected override double[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadQuantizedDoubles(Min, Max, BitCount, out double[] values)); return values; }
+
+    protected override double[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedDoubles(Min, Max, BitCount, out double[] values));
+        return values;
+    }
+
+    protected override double[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadQuantizedDoubles(Min, Max, BitCount, out double[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<double> TryOperations => new() {
         TryPeekValue = (ReadContext c, out double v) => c.TryPeekQuantizedDouble(Min, Max, BitCount, out v),
         TryReadValue = (ReadContext c, out double v) => c.TryReadQuantizedDouble(Min, Max, BitCount, out v),

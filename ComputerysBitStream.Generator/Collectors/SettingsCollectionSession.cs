@@ -38,7 +38,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
         ImmutableArray<string>.Builder localInterfaceNames = ImmutableArray.CreateBuilder<string>();
         ImmutableArray<ITypeSymbol>.Builder externalInterfaces = ImmutableArray.CreateBuilder<ITypeSymbol>();
         ImmutableArray<DiagnosticValueType>.Builder diagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
-        HashSet<string> seenLocalInterfaces = new();
+        HashSet<string> seenLocalInterfaces = [];
 
         foreach (ITypeSymbol settingsInterface in settingsInterfaces) {
             if (!settingsInterface.HasAttribute(BitStreamMetadataNames.Settings)) {
@@ -295,20 +295,14 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
         Location? location, ImmutableArray<DiagnosticValueType>.Builder diagnostics
     ) {
         foreach (DiagnosticValueType diagnostic in diagnostics) {
-            if (diagnostic.Descriptor == Diagnostics.ConflictingPrimitiveSerializationModes
+            if (diagnostic.Descriptor.Equals(Diagnostics.ConflictingPrimitiveSerializationModes)
                 && diagnostic.MessageArgs.Length > 0
                 && string.Equals(diagnostic.MessageArgs[0] as string, targetType, StringComparison.Ordinal)) {
                 return;
             }
         }
 
-        diagnostics.Add(new DiagnosticValueType(
-            Diagnostics.ConflictingPrimitiveSerializationModes,
-            location,
-            targetType,
-            fixedSize.ExtensionClassFullyQualifiedName,
-            variableLength.ExtensionClassFullyQualifiedName
-        ));
+        diagnostics.Add(new DiagnosticValueType(Diagnostics.ConflictingPrimitiveSerializationModes, location, targetType, fixedSize.ExtensionClassFullyQualifiedName, variableLength.ExtensionClassFullyQualifiedName));
     }
 
     private static bool IsFixedOrVariableLength(PrimitiveSerializationMode mode) {

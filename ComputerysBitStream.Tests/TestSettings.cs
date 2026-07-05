@@ -1,7 +1,4 @@
-using ComputerysBitStream.Attributes;
 using ComputerysBitStream.Extras.Settings;
-using ComputerysBitStream.Primitives.FixedSize;
-using ComputerysBitStream.Primitives.Quantized;
 
 [assembly: DefaultBitStreamSettings(typeof(ComputerysBitStream.Tests.ITestSettings))]
 

@@ -149,14 +149,8 @@ internal static class StructCollector {
         ValidateProxyMembers(proxyClassSymbol, structSymbol, diagnostics);
         ValidateProxyMemberAccessibility(proxyClassSymbol, diagnostics);
 
-        ImmutableArray<StructMemberDefinition> members = CollectMembers(
-            structSymbol,
-            excludedMembers,
-            includedMembers,
-            diagnostics,
-            proxyClassSymbol,
-            proxyDefinedMembers
-        );
+        ImmutableArray<StructMemberDefinition> members = CollectMembers(structSymbol, excludedMembers, includedMembers, diagnostics, proxyClassSymbol, proxyDefinedMembers);
+
         return CreateProxyStructData(
             proxyClassFullyQualifiedName,
             proxyClassSymbol.GetEmitTypeName(),
@@ -171,15 +165,9 @@ internal static class StructCollector {
     }
 
     private static Collected<StructDefinition> CreateProxyStructData(
-        string declarationTypeFullyQualifiedName,
-        string declarationTypeEmitName,
-        string? declaringNamespace,
-        Location? attributeLocation,
-        ImmutableArray<StructMemberDefinition> members,
-        ImmutableArray<DiagnosticValueType>.Builder diagnostics,
-        string typeFullyQualifiedName = "",
-        string alias = "",
-        SettingsReference? settings = null
+        string declarationTypeFullyQualifiedName, string declarationTypeEmitName, string? declaringNamespace,
+        Location? attributeLocation, ImmutableArray<StructMemberDefinition> members, ImmutableArray<DiagnosticValueType>.Builder diagnostics,
+        string typeFullyQualifiedName = "", string alias = "", SettingsReference? settings = null
     ) {
         StructDefinition definition = new(
             TypeFullyQualifiedName: typeFullyQualifiedName,
@@ -196,11 +184,8 @@ internal static class StructCollector {
     }
 
     private static void CollectMemberInclusionAttributes(
-        ISymbol member,
-        HashSet<string> excludedMembers,
-        HashSet<string> includedMembers,
-        ImmutableArray<DiagnosticValueType>.Builder diagnostics,
-        bool reportInaccessibleInclude = true
+        ISymbol member, HashSet<string> excludedMembers, HashSet<string> includedMembers,
+        ImmutableArray<DiagnosticValueType>.Builder diagnostics, bool reportInaccessibleInclude = true
     ) {
         bool hasIgnore = member.HasAttribute(BitStreamMetadataNames.StructIgnore);
         bool hasInclude = member.HasAttribute(BitStreamMetadataNames.StructInclude);
@@ -232,13 +217,8 @@ internal static class StructCollector {
     }
 
     private static bool ShouldIncludeMember(
-        string memberName,
-        bool isProperty,
-        Accessibility declaredAccessibility,
-        HashSet<string> excludedMembers,
-        HashSet<string> includedMembers,
-        bool useProxyInclusionRules,
-        HashSet<string> proxyDefinedMembers
+        string memberName, bool isProperty, Accessibility declaredAccessibility, HashSet<string> excludedMembers,
+        HashSet<string> includedMembers, bool useProxyInclusionRules, HashSet<string> proxyDefinedMembers
     ) {
         if (excludedMembers.Contains(memberName)) { return false; }
         if (includedMembers.Contains(memberName)) { return true; }
@@ -262,12 +242,8 @@ internal static class StructCollector {
     }
 
     private static ImmutableArray<StructMemberDefinition> CollectMembers(
-        INamedTypeSymbol structSymbol,
-        HashSet<string> excludedMembers,
-        HashSet<string> includedMembers,
-        ImmutableArray<DiagnosticValueType>.Builder diagnostics,
-        INamedTypeSymbol? proxyClassSymbol = null,
-        HashSet<string>? proxyDefinedMembers = null
+        INamedTypeSymbol structSymbol, HashSet<string> excludedMembers, HashSet<string> includedMembers,
+        ImmutableArray<DiagnosticValueType>.Builder diagnostics, INamedTypeSymbol? proxyClassSymbol = null, HashSet<string>? proxyDefinedMembers = null
     ) {
         bool useProxyInclusionRules = proxyClassSymbol is not null;
         proxyDefinedMembers ??= proxyClassSymbol is not null ? GetProxyDefinedMemberNames(proxyClassSymbol) : [];
@@ -298,28 +274,19 @@ internal static class StructCollector {
     }
 
     private static void TryAddProperty(
-        IPropertySymbol property,
-        HashSet<string> excludedMembers,
-        HashSet<string> includedMembers,
-        ImmutableArray<StructMemberDefinition>.Builder members,
-        ImmutableArray<DiagnosticValueType>.Builder diagnostics,
-        bool useProxyInclusionRules,
-        HashSet<string> proxyDefinedMembers,
-        INamedTypeSymbol? proxyClassSymbol = null
+        IPropertySymbol property, HashSet<string> excludedMembers, HashSet<string> includedMembers,
+        ImmutableArray<StructMemberDefinition>.Builder members, ImmutableArray<DiagnosticValueType>.Builder diagnostics,
+        bool useProxyInclusionRules, HashSet<string> proxyDefinedMembers, INamedTypeSymbol? proxyClassSymbol = null
     ) {
         if (property.IsStatic || property.IsImplicitlyDeclared || property.IsIndexer) { return; }
         if (property.DeclaredAccessibility != Accessibility.Public) { return; }
 
         bool explicitlyIncluded = includedMembers.Contains(property.Name);
-        if (!ShouldIncludeMember(property.Name, true, property.DeclaredAccessibility, excludedMembers, includedMembers, useProxyInclusionRules, proxyDefinedMembers)) {
-            return;
-        }
+        if (!ShouldIncludeMember(property.Name, true, property.DeclaredAccessibility, excludedMembers, includedMembers, useProxyInclusionRules, proxyDefinedMembers)) { return; }
 
         if (property.GetMethod is null) { return; }
 
-        bool hasWritableProxyMirror = proxyClassSymbol is not null
-                                      && TryGetProxyMember(proxyClassSymbol, property.Name, out ISymbol? proxyMember)
-                                      && IsWritableProxyMirror(proxyMember);
+        bool hasWritableProxyMirror = proxyClassSymbol is not null && TryGetProxyMember(proxyClassSymbol, property.Name, out ISymbol? proxyMember) && IsWritableProxyMirror(proxyMember);
 
         if (property.GetMethod.DeclaredAccessibility != Accessibility.Public) {
             if (explicitlyIncluded) {

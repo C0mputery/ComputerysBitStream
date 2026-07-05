@@ -1,7 +1,8 @@
-namespace ComputerysBitStream.Tests;
+namespace ComputerysBitStream.Tests.Structs;
 
 public class ExternalPlainStructTests : StructTestSuite<ExternalPlainStruct> {
     protected override ExternalPlainStruct Value => new() { X = 42, Y = 3.14f };
+
     protected override ExternalPlainStruct[] Values => [
         new() { X = 1, Y = 1.0f },
         new() { X = 2, Y = 2.0f },
@@ -11,20 +12,44 @@ public class ExternalPlainStructTests : StructTestSuite<ExternalPlainStruct> {
     protected override void Write(ref WriteContext context, ExternalPlainStruct value) => context.WriteExternalPlainStruct(value);
     protected override ExternalPlainStruct Peek(ReadContext context) => context.PeekExternalPlainStruct();
     protected override ExternalPlainStruct Read(ReadContext context) => context.ReadExternalPlainStruct();
-    protected override ExternalPlainStruct TryPeek(ReadContext context) { Assert.True(context.TryPeekExternalPlainStruct(out ExternalPlainStruct v)); return v; }
-    protected override ExternalPlainStruct TryRead(ReadContext context) { Assert.True(context.TryReadExternalPlainStruct(out ExternalPlainStruct v)); return v; }
+
+    protected override ExternalPlainStruct TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekExternalPlainStruct(out ExternalPlainStruct v));
+        return v;
+    }
+
+    protected override ExternalPlainStruct TryRead(ReadContext context) {
+        Assert.True(context.TryReadExternalPlainStruct(out ExternalPlainStruct v));
+        return v;
+    }
 
     protected override void WriteArray(ref WriteContext context, ExternalPlainStruct[] values) => context.WriteExternalPlainStructs(values);
     protected override ExternalPlainStruct[] PeekArrayWithLength(ReadContext context) => context.PeekExternalPlainStructs();
     protected override ExternalPlainStruct[] ReadArrayWithLength(ReadContext context) => context.ReadExternalPlainStructs();
-    protected override ExternalPlainStruct[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekExternalPlainStructs(out ExternalPlainStruct[] v)); return v; }
-    protected override ExternalPlainStruct[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadExternalPlainStructs(out ExternalPlainStruct[] v)); return v; }
+
+    protected override ExternalPlainStruct[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekExternalPlainStructs(out ExternalPlainStruct[] v));
+        return v;
+    }
+
+    protected override ExternalPlainStruct[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadExternalPlainStructs(out ExternalPlainStruct[] v));
+        return v;
+    }
 
     protected override void WriteArrayWithoutLength(ref WriteContext context, ExternalPlainStruct[] values) => context.WriteExternalPlainStructsWithoutLength(values);
     protected override ExternalPlainStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekExternalPlainStructs(count);
     protected override ExternalPlainStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadExternalPlainStructs(count);
-    protected override ExternalPlainStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekExternalPlainStructs(count, out ExternalPlainStruct[] v)); return v; }
-    protected override ExternalPlainStruct[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadExternalPlainStructs(count, out ExternalPlainStruct[] v)); return v; }
+
+    protected override ExternalPlainStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekExternalPlainStructs(count, out ExternalPlainStruct[] v));
+        return v;
+    }
+
+    protected override ExternalPlainStruct[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadExternalPlainStructs(count, out ExternalPlainStruct[] v));
+        return v;
+    }
 
     protected override void WriteSpan(ref WriteContext context, Span<ExternalPlainStruct> values) => context.WriteExternalPlainStructs(values);
     protected override void PeekSpanWithLength(ReadContext context, Span<ExternalPlainStruct> destination) => context.PeekExternalPlainStructs(destination);
@@ -39,6 +64,7 @@ public class ExternalPlainStructTests : StructTestSuite<ExternalPlainStruct> {
     protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<ExternalPlainStruct> destination) { Assert.True(context.TryReadExternalPlainStructs(count, destination)); }
 
     protected override Type StructType => typeof(ExternalPlainStruct);
+
     protected override TryReadOperationSet<ExternalPlainStruct> TryOperations => new() {
         TryPeekValue = (ReadContext c, out ExternalPlainStruct v) => c.TryPeekExternalPlainStruct(out v),
         TryReadValue = (ReadContext c, out ExternalPlainStruct v) => c.TryReadExternalPlainStruct(out v),
@@ -55,6 +81,7 @@ public class ExternalPlainStructTests : StructTestSuite<ExternalPlainStruct> {
 
 public class AnotherExternalStructTests : StructTestSuite<AnotherExternalStruct> {
     protected override AnotherExternalStruct Value => new() { Flag = true };
+
     protected override AnotherExternalStruct[] Values => [
         new() { Flag = true },
         new() { Flag = false },
@@ -64,20 +91,44 @@ public class AnotherExternalStructTests : StructTestSuite<AnotherExternalStruct>
     protected override void Write(ref WriteContext context, AnotherExternalStruct value) => context.WriteAnotherExternalStruct(value);
     protected override AnotherExternalStruct Peek(ReadContext context) => context.PeekAnotherExternalStruct();
     protected override AnotherExternalStruct Read(ReadContext context) => context.ReadAnotherExternalStruct();
-    protected override AnotherExternalStruct TryPeek(ReadContext context) { Assert.True(context.TryPeekAnotherExternalStruct(out AnotherExternalStruct v)); return v; }
-    protected override AnotherExternalStruct TryRead(ReadContext context) { Assert.True(context.TryReadAnotherExternalStruct(out AnotherExternalStruct v)); return v; }
+
+    protected override AnotherExternalStruct TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekAnotherExternalStruct(out AnotherExternalStruct v));
+        return v;
+    }
+
+    protected override AnotherExternalStruct TryRead(ReadContext context) {
+        Assert.True(context.TryReadAnotherExternalStruct(out AnotherExternalStruct v));
+        return v;
+    }
 
     protected override void WriteArray(ref WriteContext context, AnotherExternalStruct[] values) => context.WriteAnotherExternalStructs(values);
     protected override AnotherExternalStruct[] PeekArrayWithLength(ReadContext context) => context.PeekAnotherExternalStructs();
     protected override AnotherExternalStruct[] ReadArrayWithLength(ReadContext context) => context.ReadAnotherExternalStructs();
-    protected override AnotherExternalStruct[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekAnotherExternalStructs(out AnotherExternalStruct[] v)); return v; }
-    protected override AnotherExternalStruct[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadAnotherExternalStructs(out AnotherExternalStruct[] v)); return v; }
+
+    protected override AnotherExternalStruct[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekAnotherExternalStructs(out AnotherExternalStruct[] v));
+        return v;
+    }
+
+    protected override AnotherExternalStruct[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadAnotherExternalStructs(out AnotherExternalStruct[] v));
+        return v;
+    }
 
     protected override void WriteArrayWithoutLength(ref WriteContext context, AnotherExternalStruct[] values) => context.WriteAnotherExternalStructsWithoutLength(values);
     protected override AnotherExternalStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekAnotherExternalStructs(count);
     protected override AnotherExternalStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadAnotherExternalStructs(count);
-    protected override AnotherExternalStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekAnotherExternalStructs(count, out AnotherExternalStruct[] v)); return v; }
-    protected override AnotherExternalStruct[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadAnotherExternalStructs(count, out AnotherExternalStruct[] v)); return v; }
+
+    protected override AnotherExternalStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekAnotherExternalStructs(count, out AnotherExternalStruct[] v));
+        return v;
+    }
+
+    protected override AnotherExternalStruct[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadAnotherExternalStructs(count, out AnotherExternalStruct[] v));
+        return v;
+    }
 
     protected override void WriteSpan(ref WriteContext context, Span<AnotherExternalStruct> values) => context.WriteAnotherExternalStructs(values);
     protected override void PeekSpanWithLength(ReadContext context, Span<AnotherExternalStruct> destination) => context.PeekAnotherExternalStructs(destination);
@@ -92,6 +143,7 @@ public class AnotherExternalStructTests : StructTestSuite<AnotherExternalStruct>
     protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<AnotherExternalStruct> destination) { Assert.True(context.TryReadAnotherExternalStructs(count, destination)); }
 
     protected override Type StructType => typeof(AnotherExternalStruct);
+
     protected override TryReadOperationSet<AnotherExternalStruct> TryOperations => new() {
         TryPeekValue = (ReadContext c, out AnotherExternalStruct v) => c.TryPeekAnotherExternalStruct(out v),
         TryReadValue = (ReadContext c, out AnotherExternalStruct v) => c.TryReadAnotherExternalStruct(out v),
@@ -108,6 +160,7 @@ public class AnotherExternalStructTests : StructTestSuite<AnotherExternalStruct>
 
 public class CaseTestStructTests : StructTestSuite<CaseTestStruct> {
     protected override CaseTestStruct Value => new() { Value = 123 };
+
     protected override CaseTestStruct[] Values => [
         new() { Value = 1 },
         new() { Value = 2 },
@@ -117,20 +170,44 @@ public class CaseTestStructTests : StructTestSuite<CaseTestStruct> {
     protected override void Write(ref WriteContext context, CaseTestStruct value) => context.WriteCaseTestStruct(value);
     protected override CaseTestStruct Peek(ReadContext context) => context.PeekCaseTestStruct();
     protected override CaseTestStruct Read(ReadContext context) => context.ReadCaseTestStruct();
-    protected override CaseTestStruct TryPeek(ReadContext context) { Assert.True(context.TryPeekCaseTestStruct(out CaseTestStruct v)); return v; }
-    protected override CaseTestStruct TryRead(ReadContext context) { Assert.True(context.TryReadCaseTestStruct(out CaseTestStruct v)); return v; }
+
+    protected override CaseTestStruct TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekCaseTestStruct(out CaseTestStruct v));
+        return v;
+    }
+
+    protected override CaseTestStruct TryRead(ReadContext context) {
+        Assert.True(context.TryReadCaseTestStruct(out CaseTestStruct v));
+        return v;
+    }
 
     protected override void WriteArray(ref WriteContext context, CaseTestStruct[] values) => context.WriteCaseTestStructs(values);
     protected override CaseTestStruct[] PeekArrayWithLength(ReadContext context) => context.PeekCaseTestStructs();
     protected override CaseTestStruct[] ReadArrayWithLength(ReadContext context) => context.ReadCaseTestStructs();
-    protected override CaseTestStruct[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekCaseTestStructs(out CaseTestStruct[] v)); return v; }
-    protected override CaseTestStruct[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadCaseTestStructs(out CaseTestStruct[] v)); return v; }
+
+    protected override CaseTestStruct[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekCaseTestStructs(out CaseTestStruct[] v));
+        return v;
+    }
+
+    protected override CaseTestStruct[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadCaseTestStructs(out CaseTestStruct[] v));
+        return v;
+    }
 
     protected override void WriteArrayWithoutLength(ref WriteContext context, CaseTestStruct[] values) => context.WriteCaseTestStructsWithoutLength(values);
     protected override CaseTestStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekCaseTestStructs(count);
     protected override CaseTestStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadCaseTestStructs(count);
-    protected override CaseTestStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekCaseTestStructs(count, out CaseTestStruct[] v)); return v; }
-    protected override CaseTestStruct[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadCaseTestStructs(count, out CaseTestStruct[] v)); return v; }
+
+    protected override CaseTestStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekCaseTestStructs(count, out CaseTestStruct[] v));
+        return v;
+    }
+
+    protected override CaseTestStruct[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadCaseTestStructs(count, out CaseTestStruct[] v));
+        return v;
+    }
 
     protected override void WriteSpan(ref WriteContext context, Span<CaseTestStruct> values) => context.WriteCaseTestStructs(values);
     protected override void PeekSpanWithLength(ReadContext context, Span<CaseTestStruct> destination) => context.PeekCaseTestStructs(destination);
@@ -145,6 +222,7 @@ public class CaseTestStructTests : StructTestSuite<CaseTestStruct> {
     protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<CaseTestStruct> destination) { Assert.True(context.TryReadCaseTestStructs(count, destination)); }
 
     protected override Type StructType => typeof(CaseTestStruct);
+
     protected override TryReadOperationSet<CaseTestStruct> TryOperations => new() {
         TryPeekValue = (ReadContext c, out CaseTestStruct v) => c.TryPeekCaseTestStruct(out v),
         TryReadValue = (ReadContext c, out CaseTestStruct v) => c.TryReadCaseTestStruct(out v),

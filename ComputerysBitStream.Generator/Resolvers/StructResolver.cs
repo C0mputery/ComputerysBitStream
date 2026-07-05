@@ -9,21 +9,17 @@ internal sealed class StructResolver {
     private readonly Action<DiagnosticValueType> _reportDiagnostic;
     private readonly SettingsDefinition _globalSettings;
     private readonly ImmutableDictionary<string, SettingsDefinition> _localSettingsByInterface;
-    private readonly Dictionary<string, PrimitiveDefinition> _primitivesByExtensionClass;
     private readonly Dictionary<string, PrimitiveDefinition> _primitivesByTargetType;
     private readonly Dictionary<string, ResolvedStructDefinition?> _resolvedStructs = new();
-    private readonly HashSet<string> _computingStructs = new();
+    private readonly HashSet<string> _computingStructs = [];
 
     internal StructResolver(
-        Action<DiagnosticValueType> reportDiagnostic,
-        SettingsDefinition globalSettings,
-        ImmutableDictionary<string, SettingsDefinition> localSettingsByInterface,
-        IEnumerable<PrimitiveDefinition> additionalPrimitives
+        Action<DiagnosticValueType> reportDiagnostic, SettingsDefinition globalSettings,
+        ImmutableDictionary<string, SettingsDefinition> localSettingsByInterface, IEnumerable<PrimitiveDefinition> additionalPrimitives
     ) {
         _reportDiagnostic = reportDiagnostic;
         _globalSettings = globalSettings;
         _localSettingsByInterface = localSettingsByInterface;
-        _primitivesByExtensionClass = new Dictionary<string, PrimitiveDefinition>(StringComparer.Ordinal);
         _primitivesByTargetType = new Dictionary<string, PrimitiveDefinition>(StringComparer.Ordinal);
 
         IndexPrimitives(globalSettings.Primitives);
@@ -237,14 +233,9 @@ internal sealed class StructResolver {
     }
 
     private bool TryCreatePrimitiveMember(
-        in StructMemberDefinition member,
-        in PrimitiveDefinition primitive,
-        string memberAccess,
-        string generatedNamespace,
-        List<string> requiredUsings,
-        out ResolvedStructMember resolvedMember,
-        out bool isVariableLength,
-        out int fixedBits
+        in StructMemberDefinition member, in PrimitiveDefinition primitive,
+        string memberAccess, string generatedNamespace, List<string> requiredUsings,
+        out ResolvedStructMember resolvedMember, out bool isVariableLength, out int fixedBits
     ) {
         string extensionClass = QualifyPrimitiveExtension(primitive, generatedNamespace, requiredUsings);
         string writeMethod = GetPrimitiveMethodName(primitive, BitStreamPrimitiveRole.Write);
@@ -270,24 +261,14 @@ internal sealed class StructResolver {
             WriteCall: $"{extensionClass}.{writeMethod}(ref context, {memberAccess})",
             ReadExpression: readExpression,
             TryRead: tryRead,
-            SizeExpression: isVariableLength
-                ? $"{extensionClass}.{sizeMethod}({memberAccess})"
-                : (primitive.FixedSize ?? 0).ToString(),
+            SizeExpression: isVariableLength ? $"{extensionClass}.{sizeMethod}({memberAccess})" : (primitive.FixedSize ?? 0).ToString(),
             QuantizedRange: null
         );
         return true;
     }
 
-    private static MemberTryReadSpec CreateMemberTryRead(
-        string extensionClass,
-        string tryReadMethod,
-        int fixedBits,
-        bool isVariableLength
-    ) {
-        if (isVariableLength && !string.IsNullOrEmpty(tryReadMethod)) {
-            return new MemberTryReadSpec(MemberTryReadKind.TryReadOut, $"{extensionClass}.{tryReadMethod}", 0);
-        }
-
+    private static MemberTryReadSpec CreateMemberTryRead(string extensionClass, string tryReadMethod, int fixedBits, bool isVariableLength) {
+        if (isVariableLength && !string.IsNullOrEmpty(tryReadMethod)) { return new MemberTryReadSpec(MemberTryReadKind.TryReadOut, $"{extensionClass}.{tryReadMethod}", 0); }
         return new MemberTryReadSpec(MemberTryReadKind.PreflightThenRead, null, fixedBits);
     }
 
@@ -301,11 +282,7 @@ internal sealed class StructResolver {
     }
 
     private static string QualifyExtensionClass(string generatedNamespace, string extensionClassFqn, List<string> requiredUsings) {
-        GeneratedSourceSyntax.CollectAdditionalUsings(
-            requiredUsings,
-            GeneratedSourceSyntax.GetNamespaceFromFullyQualifiedName(extensionClassFqn),
-            generatedNamespace
-        );
+        GeneratedSourceSyntax.CollectAdditionalUsings(requiredUsings, GeneratedSourceSyntax.GetNamespaceFromFullyQualifiedName(extensionClassFqn), generatedNamespace);
         return GeneratedSourceSyntax.GetShortTypeName(extensionClassFqn);
     }
 
@@ -354,9 +331,7 @@ internal sealed class StructResolver {
 
         MergeSettings(_globalSettings, primitives, structs, externalStructs);
 
-        if (settingsReference?.ExternalSettings is SettingsDefinition externalSettings) {
-            MergeSettings(externalSettings, primitives, structs, externalStructs);
-        }
+        if (settingsReference?.ExternalSettings is SettingsDefinition externalSettings) { MergeSettings(externalSettings, primitives, structs, externalStructs); }
 
         if (settingsReference is SettingsReference reference) {
             foreach (string interfaceName in reference.LocalSettingsInterfaceFullyQualifiedNames) {
@@ -394,9 +369,7 @@ internal sealed class StructResolver {
 
         if (reference.ExternalSettings is SettingsDefinition externalSettings) {
             ImmutableArray<string> externalInterfaces = externalSettings.InterfaceFullyQualifiedNames;
-            if (externalInterfaces.Length > 0) {
-                return string.Join(", ", externalInterfaces);
-            }
+            if (externalInterfaces.Length > 0) { return string.Join(", ", externalInterfaces); }
         }
 
         return "global";
@@ -407,16 +380,8 @@ internal sealed class StructResolver {
     }
 
     private void IndexPrimitive(in PrimitiveDefinition primitive) {
-        if (!string.IsNullOrEmpty(primitive.ExtensionClassFullyQualifiedName)) {
-            _primitivesByExtensionClass[primitive.ExtensionClassFullyQualifiedName] = primitive;
-        }
-
-        if (!string.IsNullOrEmpty(primitive.TargetTypeFullyQualifiedName) && IsFixedOrVariableLength(primitive.Mode)) {
-            _primitivesByTargetType[primitive.TargetTypeFullyQualifiedName] = primitive;
-        }
+        if (!string.IsNullOrEmpty(primitive.TargetTypeFullyQualifiedName) && IsFixedOrVariableLength(primitive.Mode)) { _primitivesByTargetType[primitive.TargetTypeFullyQualifiedName] = primitive; }
     }
 
-    private static bool IsFixedOrVariableLength(PrimitiveSerializationMode mode) {
-        return mode is PrimitiveSerializationMode.FixedSize or PrimitiveSerializationMode.VariableLength;
-    }
+    private static bool IsFixedOrVariableLength(PrimitiveSerializationMode mode) { return mode is PrimitiveSerializationMode.FixedSize or PrimitiveSerializationMode.VariableLength; }
 }

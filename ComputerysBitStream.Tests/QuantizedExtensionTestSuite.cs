@@ -44,7 +44,7 @@ public abstract class QuantizedExtensionTestSuite<T> {
     protected abstract void PeekSpanWithLength(ReadContext context, Span<T> destination);
     protected abstract void ReadSpanWithLength(ReadContext context, Span<T> destination);
     protected abstract void TryPeekSpanWithLength(ReadContext context, Span<T> destination);
-    
+
     protected abstract int Precision { get; }
 
     protected virtual void AssertValuesEqual(T expected, T actual) {
@@ -60,7 +60,7 @@ public abstract class QuantizedExtensionTestSuite<T> {
 
     private void AssertValuesEqualPair(T expected, T actual) => AssertValuesEqual(expected, actual);
     private void AssertValuesEqualPair(T[] expected, T[] actual) => AssertValuesEqual(expected, actual);
-protected abstract void TryReadSpanWithLength(ReadContext context, Span<T> destination);
+    protected abstract void TryReadSpanWithLength(ReadContext context, Span<T> destination);
 
     [Theory]
     [ClassData(typeof(ZeroBitOffsetRange))]

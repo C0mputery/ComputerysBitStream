@@ -2,7 +2,9 @@ namespace ComputerysBitStream.Tests;
 
 public static class RoundTripTestHarness<T> {
     public delegate void WriteValueDelegate(ref WriteContext context, T value);
+
     public delegate void WriteSpanDelegate(ref WriteContext context, Span<T> values);
+
     public delegate void WriteArrayDelegate(ref WriteContext context, T[] values);
 
     public static void AssertSingleValueRoundTrip(int initialOffset, T valueToWrite, WriteValueDelegate writeValue, Func<ReadContext, T> peekValue, Func<ReadContext, T> readValue, Action<T, T>? assertEqual = null) {
@@ -87,8 +89,10 @@ public static class RoundTripTestHarness<T> {
     }
 
     public delegate void PeekSpanDelegate(ReadContext context, Span<T> destination);
+
     public delegate void PeekSpanDelegateWithoutLength(ReadContext context, int count, Span<T> destination);
 
     public delegate void ReadSpanDelegate(ReadContext context, Span<T> destination);
+
     public delegate void ReadSpanDelegateWithoutLength(ReadContext context, int count, Span<T> destination);
 }

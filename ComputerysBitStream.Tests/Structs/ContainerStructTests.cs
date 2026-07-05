@@ -1,30 +1,56 @@
-namespace ComputerysBitStream.Tests;
+namespace ComputerysBitStream.Tests.Structs;
 
 public class ContainerStructTests : StructTestSuite<ContainerStruct> {
     protected override ContainerStruct Value => new() { RawValue = 42, Nested = new() { Value = 99 } };
+
     protected override ContainerStruct[] Values => [
         new() { RawValue = 1, Nested = new() { Value = 10 } },
         new() { RawValue = 2, Nested = new() { Value = 20 } },
         new() { RawValue = 3, Nested = new() { Value = 30 } }
     ];
+
     protected override int? ExpectedFixedSizeBits => 64;
     protected override void Write(ref WriteContext context, ContainerStruct value) => context.WriteContainerStruct(value);
     protected override ContainerStruct Peek(ReadContext context) => context.PeekContainerStruct();
     protected override ContainerStruct Read(ReadContext context) => context.ReadContainerStruct();
-    protected override ContainerStruct TryPeek(ReadContext context) { Assert.True(context.TryPeekContainerStruct(out ContainerStruct v)); return v; }
-    protected override ContainerStruct TryRead(ReadContext context) { Assert.True(context.TryReadContainerStruct(out ContainerStruct v)); return v; }
+
+    protected override ContainerStruct TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekContainerStruct(out ContainerStruct v));
+        return v;
+    }
+
+    protected override ContainerStruct TryRead(ReadContext context) {
+        Assert.True(context.TryReadContainerStruct(out ContainerStruct v));
+        return v;
+    }
 
     protected override void WriteArray(ref WriteContext context, ContainerStruct[] values) => context.WriteContainerStructs(values);
     protected override ContainerStruct[] PeekArrayWithLength(ReadContext context) => context.PeekContainerStructs();
     protected override ContainerStruct[] ReadArrayWithLength(ReadContext context) => context.ReadContainerStructs();
-    protected override ContainerStruct[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekContainerStructs(out ContainerStruct[] v)); return v; }
-    protected override ContainerStruct[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadContainerStructs(out ContainerStruct[] v)); return v; }
+
+    protected override ContainerStruct[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekContainerStructs(out ContainerStruct[] v));
+        return v;
+    }
+
+    protected override ContainerStruct[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadContainerStructs(out ContainerStruct[] v));
+        return v;
+    }
 
     protected override void WriteArrayWithoutLength(ref WriteContext context, ContainerStruct[] values) => context.WriteContainerStructsWithoutLength(values);
     protected override ContainerStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekContainerStructs(count);
     protected override ContainerStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadContainerStructs(count);
-    protected override ContainerStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekContainerStructs(count, out ContainerStruct[] v)); return v; }
-    protected override ContainerStruct[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadContainerStructs(count, out ContainerStruct[] v)); return v; }
+
+    protected override ContainerStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekContainerStructs(count, out ContainerStruct[] v));
+        return v;
+    }
+
+    protected override ContainerStruct[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadContainerStructs(count, out ContainerStruct[] v));
+        return v;
+    }
 
     protected override void WriteSpan(ref WriteContext context, Span<ContainerStruct> values) => context.WriteContainerStructs(values);
     protected override void PeekSpanWithLength(ReadContext context, Span<ContainerStruct> destination) => context.PeekContainerStructs(destination);
@@ -45,6 +71,7 @@ public class ContainerStructTests : StructTestSuite<ContainerStruct> {
         Assert.Equal(32, StructMetadataAssertions.GetMetadataSize(typeof(NestedStruct)));
         Assert.True(StructMetadataAssertions.IsFixedSize(typeof(NestedStruct)));
     }
+
     protected override TryReadOperationSet<ContainerStruct> TryOperations => new() {
         TryPeekValue = (ReadContext c, out ContainerStruct v) => c.TryPeekContainerStruct(out v),
         TryReadValue = (ReadContext c, out ContainerStruct v) => c.TryReadContainerStruct(out v),

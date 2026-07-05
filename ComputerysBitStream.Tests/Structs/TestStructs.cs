@@ -1,13 +1,12 @@
-using ComputerysBitStream.Attributes;
-using ComputerysBitStream.Primitives.FixedSize;
-
-namespace ComputerysBitStream.Tests;
+namespace ComputerysBitStream.Tests.Structs;
 
 [BitStreamStruct]
 public partial struct SimpleStruct {
     public int X { get; set; }
+
     [BitStreamSerializer(typeof(PrimitiveFloatExtensions))]
     public float Y { get; set; }
+
     public bool Z { get; set; }
 }
 
@@ -19,6 +18,7 @@ public struct ExternalPlainStruct {
 [BitStreamProxyStruct(typeof(ExternalPlainStruct))]
 public static partial class ExternalPlainStructProxy {
     public static int X;
+
     [BitStreamSerializer(typeof(PrimitiveFloatExtensions))]
     public static float Y;
 }
@@ -63,8 +63,7 @@ public partial struct ContainerStruct {
 }
 
 public struct CaseTestStruct {
-    [BitStreamStructInclude]
-    public int Value;
+    [BitStreamStructInclude] public int Value;
 }
 
 [BitStreamProxyStruct(typeof(CaseTestStruct))]
@@ -73,6 +72,7 @@ public static partial class CaseTestStructProxyCorrect { }
 [BitStreamStruct("Aliased")]
 public partial struct AliasedStruct {
     public int A { get; set; }
+
     [BitStreamSerializer(typeof(PrimitiveFloatExtensions))]
     public float B { get; set; }
 }

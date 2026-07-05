@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class ByteExtensionsTests : ExtensionTestSuite<byte> {
-        protected override byte Value => 42;
-        protected override byte[] Values => [42, 100, 42, 42, 100];
+    protected override byte Value => 42;
+    protected override byte[] Values => [42, 100, 42, 42, 100];
 
     protected override void WritePrimitive(ref WriteContext context, byte value) => context.WriteBytePrimitive(value);
     protected override byte PeekPrimitive(ReadContext context) => context.PeekBytePrimitive();
@@ -11,8 +11,16 @@ public class ByteExtensionsTests : ExtensionTestSuite<byte> {
     protected override void Write(ref WriteContext context, byte value) => context.WriteByte(value);
     protected override byte Peek(ReadContext context) => context.PeekByte();
     protected override byte Read(ReadContext context) => context.ReadByte();
-    protected override byte TryPeek(ReadContext context) { Assert.True(context.TryPeekByte(out byte v)); return v; }
-    protected override byte TryRead(ReadContext context) { Assert.True(context.TryReadByte(out byte v)); return v; }
+
+    protected override byte TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekByte(out byte v));
+        return v;
+    }
+
+    protected override byte TryRead(ReadContext context) {
+        Assert.True(context.TryReadByte(out byte v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<byte> values) => context.WriteBytesPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<byte> destination) => context.PeekByteSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class ByteExtensionsTests : ExtensionTestSuite<byte> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, byte[] values) => context.WriteBytesWithoutLength(values);
     protected override byte[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekBytes(count);
     protected override byte[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadBytes(count);
-    protected override byte[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekBytes(count, out byte[] values)); return values; }
-    protected override byte[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadBytes(count, out byte[] values)); return values; }
+
+    protected override byte[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekBytes(count, out byte[] values));
+        return values;
+    }
+
+    protected override byte[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadBytes(count, out byte[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, byte[] values) => context.WriteBytes(values);
     protected override byte[] PeekArrayWithLength(ReadContext context) => context.PeekBytes();
     protected override byte[] ReadArrayWithLength(ReadContext context) => context.ReadBytes();
-    protected override byte[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekBytes(out byte[] values)); return values; }
-    protected override byte[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadBytes(out byte[] values)); return values; }
+
+    protected override byte[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekBytes(out byte[] values));
+        return values;
+    }
+
+    protected override byte[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadBytes(out byte[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<byte> TryOperations => new() {
         TryPeekValue = (ReadContext c, out byte v) => c.TryPeekByte(out v),
         TryReadValue = (ReadContext c, out byte v) => c.TryReadByte(out v),

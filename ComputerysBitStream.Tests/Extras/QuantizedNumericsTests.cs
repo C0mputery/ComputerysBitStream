@@ -1,6 +1,3 @@
-using System.Numerics;
-using ComputerysBitStream.Extras.Proxies.Numerics;
-
 namespace ComputerysBitStream.Tests.Extras;
 
 public abstract class ExtrasQuantizedNumericsTestSuite<T> : QuantizedExtensionTestSuite<T> {
@@ -30,8 +27,16 @@ public class QuantizedVector2ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
     protected override void Write(ref WriteContext context, Vector2 value) => context.WriteQuantizedVector2(value, MinRange, MaxRange, BitCount);
     protected override Vector2 Peek(ReadContext context) => context.PeekQuantizedVector2(MinRange, MaxRange, BitCount);
     protected override Vector2 Read(ReadContext context) => context.ReadQuantizedVector2(MinRange, MaxRange, BitCount);
-    protected override Vector2 TryPeek(ReadContext context) { Assert.True(context.TryPeekQuantizedVector2(MinRange, MaxRange, BitCount, out Vector2 v)); return v; }
-    protected override Vector2 TryRead(ReadContext context) { Assert.True(context.TryReadQuantizedVector2(MinRange, MaxRange, BitCount, out Vector2 v)); return v; }
+
+    protected override Vector2 TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedVector2(MinRange, MaxRange, BitCount, out Vector2 v));
+        return v;
+    }
+
+    protected override Vector2 TryRead(ReadContext context) {
+        Assert.True(context.TryReadQuantizedVector2(MinRange, MaxRange, BitCount, out Vector2 v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<Vector2> values) => context.WriteQuantizedVector2sPrimitive(values, MinRange, MaxRange, BitCount);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<Vector2> destination) => context.PeekQuantizedVector2SpanPrimitive(count, destination, MinRange, MaxRange, BitCount);
@@ -53,14 +58,31 @@ public class QuantizedVector2ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
     protected override void WriteArrayWithoutLength(ref WriteContext context, Vector2[] values) => context.WriteQuantizedVector2sWithoutLength(values, MinRange, MaxRange, BitCount);
     protected override Vector2[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekQuantizedVector2s(count, MinRange, MaxRange, BitCount);
     protected override Vector2[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadQuantizedVector2s(count, MinRange, MaxRange, BitCount);
-    protected override Vector2[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekQuantizedVector2s(count, MinRange, MaxRange, BitCount, out Vector2[] values)); return values; }
-    protected override Vector2[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadQuantizedVector2s(count, MinRange, MaxRange, BitCount, out Vector2[] values)); return values; }
+
+    protected override Vector2[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekQuantizedVector2s(count, MinRange, MaxRange, BitCount, out Vector2[] values));
+        return values;
+    }
+
+    protected override Vector2[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadQuantizedVector2s(count, MinRange, MaxRange, BitCount, out Vector2[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, Vector2[] values) => context.WriteQuantizedVector2s(values, MinRange, MaxRange, BitCount);
     protected override Vector2[] PeekArrayWithLength(ReadContext context) => context.PeekQuantizedVector2s(MinRange, MaxRange, BitCount);
     protected override Vector2[] ReadArrayWithLength(ReadContext context) => context.ReadQuantizedVector2s(MinRange, MaxRange, BitCount);
-    protected override Vector2[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekQuantizedVector2s(MinRange, MaxRange, BitCount, out Vector2[] values)); return values; }
-    protected override Vector2[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadQuantizedVector2s(MinRange, MaxRange, BitCount, out Vector2[] values)); return values; }
+
+    protected override Vector2[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedVector2s(MinRange, MaxRange, BitCount, out Vector2[] values));
+        return values;
+    }
+
+    protected override Vector2[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadQuantizedVector2s(MinRange, MaxRange, BitCount, out Vector2[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<Vector2> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Vector2 v) => c.TryPeekQuantizedVector2(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Vector2 v) => c.TryReadQuantizedVector2(MinRange, MaxRange, BitCount, out v),
@@ -99,8 +121,16 @@ public class QuantizedVector3ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
     protected override void Write(ref WriteContext context, Vector3 value) => context.WriteQuantizedVector3(value, MinRange, MaxRange, BitCount);
     protected override Vector3 Peek(ReadContext context) => context.PeekQuantizedVector3(MinRange, MaxRange, BitCount);
     protected override Vector3 Read(ReadContext context) => context.ReadQuantizedVector3(MinRange, MaxRange, BitCount);
-    protected override Vector3 TryPeek(ReadContext context) { Assert.True(context.TryPeekQuantizedVector3(MinRange, MaxRange, BitCount, out Vector3 v)); return v; }
-    protected override Vector3 TryRead(ReadContext context) { Assert.True(context.TryReadQuantizedVector3(MinRange, MaxRange, BitCount, out Vector3 v)); return v; }
+
+    protected override Vector3 TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedVector3(MinRange, MaxRange, BitCount, out Vector3 v));
+        return v;
+    }
+
+    protected override Vector3 TryRead(ReadContext context) {
+        Assert.True(context.TryReadQuantizedVector3(MinRange, MaxRange, BitCount, out Vector3 v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<Vector3> values) => context.WriteQuantizedVector3sPrimitive(values, MinRange, MaxRange, BitCount);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<Vector3> destination) => context.PeekQuantizedVector3SpanPrimitive(count, destination, MinRange, MaxRange, BitCount);
@@ -122,14 +152,31 @@ public class QuantizedVector3ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
     protected override void WriteArrayWithoutLength(ref WriteContext context, Vector3[] values) => context.WriteQuantizedVector3sWithoutLength(values, MinRange, MaxRange, BitCount);
     protected override Vector3[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekQuantizedVector3s(count, MinRange, MaxRange, BitCount);
     protected override Vector3[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadQuantizedVector3s(count, MinRange, MaxRange, BitCount);
-    protected override Vector3[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekQuantizedVector3s(count, MinRange, MaxRange, BitCount, out Vector3[] values)); return values; }
-    protected override Vector3[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadQuantizedVector3s(count, MinRange, MaxRange, BitCount, out Vector3[] values)); return values; }
+
+    protected override Vector3[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekQuantizedVector3s(count, MinRange, MaxRange, BitCount, out Vector3[] values));
+        return values;
+    }
+
+    protected override Vector3[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadQuantizedVector3s(count, MinRange, MaxRange, BitCount, out Vector3[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, Vector3[] values) => context.WriteQuantizedVector3s(values, MinRange, MaxRange, BitCount);
     protected override Vector3[] PeekArrayWithLength(ReadContext context) => context.PeekQuantizedVector3s(MinRange, MaxRange, BitCount);
     protected override Vector3[] ReadArrayWithLength(ReadContext context) => context.ReadQuantizedVector3s(MinRange, MaxRange, BitCount);
-    protected override Vector3[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekQuantizedVector3s(MinRange, MaxRange, BitCount, out Vector3[] values)); return values; }
-    protected override Vector3[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadQuantizedVector3s(MinRange, MaxRange, BitCount, out Vector3[] values)); return values; }
+
+    protected override Vector3[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedVector3s(MinRange, MaxRange, BitCount, out Vector3[] values));
+        return values;
+    }
+
+    protected override Vector3[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadQuantizedVector3s(MinRange, MaxRange, BitCount, out Vector3[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<Vector3> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Vector3 v) => c.TryPeekQuantizedVector3(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Vector3 v) => c.TryReadQuantizedVector3(MinRange, MaxRange, BitCount, out v),
@@ -169,8 +216,16 @@ public class QuantizedVector4ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
     protected override void Write(ref WriteContext context, Vector4 value) => context.WriteQuantizedVector4(value, MinRange, MaxRange, BitCount);
     protected override Vector4 Peek(ReadContext context) => context.PeekQuantizedVector4(MinRange, MaxRange, BitCount);
     protected override Vector4 Read(ReadContext context) => context.ReadQuantizedVector4(MinRange, MaxRange, BitCount);
-    protected override Vector4 TryPeek(ReadContext context) { Assert.True(context.TryPeekQuantizedVector4(MinRange, MaxRange, BitCount, out Vector4 v)); return v; }
-    protected override Vector4 TryRead(ReadContext context) { Assert.True(context.TryReadQuantizedVector4(MinRange, MaxRange, BitCount, out Vector4 v)); return v; }
+
+    protected override Vector4 TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedVector4(MinRange, MaxRange, BitCount, out Vector4 v));
+        return v;
+    }
+
+    protected override Vector4 TryRead(ReadContext context) {
+        Assert.True(context.TryReadQuantizedVector4(MinRange, MaxRange, BitCount, out Vector4 v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<Vector4> values) => context.WriteQuantizedVector4sPrimitive(values, MinRange, MaxRange, BitCount);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<Vector4> destination) => context.PeekQuantizedVector4SpanPrimitive(count, destination, MinRange, MaxRange, BitCount);
@@ -192,14 +247,31 @@ public class QuantizedVector4ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
     protected override void WriteArrayWithoutLength(ref WriteContext context, Vector4[] values) => context.WriteQuantizedVector4sWithoutLength(values, MinRange, MaxRange, BitCount);
     protected override Vector4[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekQuantizedVector4s(count, MinRange, MaxRange, BitCount);
     protected override Vector4[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadQuantizedVector4s(count, MinRange, MaxRange, BitCount);
-    protected override Vector4[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekQuantizedVector4s(count, MinRange, MaxRange, BitCount, out Vector4[] values)); return values; }
-    protected override Vector4[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadQuantizedVector4s(count, MinRange, MaxRange, BitCount, out Vector4[] values)); return values; }
+
+    protected override Vector4[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekQuantizedVector4s(count, MinRange, MaxRange, BitCount, out Vector4[] values));
+        return values;
+    }
+
+    protected override Vector4[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadQuantizedVector4s(count, MinRange, MaxRange, BitCount, out Vector4[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, Vector4[] values) => context.WriteQuantizedVector4s(values, MinRange, MaxRange, BitCount);
     protected override Vector4[] PeekArrayWithLength(ReadContext context) => context.PeekQuantizedVector4s(MinRange, MaxRange, BitCount);
     protected override Vector4[] ReadArrayWithLength(ReadContext context) => context.ReadQuantizedVector4s(MinRange, MaxRange, BitCount);
-    protected override Vector4[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekQuantizedVector4s(MinRange, MaxRange, BitCount, out Vector4[] values)); return values; }
-    protected override Vector4[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadQuantizedVector4s(MinRange, MaxRange, BitCount, out Vector4[] values)); return values; }
+
+    protected override Vector4[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedVector4s(MinRange, MaxRange, BitCount, out Vector4[] values));
+        return values;
+    }
+
+    protected override Vector4[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadQuantizedVector4s(MinRange, MaxRange, BitCount, out Vector4[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<Vector4> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Vector4 v) => c.TryPeekQuantizedVector4(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Vector4 v) => c.TryReadQuantizedVector4(MinRange, MaxRange, BitCount, out v),
@@ -239,8 +311,16 @@ public class QuantizedQuaternionExtensionsTests : ExtrasQuantizedNumericsTestSui
     protected override void Write(ref WriteContext context, Quaternion value) => context.WriteQuantizedQuaternion(value, MinRange, MaxRange, BitCount);
     protected override Quaternion Peek(ReadContext context) => context.PeekQuantizedQuaternion(MinRange, MaxRange, BitCount);
     protected override Quaternion Read(ReadContext context) => context.ReadQuantizedQuaternion(MinRange, MaxRange, BitCount);
-    protected override Quaternion TryPeek(ReadContext context) { Assert.True(context.TryPeekQuantizedQuaternion(MinRange, MaxRange, BitCount, out Quaternion v)); return v; }
-    protected override Quaternion TryRead(ReadContext context) { Assert.True(context.TryReadQuantizedQuaternion(MinRange, MaxRange, BitCount, out Quaternion v)); return v; }
+
+    protected override Quaternion TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedQuaternion(MinRange, MaxRange, BitCount, out Quaternion v));
+        return v;
+    }
+
+    protected override Quaternion TryRead(ReadContext context) {
+        Assert.True(context.TryReadQuantizedQuaternion(MinRange, MaxRange, BitCount, out Quaternion v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<Quaternion> values) => context.WriteQuantizedQuaternionsPrimitive(values, MinRange, MaxRange, BitCount);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<Quaternion> destination) => context.PeekQuantizedQuaternionSpanPrimitive(count, destination, MinRange, MaxRange, BitCount);
@@ -262,14 +342,31 @@ public class QuantizedQuaternionExtensionsTests : ExtrasQuantizedNumericsTestSui
     protected override void WriteArrayWithoutLength(ref WriteContext context, Quaternion[] values) => context.WriteQuantizedQuaternionsWithoutLength(values, MinRange, MaxRange, BitCount);
     protected override Quaternion[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekQuantizedQuaternions(count, MinRange, MaxRange, BitCount);
     protected override Quaternion[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadQuantizedQuaternions(count, MinRange, MaxRange, BitCount);
-    protected override Quaternion[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekQuantizedQuaternions(count, MinRange, MaxRange, BitCount, out Quaternion[] values)); return values; }
-    protected override Quaternion[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadQuantizedQuaternions(count, MinRange, MaxRange, BitCount, out Quaternion[] values)); return values; }
+
+    protected override Quaternion[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekQuantizedQuaternions(count, MinRange, MaxRange, BitCount, out Quaternion[] values));
+        return values;
+    }
+
+    protected override Quaternion[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadQuantizedQuaternions(count, MinRange, MaxRange, BitCount, out Quaternion[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, Quaternion[] values) => context.WriteQuantizedQuaternions(values, MinRange, MaxRange, BitCount);
     protected override Quaternion[] PeekArrayWithLength(ReadContext context) => context.PeekQuantizedQuaternions(MinRange, MaxRange, BitCount);
     protected override Quaternion[] ReadArrayWithLength(ReadContext context) => context.ReadQuantizedQuaternions(MinRange, MaxRange, BitCount);
-    protected override Quaternion[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekQuantizedQuaternions(MinRange, MaxRange, BitCount, out Quaternion[] values)); return values; }
-    protected override Quaternion[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadQuantizedQuaternions(MinRange, MaxRange, BitCount, out Quaternion[] values)); return values; }
+
+    protected override Quaternion[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedQuaternions(MinRange, MaxRange, BitCount, out Quaternion[] values));
+        return values;
+    }
+
+    protected override Quaternion[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadQuantizedQuaternions(MinRange, MaxRange, BitCount, out Quaternion[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<Quaternion> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Quaternion v) => c.TryPeekQuantizedQuaternion(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Quaternion v) => c.TryReadQuantizedQuaternion(MinRange, MaxRange, BitCount, out v),
@@ -309,8 +406,16 @@ public class QuantizedPlaneExtensionsTests : ExtrasQuantizedNumericsTestSuite<Pl
     protected override void Write(ref WriteContext context, Plane value) => context.WriteQuantizedPlane(value, MinRange, MaxRange, BitCount);
     protected override Plane Peek(ReadContext context) => context.PeekQuantizedPlane(MinRange, MaxRange, BitCount);
     protected override Plane Read(ReadContext context) => context.ReadQuantizedPlane(MinRange, MaxRange, BitCount);
-    protected override Plane TryPeek(ReadContext context) { Assert.True(context.TryPeekQuantizedPlane(MinRange, MaxRange, BitCount, out Plane v)); return v; }
-    protected override Plane TryRead(ReadContext context) { Assert.True(context.TryReadQuantizedPlane(MinRange, MaxRange, BitCount, out Plane v)); return v; }
+
+    protected override Plane TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedPlane(MinRange, MaxRange, BitCount, out Plane v));
+        return v;
+    }
+
+    protected override Plane TryRead(ReadContext context) {
+        Assert.True(context.TryReadQuantizedPlane(MinRange, MaxRange, BitCount, out Plane v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<Plane> values) => context.WriteQuantizedPlanesPrimitive(values, MinRange, MaxRange, BitCount);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<Plane> destination) => context.PeekQuantizedPlaneSpanPrimitive(count, destination, MinRange, MaxRange, BitCount);
@@ -332,14 +437,31 @@ public class QuantizedPlaneExtensionsTests : ExtrasQuantizedNumericsTestSuite<Pl
     protected override void WriteArrayWithoutLength(ref WriteContext context, Plane[] values) => context.WriteQuantizedPlanesWithoutLength(values, MinRange, MaxRange, BitCount);
     protected override Plane[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekQuantizedPlanes(count, MinRange, MaxRange, BitCount);
     protected override Plane[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadQuantizedPlanes(count, MinRange, MaxRange, BitCount);
-    protected override Plane[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekQuantizedPlanes(count, MinRange, MaxRange, BitCount, out Plane[] values)); return values; }
-    protected override Plane[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadQuantizedPlanes(count, MinRange, MaxRange, BitCount, out Plane[] values)); return values; }
+
+    protected override Plane[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekQuantizedPlanes(count, MinRange, MaxRange, BitCount, out Plane[] values));
+        return values;
+    }
+
+    protected override Plane[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadQuantizedPlanes(count, MinRange, MaxRange, BitCount, out Plane[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, Plane[] values) => context.WriteQuantizedPlanes(values, MinRange, MaxRange, BitCount);
     protected override Plane[] PeekArrayWithLength(ReadContext context) => context.PeekQuantizedPlanes(MinRange, MaxRange, BitCount);
     protected override Plane[] ReadArrayWithLength(ReadContext context) => context.ReadQuantizedPlanes(MinRange, MaxRange, BitCount);
-    protected override Plane[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekQuantizedPlanes(MinRange, MaxRange, BitCount, out Plane[] values)); return values; }
-    protected override Plane[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadQuantizedPlanes(MinRange, MaxRange, BitCount, out Plane[] values)); return values; }
+
+    protected override Plane[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedPlanes(MinRange, MaxRange, BitCount, out Plane[] values));
+        return values;
+    }
+
+    protected override Plane[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadQuantizedPlanes(MinRange, MaxRange, BitCount, out Plane[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<Plane> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Plane v) => c.TryPeekQuantizedPlane(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Plane v) => c.TryReadQuantizedPlane(MinRange, MaxRange, BitCount, out v),
@@ -355,6 +477,7 @@ public class QuantizedPlaneExtensionsTests : ExtrasQuantizedNumericsTestSuite<Pl
 }
 
 [BitStreamPrimitiveContext]
+// ReSharper disable once InconsistentNaming
 public class QuantizedMatrix4x4ExtensionsTests : ExtrasQuantizedNumericsTestSuite<Matrix4x4> {
     private const float Min = 0f;
     private const float Max = 100f;
@@ -391,8 +514,16 @@ public class QuantizedMatrix4x4ExtensionsTests : ExtrasQuantizedNumericsTestSuit
     protected override void Write(ref WriteContext context, Matrix4x4 value) => context.WriteQuantizedMatrix4x4(value, MinRange, MaxRange, BitCount);
     protected override Matrix4x4 Peek(ReadContext context) => context.PeekQuantizedMatrix4x4(MinRange, MaxRange, BitCount);
     protected override Matrix4x4 Read(ReadContext context) => context.ReadQuantizedMatrix4x4(MinRange, MaxRange, BitCount);
-    protected override Matrix4x4 TryPeek(ReadContext context) { Assert.True(context.TryPeekQuantizedMatrix4x4(MinRange, MaxRange, BitCount, out Matrix4x4 v)); return v; }
-    protected override Matrix4x4 TryRead(ReadContext context) { Assert.True(context.TryReadQuantizedMatrix4x4(MinRange, MaxRange, BitCount, out Matrix4x4 v)); return v; }
+
+    protected override Matrix4x4 TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedMatrix4x4(MinRange, MaxRange, BitCount, out Matrix4x4 v));
+        return v;
+    }
+
+    protected override Matrix4x4 TryRead(ReadContext context) {
+        Assert.True(context.TryReadQuantizedMatrix4x4(MinRange, MaxRange, BitCount, out Matrix4x4 v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<Matrix4x4> values) => context.WriteQuantizedMatrix4x4sPrimitive(values, MinRange, MaxRange, BitCount);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<Matrix4x4> destination) => context.PeekQuantizedMatrix4x4SpanPrimitive(count, destination, MinRange, MaxRange, BitCount);
@@ -414,14 +545,31 @@ public class QuantizedMatrix4x4ExtensionsTests : ExtrasQuantizedNumericsTestSuit
     protected override void WriteArrayWithoutLength(ref WriteContext context, Matrix4x4[] values) => context.WriteQuantizedMatrix4x4sWithoutLength(values, MinRange, MaxRange, BitCount);
     protected override Matrix4x4[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekQuantizedMatrix4x4s(count, MinRange, MaxRange, BitCount);
     protected override Matrix4x4[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadQuantizedMatrix4x4s(count, MinRange, MaxRange, BitCount);
-    protected override Matrix4x4[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekQuantizedMatrix4x4s(count, MinRange, MaxRange, BitCount, out Matrix4x4[] values)); return values; }
-    protected override Matrix4x4[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadQuantizedMatrix4x4s(count, MinRange, MaxRange, BitCount, out Matrix4x4[] values)); return values; }
+
+    protected override Matrix4x4[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekQuantizedMatrix4x4s(count, MinRange, MaxRange, BitCount, out Matrix4x4[] values));
+        return values;
+    }
+
+    protected override Matrix4x4[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadQuantizedMatrix4x4s(count, MinRange, MaxRange, BitCount, out Matrix4x4[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, Matrix4x4[] values) => context.WriteQuantizedMatrix4x4s(values, MinRange, MaxRange, BitCount);
     protected override Matrix4x4[] PeekArrayWithLength(ReadContext context) => context.PeekQuantizedMatrix4x4s(MinRange, MaxRange, BitCount);
     protected override Matrix4x4[] ReadArrayWithLength(ReadContext context) => context.ReadQuantizedMatrix4x4s(MinRange, MaxRange, BitCount);
-    protected override Matrix4x4[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekQuantizedMatrix4x4s(MinRange, MaxRange, BitCount, out Matrix4x4[] values)); return values; }
-    protected override Matrix4x4[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadQuantizedMatrix4x4s(MinRange, MaxRange, BitCount, out Matrix4x4[] values)); return values; }
+
+    protected override Matrix4x4[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedMatrix4x4s(MinRange, MaxRange, BitCount, out Matrix4x4[] values));
+        return values;
+    }
+
+    protected override Matrix4x4[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadQuantizedMatrix4x4s(MinRange, MaxRange, BitCount, out Matrix4x4[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<Matrix4x4> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Matrix4x4 v) => c.TryPeekQuantizedMatrix4x4(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Matrix4x4 v) => c.TryReadQuantizedMatrix4x4(MinRange, MaxRange, BitCount, out v),

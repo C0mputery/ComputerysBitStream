@@ -20,7 +20,7 @@
         <Compile Include="..\ComputerysBitStream\Documentation\*.cs" Link="ComputerysBitStream\Documentation\%(RecursiveDir)%(FileName)%(Extension)"/>
     </ItemGroup>
     <ItemGroup>
-      <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
-      <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+        <AdditionalFiles Include="AnalyzerReleases.Shipped.md"/>
+        <AdditionalFiles Include="AnalyzerReleases.Unshipped.md"/>
     </ItemGroup>
 </Project>

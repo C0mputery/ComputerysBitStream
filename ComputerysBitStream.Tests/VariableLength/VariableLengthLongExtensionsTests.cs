@@ -12,8 +12,16 @@ public class VariableLengthLongExtensionsTests : VariableLengthExtensionTestSuit
     protected override void Write(ref WriteContext context, long value) => context.WriteVariableLengthLong(value);
     protected override long Peek(ReadContext context) => context.PeekVariableLengthLong();
     protected override long Read(ReadContext context) => context.ReadVariableLengthLong();
-    protected override long TryPeek(ReadContext context) { Assert.True(context.TryPeekVariableLengthLong(out long v)); return v; }
-    protected override long TryRead(ReadContext context) { Assert.True(context.TryReadVariableLengthLong(out long v)); return v; }
+
+    protected override long TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekVariableLengthLong(out long v));
+        return v;
+    }
+
+    protected override long TryRead(ReadContext context) {
+        Assert.True(context.TryReadVariableLengthLong(out long v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<long> values) => context.WriteVariableLengthLongsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<long> destination) => context.PeekVariableLengthLongSpanPrimitive(count, destination);
@@ -35,14 +43,31 @@ public class VariableLengthLongExtensionsTests : VariableLengthExtensionTestSuit
     protected override void WriteArrayWithoutLength(ref WriteContext context, long[] values) => context.WriteVariableLengthLongsWithoutLength(values);
     protected override long[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekVariableLengthLongs(count);
     protected override long[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadVariableLengthLongs(count);
-    protected override long[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekVariableLengthLongs(count, out long[] values)); return values; }
-    protected override long[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadVariableLengthLongs(count, out long[] values)); return values; }
+
+    protected override long[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekVariableLengthLongs(count, out long[] values));
+        return values;
+    }
+
+    protected override long[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadVariableLengthLongs(count, out long[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, long[] values) => context.WriteVariableLengthLongs(values);
     protected override long[] PeekArrayWithLength(ReadContext context) => context.PeekVariableLengthLongs();
     protected override long[] ReadArrayWithLength(ReadContext context) => context.ReadVariableLengthLongs();
-    protected override long[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekVariableLengthLongs(out long[] values)); return values; }
-    protected override long[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadVariableLengthLongs(out long[] values)); return values; }
+
+    protected override long[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekVariableLengthLongs(out long[] values));
+        return values;
+    }
+
+    protected override long[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadVariableLengthLongs(out long[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<long> TryOperations => new() {
         TryPeekValue = (ReadContext c, out long v) => c.TryPeekVariableLengthLong(out v),
         TryReadValue = (ReadContext c, out long v) => c.TryReadVariableLengthLong(out v),

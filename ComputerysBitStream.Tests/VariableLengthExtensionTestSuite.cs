@@ -181,6 +181,7 @@ public abstract class VariableLengthExtensionTestSuite<T> {
     public void WriteAndReadArray_TryAlias_ShouldReturnIdenticalArray(int initialOffset) {
         RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, Values, WriteArray, TryPeekArrayWithLength, TryReadArrayWithLength);
     }
+
     protected abstract int GetSize(T value);
 
     [Fact]

@@ -6,32 +6,21 @@ using ComputerysBitStream.Generator.Emitters;
 
 namespace ComputerysBitStream.Generator;
 
-internal ref partial struct ExecutionContext {
+internal readonly ref partial struct ExecutionContext {
     private void EmitPrimitiveDefinitions(ImmutableArray<PrimitiveDefinition> primitives) {
         PrimitiveDefinition? globalIntHandler = FindLengthPrefixHandler(_globalSettings);
 
-        HashSet<string> usedEmissionKeys = new();
+        HashSet<string> usedEmissionKeys = [];
         foreach (PrimitiveDefinition primitive in primitives) {
             string emissionKey = $"{primitive.Namespace}|{primitive.Alias}";
             if (!usedEmissionKeys.Add(emissionKey)) {
-                _context.ReportDiagnostic(new DiagnosticValueType(
-                    Diagnostics.DuplicatePrimitiveDefinition,
-                    primitive.Location,
-                    primitive.TargetTypeFullyQualifiedName,
-                    primitive.Alias,
-                    primitive.Namespace
-                ).ToDiagnostic());
+                _context.ReportDiagnostic(new DiagnosticValueType(Diagnostics.DuplicatePrimitiveDefinition, primitive.Location, primitive.TargetTypeFullyQualifiedName, primitive.Alias, primitive.Namespace).ToDiagnostic());
                 continue;
             }
 
             PrimitiveDefinition? intHandler = ResolveLengthPrefixHandler(primitive, globalIntHandler);
             if (NeedsLengthPrefixHandlerDiagnostic(primitive, intHandler)) {
-                _context.ReportDiagnostic(new DiagnosticValueType(
-                    Diagnostics.MissingLengthPrefixHandler,
-                    primitive.Location,
-                    primitive.Alias,
-                    primitive.TargetTypeFullyQualifiedName
-                ).ToDiagnostic());
+                _context.ReportDiagnostic(new DiagnosticValueType(Diagnostics.MissingLengthPrefixHandler, primitive.Location, primitive.Alias, primitive.TargetTypeFullyQualifiedName).ToDiagnostic());
             }
 
             _context.AddSource(GetPrimitiveHintName(primitive), PrimitiveWrapperSourceEmitter.EmitSource(primitive, intHandler));

@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class SByteExtensionsTests : ExtensionTestSuite<sbyte> {
-        protected override sbyte Value => 42;
-        protected override sbyte[] Values => [42, -42, 42, 42, -42];
+    protected override sbyte Value => 42;
+    protected override sbyte[] Values => [42, -42, 42, 42, -42];
 
     protected override void WritePrimitive(ref WriteContext context, sbyte value) => context.WriteSBytePrimitive(value);
     protected override sbyte PeekPrimitive(ReadContext context) => context.PeekSBytePrimitive();
@@ -11,8 +11,16 @@ public class SByteExtensionsTests : ExtensionTestSuite<sbyte> {
     protected override void Write(ref WriteContext context, sbyte value) => context.WriteSByte(value);
     protected override sbyte Peek(ReadContext context) => context.PeekSByte();
     protected override sbyte Read(ReadContext context) => context.ReadSByte();
-    protected override sbyte TryPeek(ReadContext context) { Assert.True(context.TryPeekSByte(out sbyte v)); return v; }
-    protected override sbyte TryRead(ReadContext context) { Assert.True(context.TryReadSByte(out sbyte v)); return v; }
+
+    protected override sbyte TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekSByte(out sbyte v));
+        return v;
+    }
+
+    protected override sbyte TryRead(ReadContext context) {
+        Assert.True(context.TryReadSByte(out sbyte v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<sbyte> values) => context.WriteSBytesPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<sbyte> destination) => context.PeekSByteSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class SByteExtensionsTests : ExtensionTestSuite<sbyte> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, sbyte[] values) => context.WriteSBytesWithoutLength(values);
     protected override sbyte[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekSBytes(count);
     protected override sbyte[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadSBytes(count);
-    protected override sbyte[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekSBytes(count, out sbyte[] values)); return values; }
-    protected override sbyte[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadSBytes(count, out sbyte[] values)); return values; }
+
+    protected override sbyte[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekSBytes(count, out sbyte[] values));
+        return values;
+    }
+
+    protected override sbyte[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadSBytes(count, out sbyte[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, sbyte[] values) => context.WriteSBytes(values);
     protected override sbyte[] PeekArrayWithLength(ReadContext context) => context.PeekSBytes();
     protected override sbyte[] ReadArrayWithLength(ReadContext context) => context.ReadSBytes();
-    protected override sbyte[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekSBytes(out sbyte[] values)); return values; }
-    protected override sbyte[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadSBytes(out sbyte[] values)); return values; }
+
+    protected override sbyte[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekSBytes(out sbyte[] values));
+        return values;
+    }
+
+    protected override sbyte[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadSBytes(out sbyte[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<sbyte> TryOperations => new() {
         TryPeekValue = (ReadContext c, out sbyte v) => c.TryPeekSByte(out v),
         TryReadValue = (ReadContext c, out sbyte v) => c.TryReadSByte(out v),

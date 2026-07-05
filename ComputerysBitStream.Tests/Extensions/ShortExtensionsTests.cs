@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class ShortExtensionsTests : ExtensionTestSuite<short> {
-        protected override short Value => 42;
-        protected override short[] Values => [42, -42, 42, 42, -42];
+    protected override short Value => 42;
+    protected override short[] Values => [42, -42, 42, 42, -42];
 
     protected override void WritePrimitive(ref WriteContext context, short value) => context.WriteShortPrimitive(value);
     protected override short PeekPrimitive(ReadContext context) => context.PeekShortPrimitive();
@@ -11,8 +11,16 @@ public class ShortExtensionsTests : ExtensionTestSuite<short> {
     protected override void Write(ref WriteContext context, short value) => context.WriteShort(value);
     protected override short Peek(ReadContext context) => context.PeekShort();
     protected override short Read(ReadContext context) => context.ReadShort();
-    protected override short TryPeek(ReadContext context) { Assert.True(context.TryPeekShort(out short v)); return v; }
-    protected override short TryRead(ReadContext context) { Assert.True(context.TryReadShort(out short v)); return v; }
+
+    protected override short TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekShort(out short v));
+        return v;
+    }
+
+    protected override short TryRead(ReadContext context) {
+        Assert.True(context.TryReadShort(out short v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<short> values) => context.WriteShortsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<short> destination) => context.PeekShortSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class ShortExtensionsTests : ExtensionTestSuite<short> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, short[] values) => context.WriteShortsWithoutLength(values);
     protected override short[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekShorts(count);
     protected override short[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadShorts(count);
-    protected override short[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekShorts(count, out short[] values)); return values; }
-    protected override short[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadShorts(count, out short[] values)); return values; }
+
+    protected override short[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekShorts(count, out short[] values));
+        return values;
+    }
+
+    protected override short[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadShorts(count, out short[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, short[] values) => context.WriteShorts(values);
     protected override short[] PeekArrayWithLength(ReadContext context) => context.PeekShorts();
     protected override short[] ReadArrayWithLength(ReadContext context) => context.ReadShorts();
-    protected override short[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekShorts(out short[] values)); return values; }
-    protected override short[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadShorts(out short[] values)); return values; }
+
+    protected override short[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekShorts(out short[] values));
+        return values;
+    }
+
+    protected override short[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadShorts(out short[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<short> TryOperations => new() {
         TryPeekValue = (ReadContext c, out short v) => c.TryPeekShort(out v),
         TryReadValue = (ReadContext c, out short v) => c.TryReadShort(out v),

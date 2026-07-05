@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class FloatExtensionsTests : ExtensionTestSuite<float> {
-        protected override float Value => 1.23f;
-        protected override float[] Values => [1.23f, 4.56f, 1.23f, 1.23f, 4.56f];
+    protected override float Value => 1.23f;
+    protected override float[] Values => [1.23f, 4.56f, 1.23f, 1.23f, 4.56f];
 
     protected override void WritePrimitive(ref WriteContext context, float value) => context.WriteFloatPrimitive(value);
     protected override float PeekPrimitive(ReadContext context) => context.PeekFloatPrimitive();
@@ -11,8 +11,16 @@ public class FloatExtensionsTests : ExtensionTestSuite<float> {
     protected override void Write(ref WriteContext context, float value) => context.WriteFloat(value);
     protected override float Peek(ReadContext context) => context.PeekFloat();
     protected override float Read(ReadContext context) => context.ReadFloat();
-    protected override float TryPeek(ReadContext context) { Assert.True(context.TryPeekFloat(out float v)); return v; }
-    protected override float TryRead(ReadContext context) { Assert.True(context.TryReadFloat(out float v)); return v; }
+
+    protected override float TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekFloat(out float v));
+        return v;
+    }
+
+    protected override float TryRead(ReadContext context) {
+        Assert.True(context.TryReadFloat(out float v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<float> values) => context.WriteFloatsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<float> destination) => context.PeekFloatSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class FloatExtensionsTests : ExtensionTestSuite<float> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, float[] values) => context.WriteFloatsWithoutLength(values);
     protected override float[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekFloats(count);
     protected override float[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadFloats(count);
-    protected override float[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekFloats(count, out float[] values)); return values; }
-    protected override float[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadFloats(count, out float[] values)); return values; }
+
+    protected override float[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekFloats(count, out float[] values));
+        return values;
+    }
+
+    protected override float[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadFloats(count, out float[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, float[] values) => context.WriteFloats(values);
     protected override float[] PeekArrayWithLength(ReadContext context) => context.PeekFloats();
     protected override float[] ReadArrayWithLength(ReadContext context) => context.ReadFloats();
-    protected override float[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekFloats(out float[] values)); return values; }
-    protected override float[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadFloats(out float[] values)); return values; }
+
+    protected override float[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekFloats(out float[] values));
+        return values;
+    }
+
+    protected override float[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadFloats(out float[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<float> TryOperations => new() {
         TryPeekValue = (ReadContext c, out float v) => c.TryPeekFloat(out v),
         TryReadValue = (ReadContext c, out float v) => c.TryReadFloat(out v),

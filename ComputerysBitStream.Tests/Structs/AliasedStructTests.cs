@@ -1,7 +1,8 @@
-namespace ComputerysBitStream.Tests;
+namespace ComputerysBitStream.Tests.Structs;
 
 public class AliasedStructTests : StructTestSuite<AliasedStruct> {
     protected override AliasedStruct Value => new() { A = 42, B = 3.14f };
+
     protected override AliasedStruct[] Values => [
         new() { A = 1, B = 1.0f },
         new() { A = 2, B = 2.0f },
@@ -11,20 +12,44 @@ public class AliasedStructTests : StructTestSuite<AliasedStruct> {
     protected override void Write(ref WriteContext context, AliasedStruct value) => context.WriteAliased(value);
     protected override AliasedStruct Peek(ReadContext context) => context.PeekAliased();
     protected override AliasedStruct Read(ReadContext context) => context.ReadAliased();
-    protected override AliasedStruct TryPeek(ReadContext context) { Assert.True(context.TryPeekAliased(out AliasedStruct v)); return v; }
-    protected override AliasedStruct TryRead(ReadContext context) { Assert.True(context.TryReadAliased(out AliasedStruct v)); return v; }
+
+    protected override AliasedStruct TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekAliased(out AliasedStruct v));
+        return v;
+    }
+
+    protected override AliasedStruct TryRead(ReadContext context) {
+        Assert.True(context.TryReadAliased(out AliasedStruct v));
+        return v;
+    }
 
     protected override void WriteArray(ref WriteContext context, AliasedStruct[] values) => context.WriteAliaseds(values);
     protected override AliasedStruct[] PeekArrayWithLength(ReadContext context) => context.PeekAliaseds();
     protected override AliasedStruct[] ReadArrayWithLength(ReadContext context) => context.ReadAliaseds();
-    protected override AliasedStruct[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekAliaseds(out AliasedStruct[] v)); return v; }
-    protected override AliasedStruct[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadAliaseds(out AliasedStruct[] v)); return v; }
+
+    protected override AliasedStruct[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekAliaseds(out AliasedStruct[] v));
+        return v;
+    }
+
+    protected override AliasedStruct[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadAliaseds(out AliasedStruct[] v));
+        return v;
+    }
 
     protected override void WriteArrayWithoutLength(ref WriteContext context, AliasedStruct[] values) => context.WriteAliasedsWithoutLength(values);
     protected override AliasedStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekAliaseds(count);
     protected override AliasedStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadAliaseds(count);
-    protected override AliasedStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekAliaseds(count, out AliasedStruct[] v)); return v; }
-    protected override AliasedStruct[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadAliaseds(count, out AliasedStruct[] v)); return v; }
+
+    protected override AliasedStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekAliaseds(count, out AliasedStruct[] v));
+        return v;
+    }
+
+    protected override AliasedStruct[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadAliaseds(count, out AliasedStruct[] v));
+        return v;
+    }
 
     protected override void WriteSpan(ref WriteContext context, Span<AliasedStruct> values) => context.WriteAliaseds(values);
     protected override void PeekSpanWithLength(ReadContext context, Span<AliasedStruct> destination) => context.PeekAliaseds(destination);
@@ -39,6 +64,7 @@ public class AliasedStructTests : StructTestSuite<AliasedStruct> {
     protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<AliasedStruct> destination) { Assert.True(context.TryReadAliaseds(count, destination)); }
 
     protected override Type StructType => typeof(AliasedStruct);
+
     protected override TryReadOperationSet<AliasedStruct> TryOperations => new() {
         TryPeekValue = (ReadContext c, out AliasedStruct v) => c.TryPeekAliased(out v),
         TryReadValue = (ReadContext c, out AliasedStruct v) => c.TryReadAliased(out v),
@@ -55,6 +81,7 @@ public class AliasedStructTests : StructTestSuite<AliasedStruct> {
 
 public class AliasedExternalStructTests : StructTestSuite<AliasedExternalStruct> {
     protected override AliasedExternalStruct Value => new() { X = 99, Y = true };
+
     protected override AliasedExternalStruct[] Values => [
         new() { X = 1, Y = true },
         new() { X = 2, Y = false },
@@ -64,20 +91,44 @@ public class AliasedExternalStructTests : StructTestSuite<AliasedExternalStruct>
     protected override void Write(ref WriteContext context, AliasedExternalStruct value) => context.WriteAliasedExt(value);
     protected override AliasedExternalStruct Peek(ReadContext context) => context.PeekAliasedExt();
     protected override AliasedExternalStruct Read(ReadContext context) => context.ReadAliasedExt();
-    protected override AliasedExternalStruct TryPeek(ReadContext context) { Assert.True(context.TryPeekAliasedExt(out AliasedExternalStruct v)); return v; }
-    protected override AliasedExternalStruct TryRead(ReadContext context) { Assert.True(context.TryReadAliasedExt(out AliasedExternalStruct v)); return v; }
+
+    protected override AliasedExternalStruct TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekAliasedExt(out AliasedExternalStruct v));
+        return v;
+    }
+
+    protected override AliasedExternalStruct TryRead(ReadContext context) {
+        Assert.True(context.TryReadAliasedExt(out AliasedExternalStruct v));
+        return v;
+    }
 
     protected override void WriteArray(ref WriteContext context, AliasedExternalStruct[] values) => context.WriteAliasedExts(values);
     protected override AliasedExternalStruct[] PeekArrayWithLength(ReadContext context) => context.PeekAliasedExts();
     protected override AliasedExternalStruct[] ReadArrayWithLength(ReadContext context) => context.ReadAliasedExts();
-    protected override AliasedExternalStruct[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekAliasedExts(out AliasedExternalStruct[] v)); return v; }
-    protected override AliasedExternalStruct[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadAliasedExts(out AliasedExternalStruct[] v)); return v; }
+
+    protected override AliasedExternalStruct[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekAliasedExts(out AliasedExternalStruct[] v));
+        return v;
+    }
+
+    protected override AliasedExternalStruct[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadAliasedExts(out AliasedExternalStruct[] v));
+        return v;
+    }
 
     protected override void WriteArrayWithoutLength(ref WriteContext context, AliasedExternalStruct[] values) => context.WriteAliasedExtsWithoutLength(values);
     protected override AliasedExternalStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekAliasedExts(count);
     protected override AliasedExternalStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadAliasedExts(count);
-    protected override AliasedExternalStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekAliasedExts(count, out AliasedExternalStruct[] v)); return v; }
-    protected override AliasedExternalStruct[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadAliasedExts(count, out AliasedExternalStruct[] v)); return v; }
+
+    protected override AliasedExternalStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekAliasedExts(count, out AliasedExternalStruct[] v));
+        return v;
+    }
+
+    protected override AliasedExternalStruct[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadAliasedExts(count, out AliasedExternalStruct[] v));
+        return v;
+    }
 
     protected override void WriteSpan(ref WriteContext context, Span<AliasedExternalStruct> values) => context.WriteAliasedExts(values);
     protected override void PeekSpanWithLength(ReadContext context, Span<AliasedExternalStruct> destination) => context.PeekAliasedExts(destination);
@@ -92,6 +143,7 @@ public class AliasedExternalStructTests : StructTestSuite<AliasedExternalStruct>
     protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<AliasedExternalStruct> destination) { Assert.True(context.TryReadAliasedExts(count, destination)); }
 
     protected override Type StructType => typeof(AliasedExternalStruct);
+
     protected override TryReadOperationSet<AliasedExternalStruct> TryOperations => new() {
         TryPeekValue = (ReadContext c, out AliasedExternalStruct v) => c.TryPeekAliasedExt(out v),
         TryReadValue = (ReadContext c, out AliasedExternalStruct v) => c.TryReadAliasedExt(out v),
@@ -108,6 +160,7 @@ public class AliasedExternalStructTests : StructTestSuite<AliasedExternalStruct>
 
 public class AliasedIncludeExternalStructTests : StructTestSuite<AliasedIncludeExternalStruct> {
     protected override AliasedIncludeExternalStruct Value => new() { Included = 7, Ignored = 0 };
+
     protected override AliasedIncludeExternalStruct[] Values => [
         new() { Included = 1, Ignored = 0 },
         new() { Included = 2, Ignored = 0 },
@@ -117,20 +170,44 @@ public class AliasedIncludeExternalStructTests : StructTestSuite<AliasedIncludeE
     protected override void Write(ref WriteContext context, AliasedIncludeExternalStruct value) => context.WriteAliasedInc(value);
     protected override AliasedIncludeExternalStruct Peek(ReadContext context) => context.PeekAliasedInc();
     protected override AliasedIncludeExternalStruct Read(ReadContext context) => context.ReadAliasedInc();
-    protected override AliasedIncludeExternalStruct TryPeek(ReadContext context) { Assert.True(context.TryPeekAliasedInc(out AliasedIncludeExternalStruct v)); return v; }
-    protected override AliasedIncludeExternalStruct TryRead(ReadContext context) { Assert.True(context.TryReadAliasedInc(out AliasedIncludeExternalStruct v)); return v; }
+
+    protected override AliasedIncludeExternalStruct TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekAliasedInc(out AliasedIncludeExternalStruct v));
+        return v;
+    }
+
+    protected override AliasedIncludeExternalStruct TryRead(ReadContext context) {
+        Assert.True(context.TryReadAliasedInc(out AliasedIncludeExternalStruct v));
+        return v;
+    }
 
     protected override void WriteArray(ref WriteContext context, AliasedIncludeExternalStruct[] values) => context.WriteAliasedIncs(values);
     protected override AliasedIncludeExternalStruct[] PeekArrayWithLength(ReadContext context) => context.PeekAliasedIncs();
     protected override AliasedIncludeExternalStruct[] ReadArrayWithLength(ReadContext context) => context.ReadAliasedIncs();
-    protected override AliasedIncludeExternalStruct[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekAliasedIncs(out AliasedIncludeExternalStruct[] v)); return v; }
-    protected override AliasedIncludeExternalStruct[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadAliasedIncs(out AliasedIncludeExternalStruct[] v)); return v; }
+
+    protected override AliasedIncludeExternalStruct[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekAliasedIncs(out AliasedIncludeExternalStruct[] v));
+        return v;
+    }
+
+    protected override AliasedIncludeExternalStruct[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadAliasedIncs(out AliasedIncludeExternalStruct[] v));
+        return v;
+    }
 
     protected override void WriteArrayWithoutLength(ref WriteContext context, AliasedIncludeExternalStruct[] values) => context.WriteAliasedIncsWithoutLength(values);
     protected override AliasedIncludeExternalStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekAliasedIncs(count);
     protected override AliasedIncludeExternalStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadAliasedIncs(count);
-    protected override AliasedIncludeExternalStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekAliasedIncs(count, out AliasedIncludeExternalStruct[] v)); return v; }
-    protected override AliasedIncludeExternalStruct[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadAliasedIncs(count, out AliasedIncludeExternalStruct[] v)); return v; }
+
+    protected override AliasedIncludeExternalStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekAliasedIncs(count, out AliasedIncludeExternalStruct[] v));
+        return v;
+    }
+
+    protected override AliasedIncludeExternalStruct[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadAliasedIncs(count, out AliasedIncludeExternalStruct[] v));
+        return v;
+    }
 
     protected override void WriteSpan(ref WriteContext context, Span<AliasedIncludeExternalStruct> values) => context.WriteAliasedIncs(values);
     protected override void PeekSpanWithLength(ReadContext context, Span<AliasedIncludeExternalStruct> destination) => context.PeekAliasedIncs(destination);
@@ -168,6 +245,7 @@ public class AliasedIncludeExternalStructTests : StructTestSuite<AliasedIncludeE
         Assert.Equal(modified.Included, readModified.Included);
         Assert.Equal(readOriginal.Included, readModified.Included);
     }
+
     protected override TryReadOperationSet<AliasedIncludeExternalStruct> TryOperations => new() {
         TryPeekValue = (ReadContext c, out AliasedIncludeExternalStruct v) => c.TryPeekAliasedInc(out v),
         TryReadValue = (ReadContext c, out AliasedIncludeExternalStruct v) => c.TryReadAliasedInc(out v),

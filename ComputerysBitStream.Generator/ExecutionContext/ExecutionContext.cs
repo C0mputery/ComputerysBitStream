@@ -4,34 +4,32 @@ using Microsoft.CodeAnalysis;
 
 namespace ComputerysBitStream.Generator;
 
-internal ref partial struct ExecutionContext {
+internal readonly ref partial struct ExecutionContext {
     internal static void Run(SourceProductionContext context, AllCollectedData data) {
         ExecutionContext executionContext = new(context, data);
         executionContext.RunCore();
     }
 
     private readonly SourceProductionContext _context;
-    private readonly ImmutableArray<SettingsDefinition> _globalSettingsDataArray;
     private readonly ImmutableArray<PrimitiveDefinition> _primitivesArray;
     private readonly ImmutableArray<StructDefinition> _structDataArray;
     private readonly ImmutableDictionary<string, SettingsDefinition> _localSettingsByInterface;
-    private readonly SettingsDefinition _fallbackGlobalSetting;
     private readonly SettingsDefinition _globalSettings;
 
     private ExecutionContext(SourceProductionContext context, AllCollectedData data) {
         _context = context;
 
-        _fallbackGlobalSetting = UnwrapSettingsOrDefault(data.FallbackGlobalSettings);
+        SettingsDefinition fallbackGlobalSetting = UnwrapSettingsOrDefault(data.FallbackGlobalSettings);
 
-        _globalSettingsDataArray = UnwrapValidSettingsArray(data.GlobalSettings);
-        if (_globalSettingsDataArray.Length > 1) {
+        ImmutableArray<SettingsDefinition> globalSettingsDataArray = UnwrapValidSettingsArray(data.GlobalSettings);
+        if (globalSettingsDataArray.Length > 1) {
             ImmutableArray<DiagnosticValueType>.Builder multipleGlobalSettingsDiagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
-            foreach (SettingsDefinition globalSettings in _globalSettingsDataArray) {
+            foreach (SettingsDefinition globalSettings in globalSettingsDataArray) {
                 multipleGlobalSettingsDiagnostics.Add(new DiagnosticValueType(Diagnostics.MultipleGlobalSettings, globalSettings.Location));
             }
             ReportDiagnostics(multipleGlobalSettingsDiagnostics.ToImmutable());
         }
-        _globalSettings = _globalSettingsDataArray.Length > 0 ? _globalSettingsDataArray[0] : _fallbackGlobalSetting;
+        _globalSettings = globalSettingsDataArray.Length > 0 ? globalSettingsDataArray[0] : fallbackGlobalSetting;
 
         ImmutableArray<SettingsDefinition> localSettingsArray = UnwrapValidSettingsArray(data.Settings);
         _localSettingsByInterface = BuildLocalSettingsDictionary(localSettingsArray);
@@ -81,13 +79,7 @@ internal ref partial struct ExecutionContext {
             string key = string.IsNullOrEmpty(definition.TargetTypeFullyQualifiedName) ? string.Empty : $"{definition.TargetTypeFullyQualifiedName}|{definition.Namespace}|{definition.Alias}";
 
             if (!string.IsNullOrEmpty(key) && !seenKeys.Add(key)) {
-                duplicateDiagnostics.Add(new DiagnosticValueType(
-                    Diagnostics.DuplicatePrimitiveDefinition,
-                    definition.Location,
-                    definition.TargetTypeFullyQualifiedName,
-                    definition.Alias,
-                    definition.Namespace
-                ));
+                duplicateDiagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicatePrimitiveDefinition, definition.Location, definition.TargetTypeFullyQualifiedName, definition.Alias, definition.Namespace));
                 continue;
             }
 
@@ -111,12 +103,7 @@ internal ref partial struct ExecutionContext {
             string key = string.IsNullOrEmpty(definition.TypeFullyQualifiedName) ? string.Empty : $"{definition.TypeFullyQualifiedName}|{definition.Alias}";
 
             if (!string.IsNullOrEmpty(key) && !seenKeys.Add(key)) {
-                duplicateDiagnostics.Add(new DiagnosticValueType(
-                    Diagnostics.DuplicateStructDefinition,
-                    definition.Location,
-                    definition.TypeFullyQualifiedName,
-                    definition.Alias
-                ));
+                duplicateDiagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateStructDefinition, definition.Location, definition.TypeFullyQualifiedName, definition.Alias));
                 continue;
             }
 

@@ -20,8 +20,16 @@ public class QuantizedFloatExtensionsTests : QuantizedExtensionTestSuite<float> 
     protected override void Write(ref WriteContext context, float value) => context.WriteQuantizedFloat(value, Min, Max, BitCount);
     protected override float Peek(ReadContext context) => context.PeekQuantizedFloat(Min, Max, BitCount);
     protected override float Read(ReadContext context) => context.ReadQuantizedFloat(Min, Max, BitCount);
-    protected override float TryPeek(ReadContext context) { Assert.True(context.TryPeekQuantizedFloat(Min, Max, BitCount, out float v)); return v; }
-    protected override float TryRead(ReadContext context) { Assert.True(context.TryReadQuantizedFloat(Min, Max, BitCount, out float v)); return v; }
+
+    protected override float TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedFloat(Min, Max, BitCount, out float v));
+        return v;
+    }
+
+    protected override float TryRead(ReadContext context) {
+        Assert.True(context.TryReadQuantizedFloat(Min, Max, BitCount, out float v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<float> values) => context.WriteQuantizedFloatsPrimitive(values, Min, Max, BitCount);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<float> destination) => context.PeekQuantizedFloatSpanPrimitive(count, destination, Min, Max, BitCount);
@@ -43,14 +51,31 @@ public class QuantizedFloatExtensionsTests : QuantizedExtensionTestSuite<float> 
     protected override void WriteArrayWithoutLength(ref WriteContext context, float[] values) => context.WriteQuantizedFloatsWithoutLength(values, Min, Max, BitCount);
     protected override float[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekQuantizedFloats(count, Min, Max, BitCount);
     protected override float[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadQuantizedFloats(count, Min, Max, BitCount);
-    protected override float[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekQuantizedFloats(count, Min, Max, BitCount, out float[] values)); return values; }
-    protected override float[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadQuantizedFloats(count, Min, Max, BitCount, out float[] values)); return values; }
+
+    protected override float[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekQuantizedFloats(count, Min, Max, BitCount, out float[] values));
+        return values;
+    }
+
+    protected override float[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadQuantizedFloats(count, Min, Max, BitCount, out float[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, float[] values) => context.WriteQuantizedFloats(values, Min, Max, BitCount);
     protected override float[] PeekArrayWithLength(ReadContext context) => context.PeekQuantizedFloats(Min, Max, BitCount);
     protected override float[] ReadArrayWithLength(ReadContext context) => context.ReadQuantizedFloats(Min, Max, BitCount);
-    protected override float[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekQuantizedFloats(Min, Max, BitCount, out float[] values)); return values; }
-    protected override float[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadQuantizedFloats(Min, Max, BitCount, out float[] values)); return values; }
+
+    protected override float[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekQuantizedFloats(Min, Max, BitCount, out float[] values));
+        return values;
+    }
+
+    protected override float[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadQuantizedFloats(Min, Max, BitCount, out float[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<float> TryOperations => new() {
         TryPeekValue = (ReadContext c, out float v) => c.TryPeekQuantizedFloat(Min, Max, BitCount, out v),
         TryReadValue = (ReadContext c, out float v) => c.TryReadQuantizedFloat(Min, Max, BitCount, out v),

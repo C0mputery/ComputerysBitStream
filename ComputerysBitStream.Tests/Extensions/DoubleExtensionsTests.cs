@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class DoubleExtensionsTests : ExtensionTestSuite<double> {
-        protected override double Value => 1.23;
-        protected override double[] Values => [1.23, 4.56, 1.23, 1.23, 4.56];
+    protected override double Value => 1.23;
+    protected override double[] Values => [1.23, 4.56, 1.23, 1.23, 4.56];
 
     protected override void WritePrimitive(ref WriteContext context, double value) => context.WriteDoublePrimitive(value);
     protected override double PeekPrimitive(ReadContext context) => context.PeekDoublePrimitive();
@@ -11,8 +11,16 @@ public class DoubleExtensionsTests : ExtensionTestSuite<double> {
     protected override void Write(ref WriteContext context, double value) => context.WriteDouble(value);
     protected override double Peek(ReadContext context) => context.PeekDouble();
     protected override double Read(ReadContext context) => context.ReadDouble();
-    protected override double TryPeek(ReadContext context) { Assert.True(context.TryPeekDouble(out double v)); return v; }
-    protected override double TryRead(ReadContext context) { Assert.True(context.TryReadDouble(out double v)); return v; }
+
+    protected override double TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekDouble(out double v));
+        return v;
+    }
+
+    protected override double TryRead(ReadContext context) {
+        Assert.True(context.TryReadDouble(out double v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<double> values) => context.WriteDoublesPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<double> destination) => context.PeekDoubleSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class DoubleExtensionsTests : ExtensionTestSuite<double> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, double[] values) => context.WriteDoublesWithoutLength(values);
     protected override double[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekDoubles(count);
     protected override double[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadDoubles(count);
-    protected override double[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekDoubles(count, out double[] values)); return values; }
-    protected override double[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadDoubles(count, out double[] values)); return values; }
+
+    protected override double[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekDoubles(count, out double[] values));
+        return values;
+    }
+
+    protected override double[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadDoubles(count, out double[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, double[] values) => context.WriteDoubles(values);
     protected override double[] PeekArrayWithLength(ReadContext context) => context.PeekDoubles();
     protected override double[] ReadArrayWithLength(ReadContext context) => context.ReadDoubles();
-    protected override double[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekDoubles(out double[] values)); return values; }
-    protected override double[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadDoubles(out double[] values)); return values; }
+
+    protected override double[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekDoubles(out double[] values));
+        return values;
+    }
+
+    protected override double[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadDoubles(out double[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<double> TryOperations => new() {
         TryPeekValue = (ReadContext c, out double v) => c.TryPeekDouble(out v),
         TryReadValue = (ReadContext c, out double v) => c.TryReadDouble(out v),

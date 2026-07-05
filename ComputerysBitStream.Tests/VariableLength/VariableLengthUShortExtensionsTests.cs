@@ -3,7 +3,7 @@ namespace ComputerysBitStream.Tests.VariableLength;
 [BitStreamPrimitiveContext]
 public class VariableLengthUShortExtensionsTests : VariableLengthExtensionTestSuite<ushort> {
     protected override ushort Value => 42;
-    protected override ushort[] Values => [42, (ushort)0, (ushort)50000];
+    protected override ushort[] Values => [42, 0, 50000];
     protected override int GetSize(ushort value) => PrimitiveVariableLengthUShortExtensions.GetVariableLengthUShortSize(value);
 
     protected override void WritePrimitive(ref WriteContext context, ushort value) => context.WriteVariableLengthUShortPrimitive(value);
@@ -12,8 +12,16 @@ public class VariableLengthUShortExtensionsTests : VariableLengthExtensionTestSu
     protected override void Write(ref WriteContext context, ushort value) => context.WriteVariableLengthUShort(value);
     protected override ushort Peek(ReadContext context) => context.PeekVariableLengthUShort();
     protected override ushort Read(ReadContext context) => context.ReadVariableLengthUShort();
-    protected override ushort TryPeek(ReadContext context) { Assert.True(context.TryPeekVariableLengthUShort(out ushort v)); return v; }
-    protected override ushort TryRead(ReadContext context) { Assert.True(context.TryReadVariableLengthUShort(out ushort v)); return v; }
+
+    protected override ushort TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekVariableLengthUShort(out ushort v));
+        return v;
+    }
+
+    protected override ushort TryRead(ReadContext context) {
+        Assert.True(context.TryReadVariableLengthUShort(out ushort v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<ushort> values) => context.WriteVariableLengthUShortsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<ushort> destination) => context.PeekVariableLengthUShortSpanPrimitive(count, destination);
@@ -35,14 +43,31 @@ public class VariableLengthUShortExtensionsTests : VariableLengthExtensionTestSu
     protected override void WriteArrayWithoutLength(ref WriteContext context, ushort[] values) => context.WriteVariableLengthUShortsWithoutLength(values);
     protected override ushort[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekVariableLengthUShorts(count);
     protected override ushort[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadVariableLengthUShorts(count);
-    protected override ushort[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekVariableLengthUShorts(count, out ushort[] values)); return values; }
-    protected override ushort[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadVariableLengthUShorts(count, out ushort[] values)); return values; }
+
+    protected override ushort[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekVariableLengthUShorts(count, out ushort[] values));
+        return values;
+    }
+
+    protected override ushort[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadVariableLengthUShorts(count, out ushort[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, ushort[] values) => context.WriteVariableLengthUShorts(values);
     protected override ushort[] PeekArrayWithLength(ReadContext context) => context.PeekVariableLengthUShorts();
     protected override ushort[] ReadArrayWithLength(ReadContext context) => context.ReadVariableLengthUShorts();
-    protected override ushort[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekVariableLengthUShorts(out ushort[] values)); return values; }
-    protected override ushort[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadVariableLengthUShorts(out ushort[] values)); return values; }
+
+    protected override ushort[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekVariableLengthUShorts(out ushort[] values));
+        return values;
+    }
+
+    protected override ushort[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadVariableLengthUShorts(out ushort[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<ushort> TryOperations => new() {
         TryPeekValue = (ReadContext c, out ushort v) => c.TryPeekVariableLengthUShort(out v),
         TryReadValue = (ReadContext c, out ushort v) => c.TryReadVariableLengthUShort(out v),

@@ -428,5 +428,6 @@ public abstract class StructTestSuite<T> {
     }
 
     private delegate void SpanReadOperation(ReadContext context, Span<T> destination);
+
     private delegate void FixedLengthSpanReadOperation(ReadContext context, int count, Span<T> destination);
 }

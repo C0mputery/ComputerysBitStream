@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class IntExtensionsTests : ExtensionTestSuite<int> {
-        protected override int Value => 42;
-        protected override int[] Values => [42, -42, 42, 42, -42];
+    protected override int Value => 42;
+    protected override int[] Values => [42, -42, 42, 42, -42];
 
     protected override void WritePrimitive(ref WriteContext context, int value) => context.WriteIntPrimitive(value);
     protected override int PeekPrimitive(ReadContext context) => context.PeekIntPrimitive();
@@ -11,8 +11,16 @@ public class IntExtensionsTests : ExtensionTestSuite<int> {
     protected override void Write(ref WriteContext context, int value) => context.WriteInt(value);
     protected override int Peek(ReadContext context) => context.PeekInt();
     protected override int Read(ReadContext context) => context.ReadInt();
-    protected override int TryPeek(ReadContext context) { Assert.True(context.TryPeekInt(out int v)); return v; }
-    protected override int TryRead(ReadContext context) { Assert.True(context.TryReadInt(out int v)); return v; }
+
+    protected override int TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekInt(out int v));
+        return v;
+    }
+
+    protected override int TryRead(ReadContext context) {
+        Assert.True(context.TryReadInt(out int v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<int> values) => context.WriteIntsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<int> destination) => context.PeekIntSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class IntExtensionsTests : ExtensionTestSuite<int> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, int[] values) => context.WriteIntsWithoutLength(values);
     protected override int[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekInts(count);
     protected override int[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadInts(count);
-    protected override int[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekInts(count, out int[] values)); return values; }
-    protected override int[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadInts(count, out int[] values)); return values; }
+
+    protected override int[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekInts(count, out int[] values));
+        return values;
+    }
+
+    protected override int[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadInts(count, out int[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, int[] values) => context.WriteInts(values);
     protected override int[] PeekArrayWithLength(ReadContext context) => context.PeekInts();
     protected override int[] ReadArrayWithLength(ReadContext context) => context.ReadInts();
-    protected override int[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekInts(out int[] values)); return values; }
-    protected override int[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadInts(out int[] values)); return values; }
+
+    protected override int[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekInts(out int[] values));
+        return values;
+    }
+
+    protected override int[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadInts(out int[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<int> TryOperations => new() {
         TryPeekValue = (ReadContext c, out int v) => c.TryPeekInt(out v),
         TryReadValue = (ReadContext c, out int v) => c.TryReadInt(out v),

@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class CharExtensionsTests : ExtensionTestSuite<char> {
-        protected override char Value => 'a';
-        protected override char[] Values => ['a', 'b', 'a', 'a', 'b'];
+    protected override char Value => 'a';
+    protected override char[] Values => ['a', 'b', 'a', 'a', 'b'];
 
     protected override void WritePrimitive(ref WriteContext context, char value) => context.WriteCharPrimitive(value);
     protected override char PeekPrimitive(ReadContext context) => context.PeekCharPrimitive();
@@ -11,8 +11,16 @@ public class CharExtensionsTests : ExtensionTestSuite<char> {
     protected override void Write(ref WriteContext context, char value) => context.WriteChar(value);
     protected override char Peek(ReadContext context) => context.PeekChar();
     protected override char Read(ReadContext context) => context.ReadChar();
-    protected override char TryPeek(ReadContext context) { Assert.True(context.TryPeekChar(out char v)); return v; }
-    protected override char TryRead(ReadContext context) { Assert.True(context.TryReadChar(out char v)); return v; }
+
+    protected override char TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekChar(out char v));
+        return v;
+    }
+
+    protected override char TryRead(ReadContext context) {
+        Assert.True(context.TryReadChar(out char v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<char> values) => context.WriteCharsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<char> destination) => context.PeekCharSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class CharExtensionsTests : ExtensionTestSuite<char> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, char[] values) => context.WriteCharsWithoutLength(values);
     protected override char[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekChars(count);
     protected override char[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadChars(count);
-    protected override char[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekChars(count, out char[] values)); return values; }
-    protected override char[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadChars(count, out char[] values)); return values; }
+
+    protected override char[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekChars(count, out char[] values));
+        return values;
+    }
+
+    protected override char[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadChars(count, out char[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, char[] values) => context.WriteChars(values);
     protected override char[] PeekArrayWithLength(ReadContext context) => context.PeekChars();
     protected override char[] ReadArrayWithLength(ReadContext context) => context.ReadChars();
-    protected override char[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekChars(out char[] values)); return values; }
-    protected override char[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadChars(out char[] values)); return values; }
+
+    protected override char[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekChars(out char[] values));
+        return values;
+    }
+
+    protected override char[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadChars(out char[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<char> TryOperations => new() {
         TryPeekValue = (ReadContext c, out char v) => c.TryPeekChar(out v),
         TryReadValue = (ReadContext c, out char v) => c.TryReadChar(out v),

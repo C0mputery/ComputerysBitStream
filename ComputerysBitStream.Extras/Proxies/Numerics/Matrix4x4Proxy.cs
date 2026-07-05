@@ -4,6 +4,7 @@ using ComputerysBitStream.Extras.Settings;
 
 namespace ComputerysBitStream.Extras.Proxies.Numerics {
     [BitStreamProxyStruct(typeof(Matrix4x4), typeof(IGameExtrasSettings))]
+    // ReSharper disable once InconsistentNaming
     public static partial class Matrix4x4Proxy {
         public static float M11;
         public static float M12;

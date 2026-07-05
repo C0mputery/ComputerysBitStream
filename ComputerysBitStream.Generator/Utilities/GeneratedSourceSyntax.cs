@@ -5,12 +5,12 @@ using System.Linq;
 namespace ComputerysBitStream.Generator;
 
 internal static class GeneratedSourceSyntax {
-    private static readonly string[] StandardUsings = {
+    private static readonly string[] StandardUsings = [
         "System",
         "System.ComponentModel",
         "System.Runtime.CompilerServices",
-        "ComputerysBitStream",
-    };
+        "ComputerysBitStream"
+    ];
 
     internal static void EmitStandardUsings(SourceWriter writer, ReadOnlySpan<string> additionalNamespaces = default) {
         HashSet<string> emittedNamespaces = new(StringComparer.Ordinal);

@@ -2,8 +2,8 @@ namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
 public class BoolExtensionsTests : ExtensionTestSuite<bool> {
-        protected override bool Value => true;
-        protected override bool[] Values => [true, false, true, true, false];
+    protected override bool Value => true;
+    protected override bool[] Values => [true, false, true, true, false];
 
     protected override void WritePrimitive(ref WriteContext context, bool value) => context.WriteBoolPrimitive(value);
     protected override bool PeekPrimitive(ReadContext context) => context.PeekBoolPrimitive();
@@ -11,8 +11,16 @@ public class BoolExtensionsTests : ExtensionTestSuite<bool> {
     protected override void Write(ref WriteContext context, bool value) => context.WriteBool(value);
     protected override bool Peek(ReadContext context) => context.PeekBool();
     protected override bool Read(ReadContext context) => context.ReadBool();
-    protected override bool TryPeek(ReadContext context) { Assert.True(context.TryPeekBool(out bool v)); return v; }
-    protected override bool TryRead(ReadContext context) { Assert.True(context.TryReadBool(out bool v)); return v; }
+
+    protected override bool TryPeek(ReadContext context) {
+        Assert.True(context.TryPeekBool(out bool v));
+        return v;
+    }
+
+    protected override bool TryRead(ReadContext context) {
+        Assert.True(context.TryReadBool(out bool v));
+        return v;
+    }
 
     protected override void WriteSpanPrimitive(ref WriteContext context, Span<bool> values) => context.WriteBoolsPrimitive(values);
     protected override void PeekSpanPrimitive(ReadContext context, int count, Span<bool> destination) => context.PeekBoolSpanPrimitive(count, destination);
@@ -34,14 +42,31 @@ public class BoolExtensionsTests : ExtensionTestSuite<bool> {
     protected override void WriteArrayWithoutLength(ref WriteContext context, bool[] values) => context.WriteBoolsWithoutLength(values);
     protected override bool[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekBools(count);
     protected override bool[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadBools(count);
-    protected override bool[] TryPeekArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryPeekBools(count, out bool[] values)); return values; }
-    protected override bool[] TryReadArrayWithoutLength(ReadContext context, int count) { Assert.True(context.TryReadBools(count, out bool[] values)); return values; }
+
+    protected override bool[] TryPeekArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryPeekBools(count, out bool[] values));
+        return values;
+    }
+
+    protected override bool[] TryReadArrayWithoutLength(ReadContext context, int count) {
+        Assert.True(context.TryReadBools(count, out bool[] values));
+        return values;
+    }
 
     protected override void WriteArray(ref WriteContext context, bool[] values) => context.WriteBools(values);
     protected override bool[] PeekArrayWithLength(ReadContext context) => context.PeekBools();
     protected override bool[] ReadArrayWithLength(ReadContext context) => context.ReadBools();
-    protected override bool[] TryPeekArrayWithLength(ReadContext context) { Assert.True(context.TryPeekBools(out bool[] values)); return values; }
-    protected override bool[] TryReadArrayWithLength(ReadContext context) { Assert.True(context.TryReadBools(out bool[] values)); return values; }
+
+    protected override bool[] TryPeekArrayWithLength(ReadContext context) {
+        Assert.True(context.TryPeekBools(out bool[] values));
+        return values;
+    }
+
+    protected override bool[] TryReadArrayWithLength(ReadContext context) {
+        Assert.True(context.TryReadBools(out bool[] values));
+        return values;
+    }
+
     protected override TryReadOperationSet<bool> TryOperations => new() {
         TryPeekValue = (ReadContext c, out bool v) => c.TryPeekBool(out v),
         TryReadValue = (ReadContext c, out bool v) => c.TryReadBool(out v),
