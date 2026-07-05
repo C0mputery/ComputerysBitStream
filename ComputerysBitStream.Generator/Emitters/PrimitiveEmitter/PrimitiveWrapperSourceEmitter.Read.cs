@@ -4,7 +4,7 @@ using ComputerysBitStream.Attributes;
 namespace ComputerysBitStream.Generator.Emitters;
 
 internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
-    private void EmitReadContextClass(SourceWriter writer) {
+    private void EmitReadContextClass() {
         bool hasPeek = Has(BitStreamPrimitiveRole.Peek);
         bool hasRead = Has(BitStreamPrimitiveRole.Read);
         bool hasPeekArray = Has(BitStreamPrimitiveRole.PeekArray);
@@ -15,8 +15,8 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
         if (_mode == PrimitiveSerializationMode.VariableLength && !Has(BitStreamPrimitiveRole.TryRead)) { return; }
 
-        writer.WriteLine($"public static class {_alias}ReadContextExtensions {{");
-        writer.Indent++;
+        _writer.WriteLine($"public static class {_alias}ReadContextExtensions {{");
+        _writer.Indent++;
 
         List<string> methods = [];
         if (hasPeek) {
@@ -59,11 +59,11 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
             methods.Add(EmitTryReadAliassIntoSpanWithCount());
             methods.Add(EmitReadAliassIntoSpanWithCount());
         }
-        writer.WriteBlocks(methods);
+        _writer.WriteBlocks(methods);
 
-        writer.Indent--;
-        writer.WriteLine("}");
-        writer.WriteLine();
+        _writer.Indent--;
+        _writer.WriteLine("}");
+        _writer.WriteLine();
     }
 
     private string EmitTryPeekAlias() {

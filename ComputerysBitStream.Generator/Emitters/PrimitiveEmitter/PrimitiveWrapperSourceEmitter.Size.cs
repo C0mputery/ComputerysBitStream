@@ -3,10 +3,10 @@ using ComputerysBitStream.Attributes;
 namespace ComputerysBitStream.Generator.Emitters;
 
 internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
-    private void EmitSizeClass(SourceWriter writer) {
+    private void EmitSizeClass() {
         string? source = BuildSizeExtensions();
         if (source is null) { return; }
-        writer.WriteLines(source);
+        _writer.WriteLines(source);
     }
 
     private string? BuildSizeExtensions() {

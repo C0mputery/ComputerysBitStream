@@ -4,13 +4,13 @@ using ComputerysBitStream.Attributes;
 namespace ComputerysBitStream.Generator.Emitters;
 
 internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
-    private void EmitWriteContextClass(SourceWriter writer) {
+    private void EmitWriteContextClass() {
         bool hasWrite = Has(BitStreamPrimitiveRole.Write);
         bool hasWriteSpan = Has(BitStreamPrimitiveRole.WriteSpan);
         if (!hasWrite && !hasWriteSpan) { return; }
 
-        writer.WriteLine($"public static class {_alias}WriteContextExtensions {{");
-        writer.Indent++;
+        _writer.WriteLine($"public static class {_alias}WriteContextExtensions {{");
+        _writer.Indent++;
 
         List<string> methods = [];
         if (hasWrite) { methods.Add(EmitWriteAlias()); }
@@ -18,11 +18,11 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
             if (_hasIntWrite) { methods.Add(EmitWriteAliass()); }
             methods.Add(EmitWriteAliassWithoutLength());
         }
-        writer.WriteBlocks(methods);
+        _writer.WriteBlocks(methods);
 
-        writer.Indent--;
-        writer.WriteLine("}");
-        writer.WriteLine();
+        _writer.Indent--;
+        _writer.WriteLine("}");
+        _writer.WriteLine();
     }
 
     private string EmitWriteAlias() {

@@ -5,14 +5,14 @@ using ComputerysBitStream.Attributes;
 namespace ComputerysBitStream.Generator.Emitters;
 
 internal readonly ref partial struct StructPrimitiveSourceEmitter {
-    private void EmitVariableLengthMethods(SourceWriter writer) {
+    private void EmitVariableLengthMethods() {
         if (IsFixedSize) { return; }
 
-        writer.WriteLine();
+        _writer.WriteLine();
         List<string> methods = [];
         if (Has(BitStreamPrimitiveRole.TryRead)) { methods.Add(EmitTryRead()); }
         if (Has(BitStreamPrimitiveRole.Size)) { methods.Add(EmitSize()); }
-        writer.WriteBlocks(methods);
+        _writer.WriteBlocks(methods);
     }
 
     private string EmitTryRead() {

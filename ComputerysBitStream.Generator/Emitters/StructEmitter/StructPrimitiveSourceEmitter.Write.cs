@@ -4,7 +4,7 @@ using ComputerysBitStream.Attributes;
 namespace ComputerysBitStream.Generator.Emitters;
 
 internal readonly ref partial struct StructPrimitiveSourceEmitter {
-    private void EmitWriteMethods(SourceWriter writer) {
+    private void EmitWriteMethods() {
         bool hasWrite = Has(BitStreamPrimitiveRole.Write);
         bool hasWriteSpan = Has(BitStreamPrimitiveRole.WriteSpan);
         if (!hasWrite && !hasWriteSpan) { return; }
@@ -12,9 +12,9 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
         List<string> methods = [];
         if (hasWrite) { methods.Add(EmitWrite()); }
         if (hasWriteSpan) { methods.Add(EmitWriteSpan()); }
-        writer.WriteBlocks(methods);
+        _writer.WriteBlocks(methods);
 
-        if (Has(BitStreamPrimitiveRole.Peek)) { writer.WriteLine(); }
+        if (Has(BitStreamPrimitiveRole.Peek)) { _writer.WriteLine(); }
     }
 
     private string EmitWrite() {
