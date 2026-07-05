@@ -11,11 +11,14 @@ public class MixedIntStructTests {
             static (ref WriteContext context, MixedIntStruct value) => context.WriteMixedIntStruct(value),
             static context => context.PeekMixedIntStruct(),
             static context => context.ReadMixedIntStruct(),
-            static (expected, actual) => {
-                Assert.Equal(expected.FixedValue, actual.FixedValue);
-                Assert.Equal(expected.VariableValue, actual.VariableValue);
-            }
+            AssertEqual
         );
+        return;
+
+        static void AssertEqual(MixedIntStruct expected, MixedIntStruct actual) {
+            Assert.Equal(expected.FixedValue, actual.FixedValue);
+            Assert.Equal(expected.VariableValue, actual.VariableValue);
+        }
     }
 
     [Fact]

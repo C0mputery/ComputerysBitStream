@@ -36,6 +36,7 @@ namespace ComputerysBitStream {
     [BitStreamSerializer(typeof(PrimitiveVariableLengthUIntExtensions))]
     [BitStreamSerializer(typeof(PrimitiveVariableLengthULongExtensions))]
     [BitStreamSerializer(typeof(PrimitiveVariableLengthUShortExtensions))]
+    [BitStreamSerializer(typeof(PrimitiveStringExtensions))]
 #endif
     public interface IDefaultSettings { }
 }

@@ -30,10 +30,13 @@ public class MemberSerializerOverrideTests {
             static (ref WriteContext context, MemberSerializerOverrideStruct value) => context.WriteMemberSerializerOverrideStruct(value),
             static context => context.PeekMemberSerializerOverrideStruct(),
             static context => context.ReadMemberSerializerOverrideStruct(),
-            static (expected, actual) => {
-                Assert.Equal(expected.VariableLengthValue, actual.VariableLengthValue);
-                Assert.Equal(expected.FixedOverrideValue, actual.FixedOverrideValue);
-            }
+            AssertEqual
         );
+        return;
+
+        static void AssertEqual(MemberSerializerOverrideStruct expected, MemberSerializerOverrideStruct actual) {
+            Assert.Equal(expected.VariableLengthValue, actual.VariableLengthValue);
+            Assert.Equal(expected.FixedOverrideValue, actual.FixedOverrideValue);
+        }
     }
 }

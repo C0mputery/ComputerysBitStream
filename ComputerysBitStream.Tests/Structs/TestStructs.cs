@@ -134,6 +134,12 @@ public partial struct MemberSerializerOverrideStruct {
 }
 
 [BitStreamStruct]
+public partial struct StringStruct {
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+[BitStreamStruct]
 public partial struct QuantizedStruct {
     public const float Min = 0f;
     public const float Max = 100f;

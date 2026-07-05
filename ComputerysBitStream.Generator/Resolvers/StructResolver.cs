@@ -227,6 +227,10 @@ internal sealed class StructResolver {
             return TryCreatePrimitiveMember(member, primitive, memberAccess, generatedNamespace, requiredUsings, out resolvedMember, out isVariableLength, out fixedBits);
         }
 
+        if (!member.IsVariableLength && TryFindPrimitiveByTargetType(effectiveSettings, memberType, PrimitiveSerializationMode.VariableLength, out primitive)) {
+            return TryCreatePrimitiveMember(member, primitive, memberAccess, generatedNamespace, requiredUsings, out resolvedMember, out isVariableLength, out fixedBits);
+        }
+
         if (member.IsVariableLength) {
             _reportDiagnostic(new DiagnosticValueType(Diagnostics.VariableLengthPrimitiveNotInSettings, member.Location, member.MemberName, memberType));
             return false;

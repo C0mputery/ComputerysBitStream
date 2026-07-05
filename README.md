@@ -51,7 +51,7 @@ Array helpers come in two forms: with a length prefix (`WriteInts`, `ReadInts`) 
 
 `IDefaultSettings` registers fixed-size serializers for `bool`, `byte`, `char`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `float`, `double`, `decimal`, and `DateTime`, and emits `WriteInt`, `ReadBool`, `WriteDateTime`, and the rest of that API.
 
-Variable-length serializers live in `ComputerysBitStream.Primitives.VariableLength` (`WriteVariableLengthUInt`, etc.) for `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, and `ulong`. Quantized serializers live in `ComputerysBitStream.Primitives.Quantized` (`WriteQuantizedFloat`, etc.) for `float`, `double`, and `decimal`; they take `min`, `max`, and `bitCount` to store a value in fewer bits than the fixed-size form. All of these are registered on `IDefaultSettings` alongside the fixed-size primitives.
+Variable-length serializers live in `ComputerysBitStream.Primitives.VariableLength` (`WriteVariableLengthUInt`, `WriteString`, etc) for `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, and `string`. Quantized serializers live in `ComputerysBitStream.Primitives.Quantized` (`WriteQuantizedFloat`, etc.) for `float`, `double`, and `decimal`; they take `min`, `max`, and `bitCount` to store a value in fewer bits than the fixed-size form. All of these are registered on `IDefaultSettings` alongside the fixed-size primitives.
 
 A settings interface can register fixed-size, variable-length, and quantized serializers for the same CLR type. Members pick the mode via attribute: none for fixed-size, `[BitStreamStructVariableLength]`, or `[BitStreamStructQuantized(...)]`.
 
@@ -77,6 +77,7 @@ using ComputerysBitStream.Attributes;
 public partial struct PlayerState {
     public int Health { get; set; }
     public float Speed { get; set; }
+    public string Name { get; set; }
     [BitStreamStructIgnore] public int DebugOnly { get; set; }
     [BitStreamStructInclude] public int Flags;
 }
@@ -87,7 +88,7 @@ var copy = read.ReadPlayerState();
 
 Put `[BitStreamSerializer(typeof(...))]` on a field or property to pick which primitive extension class serializes that member. The generator checks this attribute before quantized, variable-length, or default resolution. The extension class must already be registered in effective settings (`IDefaultSettings`, `[DefaultBitStreamSettings]`, or a `[BitStreamSettings]` interface passed to `[BitStreamStruct(typeof(...))]`).
 
-This works for primitive-typed members only (`int`, `float`, `bool`, and so on). It does not register or override serialization for nested `[BitStreamStruct]` types or proxy-serialized external structs; those require settings registration (see Nested structs).
+This works for primitive-typed members only (`int`, `float`, `bool`, `string`, and so on). It does not register or override serialization for nested `[BitStreamStruct]` types or proxy-serialized external structs; those require settings registration (see Nested structs).
 
 ```csharp
 [BitStreamStruct]
@@ -103,7 +104,8 @@ For members without a per-member `[BitStreamSerializer]` attribute:
 
 - `[BitStreamStructQuantized(...)]` uses the quantized serializer (`CBS038`; `CBS045` with `[BitStreamStructVariableLength]`)
 - `[BitStreamStructVariableLength]` uses the variable-length serializer (`CBS042`)
-- otherwise uses the fixed-size serializer (`CBS043`, or `CBS044` when only a quantized serializer is registered)
+- otherwise the generator looks for a fixed-size serializer; if none is registered but a variable-length serializer is (`string`, or a custom primitive with only that mode), it uses variable-length without an attribute
+- if neither fixed-size nor variable-length resolves, `CBS043` (or `CBS044` when only a quantized serializer is registered)
 
 
 ## Nested structs
