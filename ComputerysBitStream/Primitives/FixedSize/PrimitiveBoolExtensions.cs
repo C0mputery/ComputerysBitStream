@@ -4,19 +4,20 @@ using ComputerysBitStream.Attributes;
 using ComputerysBitStream.Helpers;
 
 namespace ComputerysBitStream.Primitives.FixedSize {
+    /// <summary>Built-in reference implementation of <see cref="BitStreamPrimitiveAttribute"/>. See <see cref="BitStreamPrimitiveAuthorDocumentation"/>.</summary>
     [BitStreamFixedSizePrimitive(BitHelper.BoolSize)]
     [BitStreamPrimitive(typeof(bool), PrimitiveSerializationMode.FixedSize)]
     public static class PrimitiveBoolExtensions {
         private const int NumberOfValuesInUlong = BitHelper.ULongSize / BitHelper.BoolSize;
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Write)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBoolPrimitive(this ref WriteContext context, bool value) {
             context.WriteBitPrimitive(value);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.WriteSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteBoolsPrimitive(this ref WriteContext context, ReadOnlySpan<bool> values) {
@@ -45,21 +46,21 @@ namespace ComputerysBitStream.Primitives.FixedSize {
             }
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Peek)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool PeekBoolPrimitive(this ref ReadContext context) {
             return context.PeekBitPrimitive();
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Read)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ReadBoolPrimitive(this ref ReadContext context) {
             return context.ReadBitPrimitive();
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool[] PeekBoolArrayPrimitive(this ref ReadContext context, int count) {
@@ -68,7 +69,7 @@ namespace ComputerysBitStream.Primitives.FixedSize {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool[] ReadBoolArrayPrimitive(this ref ReadContext context, int count) {
@@ -77,7 +78,7 @@ namespace ComputerysBitStream.Primitives.FixedSize {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekBoolSpanPrimitive(this ref ReadContext context, int count, Span<bool> destination) {
@@ -86,7 +87,7 @@ namespace ComputerysBitStream.Primitives.FixedSize {
             context.Position = originalPosition;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadBoolSpanPrimitive(this ref ReadContext context, int count, Span<bool> destination) {

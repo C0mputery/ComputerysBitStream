@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using ComputerysBitStream.Helpers;
 
 namespace ComputerysBitStream.Primitives.FixedSize {
+    /// <summary>Built-in reference implementation of <see cref="BitStreamPrimitiveAttribute"/>. See <see cref="BitStreamPrimitiveAuthorDocumentation"/>.</summary>
     [BitStreamFixedSizePrimitive(BitHelper.LongSize)]
     [BitStreamPrimitive(typeof(long), PrimitiveSerializationMode.FixedSize)]
     public static class PrimitiveLongExtensions {
@@ -28,14 +29,14 @@ namespace ComputerysBitStream.Primitives.FixedSize {
 #endif
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Write)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteLongPrimitive(this ref WriteContext context, long value) {
             context.WriteBitsPrimitive(AsBits(value), BitHelper.LongSize);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.WriteSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteLongsPrimitive(this ref WriteContext context, ReadOnlySpan<long> values) {
@@ -49,21 +50,21 @@ namespace ComputerysBitStream.Primitives.FixedSize {
 #endif
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Peek)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long PeekLongPrimitive(this ref ReadContext context) {
             return FromBits(context.PeekBitsPrimitive(BitHelper.LongSize));
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Read)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long ReadLongPrimitive(this ref ReadContext context) {
             return FromBits(context.ReadBitsPrimitive(BitHelper.LongSize));
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long[] PeekLongArrayPrimitive(this ref ReadContext context, int count) {
@@ -72,7 +73,7 @@ namespace ComputerysBitStream.Primitives.FixedSize {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long[] ReadLongArrayPrimitive(this ref ReadContext context, int count) {
@@ -81,7 +82,7 @@ namespace ComputerysBitStream.Primitives.FixedSize {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekLongSpanPrimitive(this ref ReadContext context, int count, Span<long> destination) {
@@ -90,7 +91,7 @@ namespace ComputerysBitStream.Primitives.FixedSize {
             context.Position = originalPosition;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadLongSpanPrimitive(this ref ReadContext context, int count, Span<long> destination) {

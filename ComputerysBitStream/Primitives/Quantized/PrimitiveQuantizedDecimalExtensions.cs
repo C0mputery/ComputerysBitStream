@@ -4,6 +4,7 @@ using ComputerysBitStream.Attributes;
 using ComputerysBitStream.Helpers;
 
 namespace ComputerysBitStream.Primitives.Quantized {
+    /// <summary>Built-in reference implementation of <see cref="BitStreamPrimitiveAttribute"/>. See <see cref="BitStreamPrimitiveAuthorDocumentation"/>.</summary>
     [BitStreamQuantizedPrimitive(QuantizedEncodingHelper.MinimumBits, BitHelper.ULongSize)]
     [BitStreamPrimitive(typeof(decimal), "QuantizedDecimal", PrimitiveSerializationMode.Quantized)]
     public static class PrimitiveQuantizedDecimalExtensions {
@@ -29,14 +30,14 @@ namespace ComputerysBitStream.Primitives.Quantized {
             return min + normalized * (max - min);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Write)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteQuantizedDecimalPrimitive(this ref WriteContext context, decimal value, decimal min, decimal max, int bitCount) {
             context.WriteBitsPrimitive(AsBits(value, min, max, bitCount), bitCount);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.WriteSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteQuantizedDecimalsPrimitive(this ref WriteContext context, ReadOnlySpan<decimal> values, decimal min, decimal max, int bitCount) {
@@ -63,21 +64,21 @@ namespace ComputerysBitStream.Primitives.Quantized {
             }
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Peek)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static decimal PeekQuantizedDecimalPrimitive(this ref ReadContext context, decimal min, decimal max, int bitCount) {
             return FromBits(context.PeekBitsPrimitive(bitCount), min, max, bitCount);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Read)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static decimal ReadQuantizedDecimalPrimitive(this ref ReadContext context, decimal min, decimal max, int bitCount) {
             return FromBits(context.ReadBitsPrimitive(bitCount), min, max, bitCount);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static decimal[] PeekQuantizedDecimalArrayPrimitive(this ref ReadContext context, int count, decimal min, decimal max, int bitCount) {
@@ -86,7 +87,7 @@ namespace ComputerysBitStream.Primitives.Quantized {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static decimal[] ReadQuantizedDecimalArrayPrimitive(this ref ReadContext context, int count, decimal min, decimal max, int bitCount) {
@@ -95,7 +96,7 @@ namespace ComputerysBitStream.Primitives.Quantized {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekQuantizedDecimalSpanPrimitive(this ref ReadContext context, int count, Span<decimal> destination, decimal min, decimal max, int bitCount) {
@@ -104,7 +105,7 @@ namespace ComputerysBitStream.Primitives.Quantized {
             context.Position = originalPosition;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadQuantizedDecimalSpanPrimitive(this ref ReadContext context, int count, Span<decimal> destination, decimal min, decimal max, int bitCount) {

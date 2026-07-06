@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using ComputerysBitStream.Helpers;
 
 namespace ComputerysBitStream.Primitives.FixedSize {
+    /// <summary>Built-in reference implementation of <see cref="BitStreamPrimitiveAttribute"/>. See <see cref="BitStreamPrimitiveAuthorDocumentation"/>.</summary>
     [BitStreamFixedSizePrimitive(BitHelper.UIntSize)]
     [BitStreamPrimitive(typeof(uint), PrimitiveSerializationMode.FixedSize)]
     public static class PrimitiveUIntExtensions {
@@ -18,14 +19,14 @@ namespace ComputerysBitStream.Primitives.FixedSize {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static uint FromBits(ulong value) => (uint)value;
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Write)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteUIntPrimitive(this ref WriteContext context, uint value) {
             context.WriteBitsPrimitive(AsBits(value), BitHelper.UIntSize);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.WriteSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteUIntsPrimitive(this ref WriteContext context, ReadOnlySpan<uint> values) {
@@ -56,21 +57,21 @@ namespace ComputerysBitStream.Primitives.FixedSize {
             }
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Peek)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint PeekUIntPrimitive(this ref ReadContext context) {
             return FromBits(context.PeekBitsPrimitive(BitHelper.UIntSize));
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Read)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint ReadUIntPrimitive(this ref ReadContext context) {
             return FromBits(context.ReadBitsPrimitive(BitHelper.UIntSize));
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint[] PeekUIntArrayPrimitive(this ref ReadContext context, int count) {
@@ -79,7 +80,7 @@ namespace ComputerysBitStream.Primitives.FixedSize {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint[] ReadUIntArrayPrimitive(this ref ReadContext context, int count) {
@@ -88,7 +89,7 @@ namespace ComputerysBitStream.Primitives.FixedSize {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekUIntSpanPrimitive(this ref ReadContext context, int count, Span<uint> destination) {
@@ -97,7 +98,7 @@ namespace ComputerysBitStream.Primitives.FixedSize {
             context.Position = originalPosition;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadUIntSpanPrimitive(this ref ReadContext context, int count, Span<uint> destination) {

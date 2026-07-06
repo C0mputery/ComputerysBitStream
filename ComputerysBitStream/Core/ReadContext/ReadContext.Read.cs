@@ -5,7 +5,7 @@ using ComputerysBitStream.Helpers;
 
 namespace ComputerysBitStream {
     public ref partial struct ReadContext {
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool PeekBitPrimitive() {
@@ -14,7 +14,7 @@ namespace ComputerysBitStream {
             return (LoadUlong(ulongIndex) & (1UL << bitOffset)) != 0;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool ReadBitPrimitive() {
@@ -23,7 +23,7 @@ namespace ComputerysBitStream {
             return value;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly ulong PeekBitsPrimitive(int bitCount) {
@@ -51,7 +51,7 @@ namespace ComputerysBitStream {
             return result & valueMask;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ulong ReadBitsPrimitive(int bitCount) {
@@ -60,7 +60,7 @@ namespace ComputerysBitStream {
             return value;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly void PeekBitsPrimitive(int bitCount, Span<ulong> destination) {
@@ -130,7 +130,7 @@ namespace ComputerysBitStream {
             }
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ReadBitsPrimitive(int bitCount, Span<ulong> destination) {

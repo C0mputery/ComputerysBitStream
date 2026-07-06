@@ -4,16 +4,17 @@ using ComputerysBitStream.Attributes;
 using ComputerysBitStream.Helpers;
 
 namespace ComputerysBitStream.Primitives.VariableLength {
+    /// <summary>Built-in reference implementation of <see cref="BitStreamPrimitiveAttribute"/>. See <see cref="BitStreamPrimitiveAuthorDocumentation"/>.</summary>
     [BitStreamPrimitive(typeof(int), "VariableLengthInt", PrimitiveSerializationMode.VariableLength)]
     public static class PrimitiveVariableLengthIntExtensions {
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Write)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteVariableLengthIntPrimitive(this ref WriteContext context, int value) {
             context.WriteVariableLengthUIntPrimitive(ZigZagEncodingHelper.EncodeInt(value));
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.WriteSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteVariableLengthIntsPrimitive(this ref WriteContext context, ReadOnlySpan<int> values) {
@@ -22,21 +23,22 @@ namespace ComputerysBitStream.Primitives.VariableLength {
             }
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Peek)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int PeekVariableLengthIntPrimitive(this ref ReadContext context) {
             return ZigZagEncodingHelper.DecodeInt(context.PeekVariableLengthUIntPrimitive());
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Read)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ReadVariableLengthIntPrimitive(this ref ReadContext context) {
             return ZigZagEncodingHelper.DecodeInt(context.ReadVariableLengthUIntPrimitive());
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.RoleTryRead"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.TryRead)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryReadVariableLengthIntPrimitive(this ref ReadContext context, out int value) {
@@ -45,7 +47,7 @@ namespace ComputerysBitStream.Primitives.VariableLength {
             return success;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[] PeekVariableLengthIntArrayPrimitive(this ref ReadContext context, int count) {
@@ -54,7 +56,7 @@ namespace ComputerysBitStream.Primitives.VariableLength {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[] ReadVariableLengthIntArrayPrimitive(this ref ReadContext context, int count) {
@@ -63,7 +65,7 @@ namespace ComputerysBitStream.Primitives.VariableLength {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekVariableLengthIntSpanPrimitive(this ref ReadContext context, int count, Span<int> destination) {
@@ -72,7 +74,7 @@ namespace ComputerysBitStream.Primitives.VariableLength {
             context.Position = originalPosition;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadVariableLengthIntSpanPrimitive(this ref ReadContext context, int count, Span<int> destination) {
@@ -82,7 +84,8 @@ namespace ComputerysBitStream.Primitives.VariableLength {
             }
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.RoleSize"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Size)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetVariableLengthIntSize(int value) {

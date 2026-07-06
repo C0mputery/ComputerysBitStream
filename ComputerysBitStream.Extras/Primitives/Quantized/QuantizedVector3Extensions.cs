@@ -5,6 +5,7 @@ using ComputerysBitStream.Attributes;
 using ComputerysBitStream.Primitives.Quantized;
 
 namespace ComputerysBitStream.Extras.Primitives.Quantized {
+    /// <summary>Built-in reference implementation of <see cref="BitStreamPrimitiveAttribute"/>. See <see cref="BitStreamPrimitiveAuthorDocumentation"/>.</summary>
     [BitStreamQuantizedPrimitive(3, 96)]
     [BitStreamPrimitive(typeof(Vector3), "QuantizedVector3", PrimitiveSerializationMode.Quantized)]
     public static class QuantizedVector3Extensions {

@@ -12,7 +12,7 @@ namespace ComputerysBitStream.Helpers {
         private const int MaxUInt32Chunks = 5;
         private const int MaxUInt64Chunks = 10;
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteUInt32(ref WriteContext context, uint value) {
@@ -26,7 +26,7 @@ namespace ComputerysBitStream.Helpers {
             context.WriteBitsPrimitive(value, ChunkBits);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint ReadUInt32(ref ReadContext context) {
@@ -37,7 +37,7 @@ namespace ComputerysBitStream.Helpers {
             return value;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryReadUInt32(ref ReadContext context, out uint value) {
@@ -60,7 +60,7 @@ namespace ComputerysBitStream.Helpers {
             return false;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteUInt64(ref WriteContext context, ulong value) {
@@ -74,7 +74,7 @@ namespace ComputerysBitStream.Helpers {
             context.WriteBitsPrimitive(value, ChunkBits);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong ReadUInt64(ref ReadContext context) {
@@ -85,7 +85,7 @@ namespace ComputerysBitStream.Helpers {
             return value;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryReadUInt64(ref ReadContext context, out ulong value) {

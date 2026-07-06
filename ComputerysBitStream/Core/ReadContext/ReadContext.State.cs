@@ -18,7 +18,7 @@ namespace ComputerysBitStream {
         /// <summary><c>true</c> when <see cref="Position"/> is a multiple of 8.</summary>
         public readonly bool IsByteAligned => Position % BitHelper.ByteSize == 0;
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AlignToBytePrimitive() { Position += BitHelper.PaddingBitsToAlign(Position, BitHelper.ByteSize); }
@@ -34,7 +34,7 @@ namespace ComputerysBitStream {
             }
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AlignToUlongPrimitive() { Position += BitHelper.PaddingBitsToAlign(Position, BitHelper.ULongSize); }
@@ -49,7 +49,7 @@ namespace ComputerysBitStream {
             }
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetCapacityPrimitive(long capacity) { Capacity = capacity; }
@@ -63,7 +63,7 @@ namespace ComputerysBitStream {
             SetCapacityPrimitive(capacity);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetPositionPrimitive(long position) { Position = position; }

@@ -7,6 +7,7 @@ using ComputerysBitStream.Primitives.Quantized;
 // ReSharper disable InconsistentNaming
 
 namespace ComputerysBitStream.Extras.Primitives.Quantized {
+    /// <summary>Built-in reference implementation of <see cref="BitStreamPrimitiveAttribute"/>. See <see cref="BitStreamPrimitiveAuthorDocumentation"/>.</summary>
     [BitStreamQuantizedPrimitive(16, 512)]
     [BitStreamPrimitive(typeof(Matrix4x4), "QuantizedMatrix4x4", PrimitiveSerializationMode.Quantized)]
     public static class QuantizedMatrix4x4Extensions {

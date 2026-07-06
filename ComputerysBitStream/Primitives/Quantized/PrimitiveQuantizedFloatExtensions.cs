@@ -4,6 +4,7 @@ using ComputerysBitStream.Attributes;
 using ComputerysBitStream.Helpers;
 
 namespace ComputerysBitStream.Primitives.Quantized {
+    /// <summary>Built-in reference implementation of <see cref="BitStreamPrimitiveAttribute"/>. See <see cref="BitStreamPrimitiveAuthorDocumentation"/>.</summary>
     [BitStreamQuantizedPrimitive(QuantizedEncodingHelper.MinimumBits, BitHelper.FloatSize)]
     [BitStreamPrimitive(typeof(float), "QuantizedFloat", PrimitiveSerializationMode.Quantized)]
     public static class PrimitiveQuantizedFloatExtensions {
@@ -29,14 +30,14 @@ namespace ComputerysBitStream.Primitives.Quantized {
             return min + normalized * (max - min);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Write)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteQuantizedFloatPrimitive(this ref WriteContext context, float value, float min, float max, int bitCount) {
             context.WriteBitsPrimitive(AsBits(value, min, max, bitCount), bitCount);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.WriteSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteQuantizedFloatsPrimitive(this ref WriteContext context, ReadOnlySpan<float> values, float min, float max, int bitCount) {
@@ -63,21 +64,21 @@ namespace ComputerysBitStream.Primitives.Quantized {
             }
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Peek)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float PeekQuantizedFloatPrimitive(this ref ReadContext context, float min, float max, int bitCount) {
             return FromBits(context.PeekBitsPrimitive(bitCount), min, max, bitCount);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.Read)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ReadQuantizedFloatPrimitive(this ref ReadContext context, float min, float max, int bitCount) {
             return FromBits(context.ReadBitsPrimitive(bitCount), min, max, bitCount);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float[] PeekQuantizedFloatArrayPrimitive(this ref ReadContext context, int count, float min, float max, int bitCount) {
@@ -86,7 +87,7 @@ namespace ComputerysBitStream.Primitives.Quantized {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadArray)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float[] ReadQuantizedFloatArrayPrimitive(this ref ReadContext context, int count, float min, float max, int bitCount) {
@@ -95,7 +96,7 @@ namespace ComputerysBitStream.Primitives.Quantized {
             return result;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.PeekSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PeekQuantizedFloatSpanPrimitive(this ref ReadContext context, int count, Span<float> destination, float min, float max, int bitCount) {
@@ -104,7 +105,7 @@ namespace ComputerysBitStream.Primitives.Quantized {
             context.Position = originalPosition;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamPrimitiveMethod(BitStreamPrimitiveRole.ReadSpan)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadQuantizedFloatSpanPrimitive(this ref ReadContext context, int count, Span<float> destination, float min, float max, int bitCount) {

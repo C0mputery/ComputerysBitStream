@@ -5,7 +5,7 @@ using ComputerysBitStream.Helpers;
 
 namespace ComputerysBitStream {
     public ref partial struct WriteContext {
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void WriteBitPrimitive(bool bit) {
@@ -17,7 +17,7 @@ namespace ComputerysBitStream {
             Position++;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void WriteBitsPrimitive(ulong value, int bitCount) {
@@ -57,7 +57,7 @@ namespace ComputerysBitStream {
             Position += bitCount;
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void WriteBitsPrimitive(ReadOnlySpan<ulong> source, int bitCount) {

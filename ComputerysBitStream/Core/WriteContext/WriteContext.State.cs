@@ -17,7 +17,7 @@ namespace ComputerysBitStream {
         /// <summary><c>true</c> when <see cref="Position"/> is a multiple of 8.</summary>
         public readonly bool IsByteAligned => Position % BitHelper.ByteSize == 0;
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AlignToBytePrimitive() {
@@ -36,7 +36,7 @@ namespace ComputerysBitStream {
             }
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AlignToUlongPrimitive() {
@@ -54,7 +54,7 @@ namespace ComputerysBitStream {
             }
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         public void ReserveBitsPrimitive(int bitCount) { Position += bitCount; }
 
@@ -67,7 +67,7 @@ namespace ComputerysBitStream {
             ReserveBitsPrimitive(bitCount);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         public void SetPositionPrimitive(long position) { Position = position; }
 
@@ -79,7 +79,7 @@ namespace ComputerysBitStream {
             SetPositionPrimitive(position);
         }
 
-        /// <inheritdoc cref="BitStreamPrimitiveDocumentation.Usage"/>
+        /// <inheritdoc cref="BitStreamPrimitiveAuthorDocumentation.PrimitiveContextUsage"/>
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly Span<byte> WrittenBytesSpanPrimitive() { return MemoryMarshal.Cast<ulong, byte>(Buffer).Slice(0, BitHelper.BitsToBytes(Position)); }

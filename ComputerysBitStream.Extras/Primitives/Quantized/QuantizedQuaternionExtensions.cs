@@ -5,6 +5,7 @@ using ComputerysBitStream.Attributes;
 using ComputerysBitStream.Primitives.Quantized;
 
 namespace ComputerysBitStream.Extras.Primitives.Quantized {
+    /// <summary>Built-in reference implementation of <see cref="BitStreamPrimitiveAttribute"/>. See <see cref="BitStreamPrimitiveAuthorDocumentation"/>.</summary>
     [BitStreamQuantizedPrimitive(4, 128)]
     [BitStreamPrimitive(typeof(Quaternion), "QuantizedQuaternion", PrimitiveSerializationMode.Quantized)]
     public static class QuantizedQuaternionExtensions {
