@@ -1,5 +1,8 @@
+using System.ComponentModel;
+
 namespace ComputerysBitStream {
     /// <summary>Shared XML documentation for source-generated read and write extension methods.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static class BitStreamGeneratedDocumentation {
         /// <summary>Writes one value after checking <see cref="WriteContext.GetRemainingCapacity"/>.</summary>
         /// <remarks>
