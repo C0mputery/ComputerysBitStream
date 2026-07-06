@@ -1,5 +1,3 @@
-# Okay, this project currently has no real documentation, but here are some important notes and quick rundown on how to use it until I actually write xml docs and setup docfx:
-
 ComputerysBitStream is a C# library for reading and writing values at bit granularity. `WriteContext` and `ReadContext` take a `Span<ulong>` / `ReadOnlySpan<ulong>` over the backing memory, track the current bit position, and expose extension methods for primitives and user-defined structs.
 
 ## Solution layout
