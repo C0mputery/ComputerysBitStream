@@ -1,5 +1,8 @@
+using System.ComponentModel;
+
 namespace ComputerysBitStream {
     /// <summary>XML documentation for authoring custom <see cref="Attributes.BitStreamPrimitiveAttribute"/> serializers.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static class BitStreamPrimitiveAuthorDocumentation {
         /// <summary>Steps to add a custom primitive serializer.</summary>
         /// <remarks>
