@@ -5,12 +5,12 @@ using System;
 
 namespace ComputerysBitStream.Attributes {
     /// <summary>
-    /// Marks a <c>partial struct</c> for source generation of <c>Write*</c> and <c>Read*</c> extension methods.
+    /// Marks a <c>partial</c> struct or record struct for source generation of <c>Write*</c> and <c>Read*</c> extension methods.
     /// </summary>
     /// <remarks>
-    /// <para>Public properties with public getters and setters serialize by default. Public fields are skipped unless marked with <see cref="BitStreamStructIncludeAttribute"/>.</para>
+    /// <para>Public properties with public getters and writable setters (including <c>init</c>) serialize by default. Read-only properties are skipped unless a <see cref="BitStreamProxyStructAttribute"/> mirror supplies a writable setter. Public fields are skipped unless marked with <see cref="BitStreamStructIncludeAttribute"/>.</para>
     /// <para>Pass one or more <see cref="BitStreamSettingsAttribute"/> interfaces to merge serializers beyond assembly defaults. Global defaults come from <see cref="DefaultBitStreamSettingsAttribute"/> or <see cref="ComputerysBitStream.IDefaultSettings"/>.</para>
-    /// <para>A nested <see cref="BitStreamStructAttribute"/> type is not registered automatically. Add <see cref="BitStreamSerializerAttribute"/> for the nested type on a settings interface or the build reports <c>CBS043</c>.</para>
+    /// <para>A nested <see cref="BitStreamStructAttribute"/> type is not registered automatically. Add <see cref="BitStreamSerializerAttribute"/> for the nested type on a settings interface. If the nested type is missing from settings, the build reports <c>CBS043</c>. If it is registered but fails to resolve, the build reports <c>CBS036</c>.</para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Struct)]
     public sealed class BitStreamStructAttribute : Attribute {
@@ -39,7 +39,7 @@ namespace ComputerysBitStream.Attributes {
 
     /// <summary>Serializes the member with the quantized serializer registered in effective settings for its CLR type.</summary>
     /// <remarks>
-    /// <para>Reports <c>CBS038</c> when no quantized serializer is registered. Cannot be combined with <see cref="BitStreamStructVariableLengthAttribute"/> (<c>CBS045</c>).</para>
+    /// <para>Reports <c>CBS038</c> when no quantized serializer is registered. Reports <c>CBS044</c> when settings include a quantized serializer for the member type but this attribute is missing. Cannot be combined with <see cref="BitStreamStructVariableLengthAttribute"/> (<c>CBS045</c>).</para>
     /// <para><c>minMember</c> and <c>maxMember</c> must name accessible <c>const</c> or <c>static readonly</c> members on the struct or on types passed to the constructors.</para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]

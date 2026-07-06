@@ -79,11 +79,11 @@ namespace ComputerysBitStream.Attributes {
         Read,
         /// <summary>Attempt to read one variable-length value. See <see cref="BitStreamPrimitiveAuthorDocumentation.RoleTryRead"/>.</summary>
         TryRead,
-        /// <summary>Read an array when the caller supplies the count. See <see cref="BitStreamPrimitiveAuthorDocumentation.RolePeekArray"/>.</summary>
+        /// <summary>Peek an array when the caller supplies the count. See <see cref="BitStreamPrimitiveAuthorDocumentation.RolePeekArray"/>.</summary>
         PeekArray,
         /// <summary>Read an array when the caller supplies the count. See <see cref="BitStreamPrimitiveAuthorDocumentation.RoleReadArray"/>.</summary>
         ReadArray,
-        /// <summary>Read into a span when the caller supplies the count. See <see cref="BitStreamPrimitiveAuthorDocumentation.RolePeekSpan"/>.</summary>
+        /// <summary>Peek into a span when the caller supplies the count. See <see cref="BitStreamPrimitiveAuthorDocumentation.RolePeekSpan"/>.</summary>
         PeekSpan,
         /// <summary>Read into a span when the caller supplies the count. See <see cref="BitStreamPrimitiveAuthorDocumentation.RoleReadSpan"/>.</summary>
         ReadSpan,

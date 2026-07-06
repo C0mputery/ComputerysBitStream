@@ -85,7 +85,7 @@ namespace ComputerysBitStream {
         public readonly Span<byte> WrittenBytesSpanPrimitive() { return MemoryMarshal.Cast<ulong, byte>(Buffer).Slice(0, BitHelper.BitsToBytes(Position)); }
 
         /// <summary>Returns a byte span covering bits written so far, rounding up to a byte boundary for the view.</summary>
-        /// <remarks>Temporarily aligns to a byte boundary, copies the view, then restores <see cref="Position"/>.</remarks>
+        /// <remarks>When <see cref="IsByteAligned"/> is <c>false</c>, calls <see cref="AlignToByte"/> to write zero padding bits, then restores <see cref="Position"/>. Returns a span over the backing buffer, not a copy.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<byte> GetWrittenBytes() {
             if (!IsByteAligned) {
