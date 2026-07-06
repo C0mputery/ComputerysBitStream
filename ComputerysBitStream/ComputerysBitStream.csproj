@@ -7,7 +7,6 @@
         <DefineConstants>$(DefineConstants);$(BitStreamDefineConstants)</DefineConstants>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);CS1591</NoWarn>
-        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <BitStreamUsesUnsafePackage Condition="$(DefineConstants.Contains('BITSTREAM_INCLUDES_SYSTEM_RUNTIME_COMPILER_SERVICES_UNSAFE'))">true</BitStreamUsesUnsafePackage>
     </PropertyGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1' and '$(BitStreamUsesUnsafePackage)' == 'true'">
