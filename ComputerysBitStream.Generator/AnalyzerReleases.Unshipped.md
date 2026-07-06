@@ -50,3 +50,4 @@ CBS042 | BitStream | Error | Diagnostics
 CBS043 | BitStream | Error | Diagnostics
 CBS044 | BitStream | Error | Diagnostics
 CBS045 | BitStream | Error | Diagnostics
+CBS046 | BitStream | Error | Diagnostics

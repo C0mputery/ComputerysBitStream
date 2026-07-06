@@ -290,21 +290,21 @@ internal static class StructCollector {
 
         if (property.GetMethod.DeclaredAccessibility != Accessibility.Public) {
             if (explicitlyIncluded) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "non-public getter"));
+                diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "getter is not public"));
             }
 
             return;
         }
 
         if (property.SetMethod is null && !hasWritableProxyMirror) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "read-only property"));
+            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "property is read-only"));
             return;
         }
 
         if (property.SetMethod is not null
             && property.SetMethod.DeclaredAccessibility != Accessibility.Public
             && !hasWritableProxyMirror) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "non-public setter"));
+            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "setter is not public"));
             return;
         }
 
@@ -335,12 +335,12 @@ internal static class StructCollector {
         }
 
         if (field.IsReadOnly || field.IsConst) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, field.Locations.FirstOrDefault(), field.Name, "read-only field"));
+            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, field.Locations.FirstOrDefault(), field.Name, "field is read-only"));
             return;
         }
 
         if (field.RefKind != RefKind.None) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, field.Locations.FirstOrDefault(), field.Name, "ref field cannot be serialized"));
+            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, field.Locations.FirstOrDefault(), field.Name, "field is a ref field"));
             return;
         }
 
@@ -461,7 +461,7 @@ internal static class StructCollector {
                     serializerExtensionClass = serializerType.GetFullyQualifiedName();
                 }
                 else {
-                    diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, attribute.GetLocation(), "type", "BitStreamSerializer"));
+                    diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attribute.GetLocation(), "type", "BitStreamSerializer"));
                 }
             }
         }
@@ -504,13 +504,13 @@ internal static class StructCollector {
         ITypeSymbol? minSource;
         if (arguments.TryGetValue("minSource", out TypedConstant minSourceArgument)) {
             if (!minSourceArgument.TryGetValue(out minSource)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "minSource", "BitStreamStructQuantized"));
+                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "minSource", "BitStreamStructQuantized", minSourceArgument.ToCSharpString()));
                 return false;
             }
         }
         else if (arguments.TryGetValue("source", out TypedConstant sourceArgument)) {
             if (!sourceArgument.TryGetValue(out minSource)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "source", "BitStreamStructQuantized"));
+                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "source", "BitStreamStructQuantized", sourceArgument.ToCSharpString()));
                 return false;
             }
         }
@@ -519,7 +519,7 @@ internal static class StructCollector {
         ITypeSymbol? maxSource;
         if (arguments.TryGetValue("maxSource", out TypedConstant maxSourceArgument)) {
             if (!maxSourceArgument.TryGetValue(out maxSource)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "maxSource", "BitStreamStructQuantized"));
+                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "maxSource", "BitStreamStructQuantized", maxSourceArgument.ToCSharpString()));
                 return false;
             }
         }

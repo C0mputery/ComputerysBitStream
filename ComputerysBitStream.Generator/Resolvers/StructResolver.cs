@@ -147,7 +147,7 @@ internal sealed class StructResolver {
         if (effectiveSettings.Structs.TryGetValue(memberType, out StructDefinition nestedStruct)) {
             ResolvedStructDefinition? nestedResolved = Resolve(nestedStruct);
             if (nestedResolved is not ResolvedStructDefinition nested) {
-                _reportDiagnostic(new DiagnosticValueType(Diagnostics.StructMemberNotSerializable, member.Location, memberType, settingsLabel));
+                _reportDiagnostic(new DiagnosticValueType(Diagnostics.StructMemberNotSerializable, member.Location, member.MemberName, memberType, settingsLabel));
                 return false;
             }
 

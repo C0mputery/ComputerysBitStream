@@ -14,7 +14,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor DuplicateRole = new(
         id: "CBS001",
         title: "Multiple methods with the same role",
-        messageFormat: "Multiple methods with the same role '{0}' in the same primitive",
+        messageFormat: "Role '{0}' is defined by more than one [BitStreamPrimitiveMethod] on this primitive",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -23,7 +23,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor DuplicateIncludedPrimitive = new(
         id: "CBS002",
         title: "Multiple included primitives for the same extension class",
-        messageFormat: "Multiple included primitives with the same extension class '{0}' in the same settings interface",
+        messageFormat: "Settings interface lists primitive extension '{0}' more than once",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -32,7 +32,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor MultipleGlobalSettings = new(
         id: "CBS003",
         title: "Multiple global settings",
-        messageFormat: "Multiple global settings are defined for the assembly",
+        messageFormat: "Assembly defines global settings more than once ({0}). Remove duplicate [BitStreamDefaultSettings] attributes or merge the interfaces into one definition.",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -41,7 +41,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor InvalidSettingsInterface = new(
         id: "CBS004",
         title: "Invalid settings interface",
-        messageFormat: "The type '{0}' is not a valid settings interface. It must be annotated with [BitStreamSettings].",
+        messageFormat: "Type '{0}' is not a settings interface. Add [BitStreamSettings].",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -50,7 +50,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor InvalidSettingType = new(
         id: "CBS005",
         title: "Invalid setting type",
-        messageFormat: "The type '{0}' included in settings is missing the BitStreamPrimitive, BitStreamStruct, or BitStreamProxyStruct attribute",
+        messageFormat: "Type '{0}' included in settings has none of [BitStreamPrimitive], [BitStreamStruct], or [BitStreamProxyStruct]. Add one of these attributes to register the type as a serializer.",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -59,7 +59,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor NoPrimitiveMethods = new(
         id: "CBS006",
         title: "No primitive methods on BitStreamPrimitive class",
-        messageFormat: "The class '{0}' marked with [BitStreamPrimitive] has no methods marked with [BitStreamPrimitiveMethod]",
+        messageFormat: "Class '{0}' has [BitStreamPrimitive] but no methods marked with [BitStreamPrimitiveMethod]",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -67,8 +67,8 @@ internal static class Diagnostics {
 
     public static readonly DiagnosticDescriptor MethodNotPublicStatic = new(
         id: "CBS007",
-        title: "BitStreamPrimitiveMethod method is not public static",
-        messageFormat: "The method '{0}' marked with [BitStreamPrimitiveMethod] must be public and static",
+        title: "[BitStreamPrimitiveMethod] must be public static",
+        messageFormat: "Method '{0}' marked with [BitStreamPrimitiveMethod] must be public and static",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -77,7 +77,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor InvalidFixedSize = new(
         id: "CBS008",
         title: "Invalid fixed size in BitStreamFixedSizePrimitive",
-        messageFormat: "The size '{0}' in [BitStreamFixedSizePrimitive] must be greater than 0",
+        messageFormat: "Size '{0}' in [BitStreamFixedSizePrimitive] must be greater than 0",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -86,7 +86,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor TypeMustBeStatic = new(
         id: "CBS009",
         title: "Type must be static",
-        messageFormat: "The type '{0}' marked with [{1}] must be static",
+        messageFormat: "Type '{0}' marked with [{1}] must be static",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -95,16 +95,17 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor InvalidPrimitiveMethodSignature = new(
         id: "CBS010",
         title: "Invalid primitive method signature",
-        messageFormat: "The method '{0}' marked with [BitStreamPrimitiveMethod] for role '{1}' does not match the expected signature: {2}",
+        messageFormat: "Method '{0}' marked with [BitStreamPrimitiveMethod({1})] does not match the expected signature: {2}",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true
+        isEnabledByDefault: true,
+        description: "Each BitStreamPrimitiveMethod role has a required signature. Copy the expected signature from the diagnostic and replace MethodName with your method name."
     );
 
     public static readonly DiagnosticDescriptor MemberSkipped = new(
         id: "CBS011",
         title: "Struct member skipped",
-        messageFormat: "Member '{0}' skipped: {1}",
+        messageFormat: "Member '{0}' was skipped because its {1}",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true
@@ -112,8 +113,8 @@ internal static class Diagnostics {
 
     public static readonly DiagnosticDescriptor ProxyStructNotStruct = new(
         id: "CBS012",
-        title: "BitStreamProxyStructAttribute target is not a struct",
-        messageFormat: "The type '{0}' specified in [BitStreamProxyStruct] is not a struct",
+        title: "[BitStreamProxyStruct] target is not a struct",
+        messageFormat: "Type '{0}' specified in [BitStreamProxyStruct] is not a struct",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -122,7 +123,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor MissingSizeRole = new(
         id: "CBS013",
         title: "Missing BitStreamPrimitiveMethod(Size)",
-        messageFormat: "The class '{0}' marked with [BitStreamPrimitive(…, VariableLength)] must have a method marked with [BitStreamPrimitiveMethod(Size)]",
+        messageFormat: "Class '{0}' has [BitStreamPrimitive(VariableLength)] but no method marked with [BitStreamPrimitiveMethod(Size)]",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -131,7 +132,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor TypeMustBePartial = new(
         id: "CBS014",
         title: "Type must be partial",
-        messageFormat: "The type '{0}' marked with [{1}] must be partial",
+        messageFormat: "Type '{0}' marked with [{1}] must be partial",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -140,7 +141,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor MissingCompanionAttribute = new(
         id: "CBS015",
         title: "Missing companion attribute on BitStreamPrimitive",
-        messageFormat: "The class '{0}' marked with [BitStreamPrimitive({1})] must also have [{2}]",
+        messageFormat: "Class '{0}' marked with [BitStreamPrimitive({1})] must also have [{2}]",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -149,7 +150,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor InvalidQuantizedBitRange = new(
         id: "CBS016",
         title: "Invalid BitStreamQuantizedPrimitive bit range",
-        messageFormat: "The minimum bits '{0}' and maximum bits '{1}' in [BitStreamQuantizedPrimitive] must satisfy 0 < minimum <= maximum",
+        messageFormat: "Minimum bits '{0}' and maximum bits '{1}' in [BitStreamQuantizedPrimitive] must satisfy 0 < minimum <= maximum",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -176,7 +177,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor InvalidSizeRole = new(
         id: "CBS019",
         title: "BitStreamPrimitiveMethod(Size) on non-VariableLength primitive",
-        messageFormat: "The method '{0}' marked with [BitStreamPrimitiveMethod(Size)] is only valid on VariableLength primitives",
+        messageFormat: "Method '{0}' marked with [BitStreamPrimitiveMethod(Size)] is only valid on VariableLength primitives",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -185,7 +186,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor TypeMustBePublic = new(
         id: "CBS020",
         title: "Type must be public",
-        messageFormat: "The type '{0}' marked with [{1}] must be public",
+        messageFormat: "Type '{0}' marked with [{1}] must be public",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -203,7 +204,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor DuplicateStructDefinition = new(
         id: "CBS022",
         title: "Duplicate struct definition",
-        messageFormat: "Multiple [BitStreamStruct] or [BitStreamProxyStruct] definitions exist for struct '{0}' with alias '{1}'",
+        messageFormat: "Struct '{0}' with alias '{1}' has more than one [BitStreamStruct] or [BitStreamProxyStruct] definition",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -212,16 +213,17 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor CircularSettingsReference = new(
         id: "CBS030",
         title: "Circular settings reference",
-        messageFormat: "The settings interface '{0}' is referenced recursively and cannot be expanded",
+        messageFormat: "Settings interface '{0}' includes itself through inherited or nested settings interfaces and cannot be expanded",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true
+        isEnabledByDefault: true,
+        description: "A settings interface cannot reference itself directly or through another settings interface in its inheritance chain."
     );
 
     public static readonly DiagnosticDescriptor DuplicatePrimitiveDefinition = new(
         id: "CBS023",
         title: "Duplicate primitive definition",
-        messageFormat: "Multiple [BitStreamPrimitive] definitions exist for type '{0}' with alias '{1}' in namespace '{2}'",
+        messageFormat: "Type '{0}' with alias '{1}' in namespace '{2}' has more than one [BitStreamPrimitive] definition",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -230,7 +232,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor DuplicateIncludedStruct = new(
         id: "CBS024",
         title: "Multiple included structs for the same type",
-        messageFormat: "Multiple included structs with the same type '{0}' in the same settings interface",
+        messageFormat: "Settings interface lists struct type '{0}' more than once",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -239,7 +241,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor DuplicateIncludedExternalStruct = new(
         id: "CBS025",
         title: "Multiple included external structs for the same type",
-        messageFormat: "Multiple included external structs with the same type '{0}' in the same settings interface",
+        messageFormat: "Settings interface lists external struct type '{0}' more than once",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -248,7 +250,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor DuplicateMemberSerializer = new(
         id: "CBS026",
         title: "Multiple serializers on struct member",
-        messageFormat: "Member '{0}' has multiple [BitStreamSerializer] attributes",
+        messageFormat: "Member '{0}' has more than one [BitStreamSerializer] attribute",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -275,7 +277,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor InvalidAttributeArgument = new(
         id: "CBS029",
         title: "Invalid attribute argument",
-        messageFormat: "The argument '{0}' on [{1}] is missing or has an invalid value",
+        messageFormat: "Argument '{0}' on [{1}] has an invalid value: '{2}'",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -284,7 +286,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor PrimitiveMethodCalledOutsidePrimitive = new(
         id: "CBS031",
         title: "BitStream primitive method called outside primitive context",
-        messageFormat: "BitStream primitive method '{0}' should only be called from within a type marked with [BitStreamPrimitive] or [BitStreamPrimitiveContext]",
+        messageFormat: "BitStream primitive method '{0}' is only valid inside a type marked with [BitStreamPrimitive] or [BitStreamPrimitiveContext]",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true
@@ -293,7 +295,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor MissingTryReadRole = new(
         id: "CBS033",
         title: "Missing BitStreamPrimitiveMethod(TryRead)",
-        messageFormat: "The class '{0}' marked with [BitStreamPrimitive(…, VariableLength)] must have a method marked with [BitStreamPrimitiveMethod(TryRead)]",
+        messageFormat: "Class '{0}' has [BitStreamPrimitive(VariableLength)] but no method marked with [BitStreamPrimitiveMethod(TryRead)]",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -302,7 +304,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor InvalidTryReadRole = new(
         id: "CBS034",
         title: "BitStreamPrimitiveMethod(TryRead) on non-VariableLength primitive",
-        messageFormat: "The method '{0}' marked with [BitStreamPrimitiveMethod(TryRead)] is only valid on VariableLength primitives",
+        messageFormat: "Method '{0}' marked with [BitStreamPrimitiveMethod(TryRead)] is only valid on VariableLength primitives",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -320,25 +322,27 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor CyclicStructReference = new(
         id: "CBS035",
         title: "Cyclic struct reference detected",
-        messageFormat: "Struct '{0}' contains a cyclic reference and cannot be serialized",
+        messageFormat: "Struct '{0}' is nested inside itself through struct members and cannot be serialized",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true
+        isEnabledByDefault: true,
+        description: "A struct cannot contain a member whose type resolves back to the same struct, directly or through other struct members."
     );
 
     public static readonly DiagnosticDescriptor StructMemberNotSerializable = new(
         id: "CBS036",
         title: "Struct member type not serializable",
-        messageFormat: "Member type '{0}' is not serializable with current settings (settings: '{1}')",
+        messageFormat: "Member '{0}' with type '{1}' could not be serialized using settings '{2}'. Fix errors on the nested struct type first.",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true
+        isEnabledByDefault: true,
+        description: "Nested struct resolution failed. Check diagnostics on the member's struct type for cyclic references, missing primitives, or members with no serializer."
     );
 
     public static readonly DiagnosticDescriptor StructNoSerializableMembers = new(
         id: "CBS037",
         title: "Struct has no serializable members",
-        messageFormat: "Struct '{0}' has no serializable members",
+        messageFormat: "Struct '{0}' has no serializable members after skipping inaccessible or unsupported members",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -350,7 +354,8 @@ internal static class Diagnostics {
         messageFormat: "Member '{0}' uses [BitStreamStructQuantized] but no Quantized serializer for type '{1}' is registered in settings. Register a Quantized primitive on your settings interface.",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true
+        isEnabledByDefault: true,
+        description: "Add a BitStreamPrimitive with Quantized serialization mode for the member type, then include it on your settings interface with [BitStreamSerializer]."
     );
 
     public static readonly DiagnosticDescriptor DuplicateAlias = new(
@@ -365,7 +370,7 @@ internal static class Diagnostics {
     public static readonly DiagnosticDescriptor InvalidStructMetadataSize = new(
         id: "CBS040",
         title: "Invalid size in BitStreamStructMetadata",
-        messageFormat: "The size '{0}' in [BitStreamStructMetadata] must be greater than 0 or -1 for variable-length structs",
+        messageFormat: "Size '{0}' in [BitStreamStructMetadata] must be greater than 0 or -1 for variable-length structs",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -386,7 +391,8 @@ internal static class Diagnostics {
         messageFormat: "Member '{0}' uses [BitStreamStructVariableLength] but no variable-length serializer for type '{1}' is registered in settings. Register a variable-length primitive on your settings interface.",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true
+        isEnabledByDefault: true,
+        description: "Add a BitStreamPrimitive with VariableLength serialization mode for the member type, then include it on your settings interface with [BitStreamSerializer]."
     );
 
     public static readonly DiagnosticDescriptor DefaultPrimitiveNotInSettings = new(
@@ -395,7 +401,8 @@ internal static class Diagnostics {
         messageFormat: "Member type '{0}' has no fixed-size serializer registered in settings '{1}'. Register a fixed-size primitive on your settings interface, or mark the member with [BitStreamStructVariableLength] and register a variable-length primitive.",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true
+        isEnabledByDefault: true,
+        description: "Register a fixed-size BitStreamPrimitive for the member type on your settings interface. For variable-length encoding, add [BitStreamStructVariableLength] on the member and register a VariableLength primitive instead."
     );
 
     public static readonly DiagnosticDescriptor QuantizedPrimitiveRequiresAttribute = new(
@@ -411,6 +418,15 @@ internal static class Diagnostics {
         id: "CBS045",
         title: "Conflicting struct member serialization attributes",
         messageFormat: "Member '{0}' cannot have both [BitStreamStructVariableLength] and [BitStreamStructQuantized]",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
+    public static readonly DiagnosticDescriptor MissingAttributeArgument = new(
+        id: "CBS046",
+        title: "Missing attribute argument",
+        messageFormat: "Argument '{0}' is required on [{1}]",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true

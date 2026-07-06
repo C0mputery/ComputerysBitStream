@@ -14,7 +14,7 @@ namespace ComputerysBitStream {
         /// <param name="type">Label passed to the read helper.</param>
         /// <param name="availableBits">Bits remaining in the context.</param>
         /// <param name="position">Read position in bits.</param>
-        public BitStreamReadException(string type, long availableBits, long position) : base($"Failed to read {type} at position {position}. Available bits: {availableBits}.") {
+        public BitStreamReadException(string type, long availableBits, long position) : base($"TryRead returned false for {type} at position {position}. Available bits: {availableBits}.") {
             Type = type;
             AvailableBits = availableBits;
             Position = position;

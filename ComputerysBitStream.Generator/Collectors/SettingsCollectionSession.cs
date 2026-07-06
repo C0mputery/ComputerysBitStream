@@ -125,7 +125,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                 if (!attributeData.IsAttribute(BitStreamMetadataNames.Serializer)) { continue; }
 
                 if (!attributeData.TryGetValue("type", out INamedTypeSymbol? serializerSymbol)) {
-                    diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, attributeData.GetLocation(), "type", "BitStreamSerializer"));
+                    diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attributeData.GetLocation(), "type", "BitStreamSerializer"));
                     continue;
                 }
 
@@ -184,7 +184,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                 }
                 else if (serializerSymbol.TryGetAttribute(BitStreamMetadataNames.StructMetadata, out AttributeData? metadataAttribute)) {
                     if (!metadataAttribute.TryGetValue("size", out int size)) {
-                        diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, metadataAttribute.GetLocation(), "size", "BitStreamStructMetadata"));
+                        diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, metadataAttribute.GetLocation(), "size", "BitStreamStructMetadata"));
                         continue;
                     }
 

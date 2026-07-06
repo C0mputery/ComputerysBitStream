@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace ComputerysBitStream.Generator;
@@ -23,11 +24,11 @@ internal readonly ref partial struct ExecutionContext {
 
         ImmutableArray<SettingsDefinition> globalSettingsDataArray = UnwrapValidSettingsArray(data.GlobalSettings);
         if (globalSettingsDataArray.Length > 1) {
-            ImmutableArray<DiagnosticValueType>.Builder multipleGlobalSettingsDiagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
-            foreach (SettingsDefinition globalSettings in globalSettingsDataArray) {
-                multipleGlobalSettingsDiagnostics.Add(new DiagnosticValueType(Diagnostics.MultipleGlobalSettings, globalSettings.Location));
-            }
-            ReportDiagnostics(multipleGlobalSettingsDiagnostics.ToImmutable());
+            string conflictingDefinitions = string.Join("; ", globalSettingsDataArray.Select(static settings => {
+                ImmutableArray<string> interfaces = settings.InterfaceFullyQualifiedNames;
+                return interfaces.IsDefaultOrEmpty ? "(no interfaces)" : string.Join(", ", interfaces);
+            }));
+            ReportDiagnostics(ImmutableArray.Create(new DiagnosticValueType(Diagnostics.MultipleGlobalSettings, globalSettingsDataArray[0].Location, conflictingDefinitions)));
         }
         _globalSettings = globalSettingsDataArray.Length > 0 ? globalSettingsDataArray[0] : fallbackGlobalSetting;
 
