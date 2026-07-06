@@ -9,6 +9,10 @@ using ComputerysBitStream.Primitives.VariableLength;
 [assembly: DefaultBitStreamSettings(typeof(IDefaultSettings))]
 
 namespace ComputerysBitStream {
+    /// <summary>
+    /// Marker interface for the built-in primitive serializers. Referenced by <see cref="DefaultBitStreamSettingsAttribute"/> on this assembly.
+    /// </summary>
+    /// <remarks>Inherit this interface on custom <see cref="Attributes.BitStreamSettingsAttribute"/> types when you want the default fixed-size, variable-length, and quantized primitives.</remarks>
     [BitStreamSettings]
 #if !BITSTREAM_SOURCE_GENERATOR
     [BitStreamSerializer(typeof(PrimitiveBoolExtensions))]

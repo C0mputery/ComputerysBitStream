@@ -30,6 +30,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
         return $$"""
                  public static class {{_alias}}SizeExtensions {
+                     {{GeneratedDocumentationSyntax.GetSizeInBits}}
                      [EditorBrowsable(EditorBrowsableState.Never)]
                      [MethodImpl(MethodImplOptions.AggressiveInlining)]
                      public static int Get{{_alias}}SizeInBits({{parameters}}) => {{sizeExpression}};

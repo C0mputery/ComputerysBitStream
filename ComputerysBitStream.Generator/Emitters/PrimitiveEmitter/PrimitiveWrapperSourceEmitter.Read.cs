@@ -70,6 +70,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         string body = TryPeekAliasBody();
 
         return $$"""
+                 {{GeneratedDocumentationSyntax.TryPeekValue}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryPeek{{_alias}}(this ref ReadContext context{{_extraParams}}, out {{_targetType}} value) {
                      {{SourceWriter.MaintainRelativeIndent(body, 1)}}
@@ -80,6 +81,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitPeekAlias() {
         if (_mode == PrimitiveSerializationMode.VariableLength) {
             return $$"""
+                     {{GeneratedDocumentationSyntax.PeekValue}}
                      [MethodImpl(MethodImplOptions.AggressiveInlining)]
                      public static {{_targetType}} Peek{{_alias}}(this ref ReadContext context{{_extraParams}}) {
                          {{SourceWriter.MaintainRelativeIndent(GeneratedSourceSyntax.EmitThrowIfTryReadFailed(_alias, TryPeekScalarCall(), "return value;"), 1)}}
@@ -89,6 +91,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
         if (_mode == PrimitiveSerializationMode.Quantized) {
             return $$"""
+                     {{GeneratedDocumentationSyntax.PeekValue}}
                      [MethodImpl(MethodImplOptions.AggressiveInlining)]
                      public static {{_targetType}} Peek{{_alias}}(this ref ReadContext context{{_extraParams}}) {
                          {{BitCountValidationThrow}}
@@ -99,6 +102,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         }
 
         return $$"""
+                 {{GeneratedDocumentationSyntax.PeekValue}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static {{_targetType}} Peek{{_alias}}(this ref ReadContext context{{_extraParams}}) {
                      {{GeneratedSourceSyntax.EmitThrowInsufficientReadSpace(_alias, FixedSize.ToString())}}
@@ -111,6 +115,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         string body = TryReadAliasBody();
 
         return $$"""
+                 {{GeneratedDocumentationSyntax.TryReadValue}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryRead{{_alias}}(this ref ReadContext context{{_extraParams}}, out {{_targetType}} value) {
                      {{SourceWriter.MaintainRelativeIndent(body, 1)}}
@@ -121,6 +126,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitReadAlias() {
         if (_mode == PrimitiveSerializationMode.VariableLength) {
             return $$"""
+                     {{GeneratedDocumentationSyntax.ReadValue}}
                      [MethodImpl(MethodImplOptions.AggressiveInlining)]
                      public static {{_targetType}} Read{{_alias}}(this ref ReadContext context{{_extraParams}}) {
                          {{SourceWriter.MaintainRelativeIndent(GeneratedSourceSyntax.EmitThrowIfTryReadFailed(_alias, TryReadScalarCall(), "return value;"), 1)}}
@@ -130,6 +136,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
         if (_mode == PrimitiveSerializationMode.Quantized) {
             return $$"""
+                     {{GeneratedDocumentationSyntax.ReadValue}}
                      [MethodImpl(MethodImplOptions.AggressiveInlining)]
                      public static {{_targetType}} Read{{_alias}}(this ref ReadContext context{{_extraParams}}) {
                          {{BitCountValidationThrow}}
@@ -140,6 +147,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         }
 
         return $$"""
+                 {{GeneratedDocumentationSyntax.ReadValue}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static {{_targetType}} Read{{_alias}}(this ref ReadContext context{{_extraParams}}) {
                      {{GeneratedSourceSyntax.EmitThrowInsufficientReadSpace(_alias, FixedSize.ToString())}}
@@ -152,6 +160,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         string empty = $"Array.Empty<{_targetType}>()";
 
         return $$"""
+                 {{GeneratedDocumentationSyntax.TryPeekValuesWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryPeek{{_alias}}s(this ref ReadContext context{{_extraParams}}, out {{_targetType}}[] values) {
                      if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) {
@@ -173,6 +182,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitPeekAliassOut() {
         string typeName = $"{_alias} array";
         return $$"""
+                 {{GeneratedDocumentationSyntax.PeekValuesWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static {{_targetType}}[] Peek{{_alias}}s(this ref ReadContext context{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryPeekArrayCall(), "return values;"), 1)}}
@@ -184,6 +194,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         string empty = $"Array.Empty<{_targetType}>()";
 
         return $$"""
+                 {{GeneratedDocumentationSyntax.TryReadValuesWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryRead{{_alias}}s(this ref ReadContext context{{_extraParams}}, out {{_targetType}}[] values) {
                      if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) {
@@ -205,6 +216,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitReadAliassOut() {
         string typeName = $"{_alias} array";
         return $$"""
+                 {{GeneratedDocumentationSyntax.ReadValuesWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static {{_targetType}}[] Read{{_alias}}s(this ref ReadContext context{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryReadArrayCall(), "return values;"), 1)}}
@@ -216,6 +228,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         string empty = $"Array.Empty<{_targetType}>()";
 
         return $$"""
+                 {{GeneratedDocumentationSyntax.TryPeekValuesWithCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryPeek{{_alias}}s(this ref ReadContext context, int count{{_extraParams}}, out {{_targetType}}[] values) {
                      if ({{QuantizedFailPrefix}}count < 0) {
@@ -231,6 +244,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitPeekAliassWithCount() {
         string typeName = $"{_alias} array";
         return $$"""
+                 {{GeneratedDocumentationSyntax.PeekValuesWithCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static {{_targetType}}[] Peek{{_alias}}s(this ref ReadContext context, int count{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryPeekArrayWithCountCall(), "return values;"), 1)}}
@@ -242,6 +256,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         string empty = $"Array.Empty<{_targetType}>()";
 
         return $$"""
+                 {{GeneratedDocumentationSyntax.TryReadValuesWithCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryRead{{_alias}}s(this ref ReadContext context, int count{{_extraParams}}, out {{_targetType}}[] values) {
                      if ({{QuantizedFailPrefix}}count < 0) {
@@ -257,6 +272,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitReadAliassWithCount() {
         string typeName = $"{_alias} array";
         return $$"""
+                 {{GeneratedDocumentationSyntax.ReadValuesWithCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static {{_targetType}}[] Read{{_alias}}s(this ref ReadContext context, int count{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryReadArrayWithCountCall(), "return values;"), 1)}}
@@ -266,6 +282,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
     private string EmitTryPeekAliassIntoSpan() {
         return $$"""
+                 {{GeneratedDocumentationSyntax.TryPeekValuesIntoSpanWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryPeek{{_alias}}s(this ref ReadContext context, Span<{{_targetType}}> destination{{_extraParams}}) {
                      if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) { return false; }
@@ -281,6 +298,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitPeekAliassIntoSpan() {
         string typeName = $"{_alias} span";
         return $$"""
+                 {{GeneratedDocumentationSyntax.PeekValuesIntoSpanWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static void Peek{{_alias}}s(this ref ReadContext context, Span<{{_targetType}}> destination{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryPeekSpanCall(), string.Empty), 1)}}
@@ -290,6 +308,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
     private string EmitTryReadAliassIntoSpan() {
         return $$"""
+                 {{GeneratedDocumentationSyntax.TryReadValuesIntoSpanWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryRead{{_alias}}s(this ref ReadContext context, Span<{{_targetType}}> destination{{_extraParams}}) {
                      if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) { return false; }
@@ -305,6 +324,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitReadAliassIntoSpan() {
         string typeName = $"{_alias} span";
         return $$"""
+                 {{GeneratedDocumentationSyntax.ReadValuesIntoSpanWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static void Read{{_alias}}s(this ref ReadContext context, Span<{{_targetType}}> destination{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryReadSpanCall(), string.Empty), 1)}}
@@ -314,6 +334,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
     private string EmitTryPeekAliassIntoSpanWithCount() {
         return $$"""
+                 {{GeneratedDocumentationSyntax.TryPeekValuesIntoSpanWithCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryPeek{{_alias}}s(this ref ReadContext context, int count, Span<{{_targetType}}> destination{{_extraParams}}) {
                      if ({{QuantizedFailPrefix}}count < 0 || count > destination.Length) { return false; }
@@ -326,6 +347,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitPeekAliassIntoSpanWithCount() {
         string typeName = $"{_alias} span";
         return $$"""
+                 {{GeneratedDocumentationSyntax.PeekValuesIntoSpanWithCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static void Peek{{_alias}}s(this ref ReadContext context, int count, Span<{{_targetType}}> destination{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryPeekSpanWithCountCall(), string.Empty), 1)}}
@@ -335,6 +357,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
     private string EmitTryReadAliassIntoSpanWithCount() {
         return $$"""
+                 {{GeneratedDocumentationSyntax.TryReadValuesIntoSpanWithCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryRead{{_alias}}s(this ref ReadContext context, int count, Span<{{_targetType}}> destination{{_extraParams}}) {
                      if ({{QuantizedFailPrefix}}count < 0 || count > destination.Length) { return false; }
@@ -347,6 +370,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitReadAliassIntoSpanWithCount() {
         string typeName = $"{_alias} span";
         return $$"""
+                 {{GeneratedDocumentationSyntax.ReadValuesIntoSpanWithCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static void Read{{_alias}}s(this ref ReadContext context, int count, Span<{{_targetType}}> destination{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryReadSpanWithCountCall(), string.Empty), 1)}}

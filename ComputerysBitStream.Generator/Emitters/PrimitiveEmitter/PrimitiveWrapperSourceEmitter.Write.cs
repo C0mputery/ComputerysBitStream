@@ -36,6 +36,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         };
 
         return $$"""
+                 {{GeneratedDocumentationSyntax.WriteValue}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static void Write{{_alias}}(this ref WriteContext context, {{_targetType}} value{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(guard, 1)}}
@@ -49,6 +50,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         string guard = SpanWriteGuard(includeLengthPrefix: true, operation: $"{_alias} array");
 
         return $$"""
+                 {{GeneratedDocumentationSyntax.WriteValuesWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static void Write{{_alias}}s(this ref WriteContext context, ReadOnlySpan<{{_targetType}}> values{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(guard, 1)}}
@@ -63,6 +65,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         string guard = SpanWriteGuard(includeLengthPrefix: false, operation: $"{_alias} span");
 
         return $$"""
+                 {{GeneratedDocumentationSyntax.WriteValuesWithoutLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static void Write{{_alias}}sWithoutLength(this ref WriteContext context, ReadOnlySpan<{{_targetType}}> values{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(guard, 1)}}
