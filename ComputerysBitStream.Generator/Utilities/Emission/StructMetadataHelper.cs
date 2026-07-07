@@ -1,4 +1,4 @@
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Emission;
 
 internal static class StructMetadataHelper {
     internal const int VariableLengthSize = -1;

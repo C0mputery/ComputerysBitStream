@@ -1,4 +1,6 @@
 ﻿using ComputerysBitStream.Generator.Collectors;
+using ComputerysBitStream.Generator.Diagnostics;
+using ComputerysBitStream.Generator.EquatableCollections;
 using Microsoft.CodeAnalysis;
 
 namespace ComputerysBitStream.Generator;

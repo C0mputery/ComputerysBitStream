@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using ComputerysBitStream.Attributes;
+using ComputerysBitStream.Generator.EquatableCollections;
+using ComputerysBitStream.Generator.Roslyn;
 
 namespace ComputerysBitStream.Generator;
 

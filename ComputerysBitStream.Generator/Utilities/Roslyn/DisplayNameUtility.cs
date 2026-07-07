@@ -1,7 +1,7 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Roslyn;
 
 internal static class DisplayNameUtility {
     internal const string DefaultInt32Alias = "Int";

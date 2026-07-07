@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using ComputerysBitStream.Attributes;
+using ComputerysBitStream.Generator.Diagnostics;
 using ComputerysBitStream.Generator.Emitters;
+using ComputerysBitStream.Generator.Emission;
+using ComputerysBitStream.Generator.Roslyn;
 
 namespace ComputerysBitStream.Generator;
 
@@ -14,13 +17,13 @@ internal readonly ref partial struct ExecutionContext {
         foreach (PrimitiveDefinition primitive in primitives) {
             string emissionKey = $"{primitive.Namespace}|{primitive.Alias}";
             if (!usedEmissionKeys.Add(emissionKey)) {
-                _context.ReportDiagnostic(new DiagnosticValueType(Diagnostics.DuplicatePrimitiveDefinition, primitive.Location, primitive.TargetTypeFullyQualifiedName, primitive.Alias, primitive.Namespace).ToDiagnostic());
+                _context.ReportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.DuplicatePrimitiveDefinition, primitive.Location, primitive.TargetTypeFullyQualifiedName, primitive.Alias, primitive.Namespace).ToDiagnostic());
                 continue;
             }
 
             PrimitiveDefinition? intHandler = ResolveLengthPrefixHandler(primitive, globalIntHandler);
             if (NeedsLengthPrefixHandlerDiagnostic(primitive, intHandler)) {
-                _context.ReportDiagnostic(new DiagnosticValueType(Diagnostics.MissingLengthPrefixHandler, primitive.Location, primitive.Alias, primitive.TargetTypeFullyQualifiedName).ToDiagnostic());
+                _context.ReportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.MissingLengthPrefixHandler, primitive.Location, primitive.Alias, primitive.TargetTypeFullyQualifiedName).ToDiagnostic());
             }
 
             _context.AddSource(GetPrimitiveHintName(primitive), PrimitiveWrapperSourceEmitter.EmitSource(primitive, intHandler));

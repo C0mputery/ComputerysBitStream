@@ -1,4 +1,7 @@
 using ComputerysBitStream.Attributes;
+using ComputerysBitStream.Generator.Diagnostics;
+using ComputerysBitStream.Generator.Emission;
+using ComputerysBitStream.Generator.EquatableCollections;
 
 namespace ComputerysBitStream.Generator;
 

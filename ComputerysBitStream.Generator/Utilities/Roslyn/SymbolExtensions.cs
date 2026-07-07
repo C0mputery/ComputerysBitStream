@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Roslyn;
 
 internal static class SymbolExtensions {
     private static readonly SymbolDisplayFormat FullyQualifiedFormatWithoutUseSpecialTypesAndGlobal = new SymbolDisplayFormat(

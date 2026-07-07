@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.EquatableCollections;
 
 internal readonly struct EquatableImmutableArray<T>(ImmutableArray<T> array) : IEquatable<EquatableImmutableArray<T>>, IEnumerable<T> where T : IEquatable<T> {
     private readonly ImmutableArray<T> _array = array;

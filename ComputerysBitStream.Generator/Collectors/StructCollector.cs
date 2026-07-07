@@ -3,6 +3,8 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using ComputerysBitStream.Generator.Diagnostics;
+using ComputerysBitStream.Generator.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -40,7 +42,7 @@ internal static class StructCollector {
 
         ImmutableArray<DiagnosticValueType>.Builder diagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
         diagnostics.AddRange(collected.Diagnostics);
-        diagnostics.Add(new DiagnosticValueType(Diagnostics.TypeMustBePartial, typeDeclaration.Identifier.GetLocation(), structSymbol.GetFullyQualifiedName(), "BitStreamStruct"));
+        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.TypeMustBePartial, typeDeclaration.Identifier.GetLocation(), structSymbol.GetFullyQualifiedName(), "BitStreamStruct"));
         return new Collected<StructDefinition>(collected.Value, diagnostics.ToImmutable());
     }
 
@@ -49,7 +51,7 @@ internal static class StructCollector {
         Location? attributeLocation = attributeData.GetLocation();
 
         if (structSymbol.DeclaredAccessibility != Accessibility.Public) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.TypeMustBePublic, attributeLocation, structSymbol.GetFullyQualifiedName(), "BitStreamStruct"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.TypeMustBePublic, attributeLocation, structSymbol.GetFullyQualifiedName(), "BitStreamStruct"));
         }
 
         ImmutableDictionary<string, TypedConstant> arguments = attributeData.GetConstructorArgumentsByName();
@@ -100,7 +102,7 @@ internal static class StructCollector {
 
         ImmutableArray<DiagnosticValueType>.Builder diagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
         diagnostics.AddRange(collected.Diagnostics);
-        diagnostics.Add(new DiagnosticValueType(Diagnostics.TypeMustBePartial, classDeclaration.Identifier.GetLocation(), proxyClassSymbol.GetFullyQualifiedName(), "BitStreamProxyStruct"));
+        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.TypeMustBePartial, classDeclaration.Identifier.GetLocation(), proxyClassSymbol.GetFullyQualifiedName(), "BitStreamProxyStruct"));
         return new Collected<StructDefinition>(collected.Value, diagnostics.ToImmutable());
     }
 
@@ -110,22 +112,22 @@ internal static class StructCollector {
         string proxyClassFullyQualifiedName = proxyClassSymbol.GetFullyQualifiedName();
 
         if (!proxyClassSymbol.IsStatic) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.TypeMustBeStatic, attributeLocation, proxyClassFullyQualifiedName, "BitStreamProxyStruct"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.TypeMustBeStatic, attributeLocation, proxyClassFullyQualifiedName, "BitStreamProxyStruct"));
         }
 
         if (proxyClassSymbol.DeclaredAccessibility != Accessibility.Public) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.TypeMustBePublic, attributeLocation, proxyClassFullyQualifiedName, "BitStreamProxyStruct"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.TypeMustBePublic, attributeLocation, proxyClassFullyQualifiedName, "BitStreamProxyStruct"));
         }
 
         ImmutableDictionary<string, TypedConstant> arguments = attributeData.GetConstructorArgumentsByName();
 
         if (!arguments.TryGetValue("targetStruct", out ITypeSymbol? targetType)) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.ProxyStructNotStruct, attributeLocation, "unknown"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.ProxyStructNotStruct, attributeLocation, "unknown"));
             return CreateProxyStructData(proxyClassFullyQualifiedName, proxyClassSymbol.GetEmitTypeName(), proxyClassSymbol.GetFullyQualifiedNamespace(), attributeLocation, ImmutableArray<StructMemberDefinition>.Empty, diagnostics);
         }
 
         if (targetType is not INamedTypeSymbol structSymbol || structSymbol.TypeKind != TypeKind.Struct) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.ProxyStructNotStruct, attributeLocation, targetType.GetFullyQualifiedName()));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.ProxyStructNotStruct, attributeLocation, targetType.GetFullyQualifiedName()));
             return CreateProxyStructData(proxyClassFullyQualifiedName, proxyClassSymbol.GetEmitTypeName(), proxyClassSymbol.GetFullyQualifiedNamespace(), attributeLocation, ImmutableArray<StructMemberDefinition>.Empty, diagnostics);
         }
 
@@ -191,7 +193,7 @@ internal static class StructCollector {
         bool hasInclude = member.HasAttribute(BitStreamTypeNames.StructInclude);
 
         if (hasIgnore && hasInclude) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.ConflictingStructMemberAttributes, member.Locations.FirstOrDefault(), member.Name));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.ConflictingStructMemberAttributes, member.Locations.FirstOrDefault(), member.Name));
             excludedMembers.Add(member.Name);
             return;
         }
@@ -205,7 +207,7 @@ internal static class StructCollector {
             case IFieldSymbol when hasInclude:
                 if (member.DeclaredAccessibility != Accessibility.Public) {
                     if (reportInaccessibleInclude) {
-                        diagnostics.Add(new DiagnosticValueType(Diagnostics.InaccessibleStructMember, member.Locations.FirstOrDefault(), member.Name));
+                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InaccessibleStructMember, member.Locations.FirstOrDefault(), member.Name));
                     }
 
                     break;
@@ -256,7 +258,7 @@ internal static class StructCollector {
             if (proxyClassSymbol is not null
                 && TryGetProxyMember(proxyClassSymbol, member.Name, out ISymbol? proxyMember)
                 && !ProxyMemberMatchesTarget(proxyMember, member)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.ProxyMemberTypeMismatch, proxyMember.Locations.FirstOrDefault(), member.Name, structDisplayName));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.ProxyMemberTypeMismatch, proxyMember.Locations.FirstOrDefault(), member.Name, structDisplayName));
                 continue;
             }
 
@@ -290,21 +292,21 @@ internal static class StructCollector {
 
         if (property.GetMethod.DeclaredAccessibility != Accessibility.Public) {
             if (explicitlyIncluded) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "getter is not public"));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "getter is not public"));
             }
 
             return;
         }
 
         if (property.SetMethod is null && !hasWritableProxyMirror) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "property is read-only"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "property is read-only"));
             return;
         }
 
         if (property.SetMethod is not null
             && property.SetMethod.DeclaredAccessibility != Accessibility.Public
             && !hasWritableProxyMirror) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "setter is not public"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MemberSkipped, property.Locations.FirstOrDefault(), property.Name, "setter is not public"));
             return;
         }
 
@@ -335,12 +337,12 @@ internal static class StructCollector {
         }
 
         if (field.IsReadOnly || field.IsConst) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, field.Locations.FirstOrDefault(), field.Name, "field is read-only"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MemberSkipped, field.Locations.FirstOrDefault(), field.Name, "field is read-only"));
             return;
         }
 
         if (field.RefKind != RefKind.None) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.MemberSkipped, field.Locations.FirstOrDefault(), field.Name, "field is a ref field"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MemberSkipped, field.Locations.FirstOrDefault(), field.Name, "field is a ref field"));
             return;
         }
 
@@ -403,7 +405,7 @@ internal static class StructCollector {
             }
 
             if (structSymbol.GetMembers(proxyMember.Name).FirstOrDefault(static member => member is IPropertySymbol or IFieldSymbol) is null) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.ProxyMemberNotOnTarget, proxyMember.Locations.FirstOrDefault(), proxyMember.Name, structDisplayName));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.ProxyMemberNotOnTarget, proxyMember.Locations.FirstOrDefault(), proxyMember.Name, structDisplayName));
             }
         }
     }
@@ -419,7 +421,7 @@ internal static class StructCollector {
             }
 
             if (proxyMember.DeclaredAccessibility != Accessibility.Public) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InaccessibleStructMember, proxyMember.Locations.FirstOrDefault(), proxyMember.Name));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InaccessibleStructMember, proxyMember.Locations.FirstOrDefault(), proxyMember.Name));
             }
         }
     }
@@ -454,14 +456,14 @@ internal static class StructCollector {
             if (attribute.TryGetConstructorArgumentByName("type", out TypedConstant typeArgument)) {
                 if (typeArgument.TryGetValue(out INamedTypeSymbol? serializerType)) {
                     if (serializerExtensionClass is not null) {
-                        diagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateMemberSerializer, attribute.GetLocation(), memberName));
+                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateMemberSerializer, attribute.GetLocation(), memberName));
                         continue;
                     }
 
                     serializerExtensionClass = serializerType.GetFullyQualifiedName();
                 }
                 else {
-                    diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attribute.GetLocation(), "type", "BitStreamSerializer"));
+                    diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attribute.GetLocation(), "type", "BitStreamSerializer"));
                 }
             }
         }
@@ -475,7 +477,7 @@ internal static class StructCollector {
 
         bool isVariableLength = memberSymbol.TryGetAttribute(BitStreamTypeNames.StructVariableLength, out _);
         if (isVariableLength && quantized is not null) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.ConflictingStructMemberSerializationAttributes, memberSymbol.Locations.FirstOrDefault(), memberName));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.ConflictingStructMemberSerializationAttributes, memberSymbol.Locations.FirstOrDefault(), memberName));
             isVariableLength = false;
         }
 
@@ -497,20 +499,20 @@ internal static class StructCollector {
         ImmutableDictionary<string, TypedConstant> arguments = attributeData.GetConstructorArgumentsByName();
 
         if (!arguments.TryGetValue("minMember", out string? minMemberName) || !arguments.TryGetValue("maxMember", out string? maxMemberName) || !arguments.TryGetValue("bitCount", out int bitCount)) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedMember, location, "unknown", memberSymbol.Name));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidQuantizedMember, location, "unknown", memberSymbol.Name));
             return false;
         }
 
         ITypeSymbol? minSource;
         if (arguments.TryGetValue("minSource", out TypedConstant minSourceArgument)) {
             if (!minSourceArgument.TryGetValue(out minSource)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "minSource", "BitStreamStructQuantized", minSourceArgument.ToCSharpString()));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidAttributeArgument, location, "minSource", "BitStreamStructQuantized", minSourceArgument.ToCSharpString()));
                 return false;
             }
         }
         else if (arguments.TryGetValue("source", out TypedConstant sourceArgument)) {
             if (!sourceArgument.TryGetValue(out minSource)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "source", "BitStreamStructQuantized", sourceArgument.ToCSharpString()));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidAttributeArgument, location, "source", "BitStreamStructQuantized", sourceArgument.ToCSharpString()));
                 return false;
             }
         }
@@ -519,14 +521,14 @@ internal static class StructCollector {
         ITypeSymbol? maxSource;
         if (arguments.TryGetValue("maxSource", out TypedConstant maxSourceArgument)) {
             if (!maxSourceArgument.TryGetValue(out maxSource)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidAttributeArgument, location, "maxSource", "BitStreamStructQuantized", maxSourceArgument.ToCSharpString()));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidAttributeArgument, location, "maxSource", "BitStreamStructQuantized", maxSourceArgument.ToCSharpString()));
                 return false;
             }
         }
         else { maxSource = minSource; }
 
         if (bitCount <= 0) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedBitCount, location, bitCount.ToString(), memberSymbol.Name));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidQuantizedBitCount, location, bitCount.ToString(), memberSymbol.Name));
             return false;
         }
 
@@ -540,7 +542,7 @@ internal static class StructCollector {
     private static bool TryResolveRangeExpression(ITypeSymbol? sourceType, string memberName, string annotatedMemberName, Location? location, ImmutableArray<DiagnosticValueType>.Builder diagnostics, out string expression) {
         expression = string.Empty;
         if (sourceType is not INamedTypeSymbol namedType) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedMember, location, memberName, annotatedMemberName));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidQuantizedMember, location, memberName, annotatedMemberName));
             return false;
         }
 
@@ -560,7 +562,7 @@ internal static class StructCollector {
             return true;
         }
 
-        diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedMember, location, memberName, annotatedMemberName));
+        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidQuantizedMember, location, memberName, annotatedMemberName));
         return false;
     }
 }

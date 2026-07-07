@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Diagnostics;
 
 internal readonly record struct ValueTypeLocation(string FilePath, TextSpan TextSpan, LinePositionSpan LineSpan) {
     public static implicit operator ValueTypeLocation?(Location? location) {

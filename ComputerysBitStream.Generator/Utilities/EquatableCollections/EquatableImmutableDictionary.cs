@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.EquatableCollections;
 
 internal readonly struct EquatableImmutableDictionary<TKey, TValue>(ImmutableDictionary<TKey, TValue> dictionary) : IEquatable<EquatableImmutableDictionary<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>> where TKey : notnull {
     private readonly ImmutableDictionary<TKey, TValue> _dictionary = dictionary;

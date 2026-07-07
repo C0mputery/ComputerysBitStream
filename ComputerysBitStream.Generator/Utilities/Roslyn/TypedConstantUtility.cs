@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Roslyn;
 
 internal static class TypedConstantUtility {
     public static ImmutableArray<ITypeSymbol> ExtractTypeSymbols(TypedConstant constant) {

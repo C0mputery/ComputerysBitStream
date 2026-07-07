@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using ComputerysBitStream.Attributes;
+using ComputerysBitStream.Generator.Diagnostics;
+using ComputerysBitStream.Generator.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -27,22 +29,22 @@ internal static class PrimitiveCollector {
         Location? attributeLocation = attributeData.GetLocation();
 
         if (!targetTypeSymbol.IsStatic) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.TypeMustBeStatic, attributeLocation, targetTypeSymbol.Name, "BitStreamPrimitive"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.TypeMustBeStatic, attributeLocation, targetTypeSymbol.Name, "BitStreamPrimitive"));
         }
 
         if (targetTypeSymbol.DeclaredAccessibility != Accessibility.Public) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.TypeMustBePublic, attributeLocation, targetTypeSymbol.GetFullyQualifiedName(), "BitStreamPrimitive"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.TypeMustBePublic, attributeLocation, targetTypeSymbol.GetFullyQualifiedName(), "BitStreamPrimitive"));
         }
 
         ImmutableDictionary<string, TypedConstant> arguments = attributeData.GetConstructorArgumentsByName();
 
         if (!arguments.TryGetValue("target", out ITypeSymbol? targetType)) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attributeLocation, "target", "BitStreamPrimitive"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "target", "BitStreamPrimitive"));
             return CreateInvalidPrimitiveDefinition(targetTypeSymbol, attributeLocation, diagnostics);
         }
 
         if (!arguments.TryGetValue("serializationMode", out PrimitiveSerializationMode mode)) {
-            diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attributeLocation, "serializationMode", "BitStreamPrimitive"));
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "serializationMode", "BitStreamPrimitive"));
             return CreateInvalidPrimitiveDefinition(targetTypeSymbol, targetType, attributeLocation, diagnostics);
         }
 
@@ -56,33 +58,33 @@ internal static class PrimitiveCollector {
             case PrimitiveSerializationMode.FixedSize:
                 if (targetTypeSymbol.TryGetAttribute(BitStreamTypeNames.FixedSizePrimitive, out AttributeData? fixedSizeAttribute)) {
                     if (!fixedSizeAttribute.TryGetValue("size", out int parsedFixedSize)) {
-                        diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attributeLocation, "size", "BitStreamFixedSizePrimitive"));
+                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "size", "BitStreamFixedSizePrimitive"));
                     }
                     else {
                         fixedSize = parsedFixedSize;
-                        if (fixedSize <= 0) { diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidFixedSize, attributeLocation, fixedSize.ToString())); }
+                        if (fixedSize <= 0) { diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidFixedSize, attributeLocation, fixedSize.ToString())); }
                     }
                 }
-                else { diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingCompanionAttribute, attributeLocation, targetTypeSymbol.Name, "FixedSize", "BitStreamFixedSizePrimitive")); }
+                else { diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingCompanionAttribute, attributeLocation, targetTypeSymbol.Name, "FixedSize", "BitStreamFixedSizePrimitive")); }
                 break;
             case PrimitiveSerializationMode.Quantized:
                 if (targetTypeSymbol.TryGetAttribute(BitStreamTypeNames.QuantizedPrimitive, out AttributeData? quantizedAttribute)) {
                     ImmutableDictionary<string, TypedConstant> quantizedArguments = quantizedAttribute.GetConstructorArgumentsByName();
                     if (!quantizedArguments.TryGetValue("minimumBits", out int parsedMinBits)) {
-                        diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attributeLocation, "minimumBits", "BitStreamQuantizedPrimitive"));
+                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "minimumBits", "BitStreamQuantizedPrimitive"));
                     }
                     else { minBits = parsedMinBits; }
 
                     if (!quantizedArguments.TryGetValue("maximumBits", out int parsedMaxBits)) {
-                        diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attributeLocation, "maximumBits", "BitStreamQuantizedPrimitive"));
+                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "maximumBits", "BitStreamQuantizedPrimitive"));
                     }
                     else { maxBits = parsedMaxBits; }
 
                     if (minBits is not null && maxBits is not null && (minBits <= 0 || maxBits < minBits)) {
-                        diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidQuantizedBitRange, attributeLocation, minBits.ToString(), maxBits.ToString()));
+                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidQuantizedBitRange, attributeLocation, minBits.ToString(), maxBits.ToString()));
                     }
                 }
-                else { diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingCompanionAttribute, attributeLocation, targetTypeSymbol.Name, "Quantized", "BitStreamQuantizedPrimitive")); }
+                else { diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingCompanionAttribute, attributeLocation, targetTypeSymbol.Name, "Quantized", "BitStreamQuantizedPrimitive")); }
                 break;
             case PrimitiveSerializationMode.VariableLength:
             default:
@@ -92,26 +94,26 @@ internal static class PrimitiveCollector {
         PrimitiveSignatureContext signatureContext = PrimitiveSignatureContext.Create(compilation, targetType);
         Dictionary<BitStreamPrimitiveRole, PrimitiveMethodDefinition> methodsByRole = CollectPrimitiveMethods(targetTypeSymbol, mode, signatureContext, diagnostics);
 
-        if (methodsByRole.Count == 0) { diagnostics.Add(new DiagnosticValueType(Diagnostics.NoPrimitiveMethods, attributeLocation, targetTypeSymbol.Name)); }
+        if (methodsByRole.Count == 0) { diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.NoPrimitiveMethods, attributeLocation, targetTypeSymbol.Name)); }
 
         if (mode == PrimitiveSerializationMode.VariableLength) {
             if (!HasValidMethod(methodsByRole, BitStreamPrimitiveRole.Size)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingSizeRole, attributeLocation, targetTypeSymbol.Name));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingSizeRole, attributeLocation, targetTypeSymbol.Name));
             }
 
             if (!HasValidMethod(methodsByRole, BitStreamPrimitiveRole.TryRead)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingTryReadRole, attributeLocation, targetTypeSymbol.Name));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingTryReadRole, attributeLocation, targetTypeSymbol.Name));
             }
         }
         else {
             if (HasValidMethod(methodsByRole, BitStreamPrimitiveRole.Size)) {
                 PrimitiveMethodDefinition sizeMethod = methodsByRole[BitStreamPrimitiveRole.Size];
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidSizeRole, attributeLocation, sizeMethod.MethodName));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidSizeRole, attributeLocation, sizeMethod.MethodName));
             }
 
             if (HasValidMethod(methodsByRole, BitStreamPrimitiveRole.TryRead)) {
                 PrimitiveMethodDefinition tryReadMethod = methodsByRole[BitStreamPrimitiveRole.TryRead];
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidTryReadRole, attributeLocation, tryReadMethod.MethodName));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidTryReadRole, attributeLocation, tryReadMethod.MethodName));
             }
         }
 
@@ -194,23 +196,23 @@ internal static class PrimitiveCollector {
             if (!member.TryGetAttribute(BitStreamTypeNames.PrimitiveMethod, out AttributeData? methodAttribute)) { continue; }
 
             if (!methodAttribute.TryGetValue("role", out BitStreamPrimitiveRole role)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, methodAttribute.GetLocation(), "role", "BitStreamPrimitiveMethod"));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, methodAttribute.GetLocation(), "role", "BitStreamPrimitiveMethod"));
                 continue;
             }
 
             if (methodsByRole.ContainsKey(role)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateRole, methodAttribute.GetLocation(), role));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateRole, methodAttribute.GetLocation(), role));
                 continue;
             }
 
             bool isPublicStatic = member.IsStatic && member.DeclaredAccessibility == Accessibility.Public;
             if (!isPublicStatic) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.MethodNotPublicStatic, methodAttribute.GetLocation(), member.Name));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MethodNotPublicStatic, methodAttribute.GetLocation(), member.Name));
             }
 
             SignatureValidation validation = ValidatePrimitiveMethodSignature(member, role, mode, signatureContext);
             if (validation.ExpectedSignature is not null && !validation.IsValid) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidPrimitiveMethodSignature, methodAttribute.GetLocation(), member.Name, role.ToString(), validation.ExpectedSignature));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidPrimitiveMethodSignature, methodAttribute.GetLocation(), member.Name, role.ToString(), validation.ExpectedSignature));
             }
 
             bool isValid = isPublicStatic && validation.IsValid;

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using ComputerysBitStream.Generator.Diagnostics;
 using ComputerysBitStream.Generator.Emitters;
+using ComputerysBitStream.Generator.Emission;
 using Microsoft.CodeAnalysis;
 
 namespace ComputerysBitStream.Generator;
@@ -22,7 +24,7 @@ internal readonly ref partial struct ExecutionContext {
             if (resolved is not ResolvedStructDefinition resolvedStruct) { continue; }
 
             if (!usedAliases.Add(structDefinition.Alias)) {
-                context.ReportDiagnostic(new DiagnosticValueType(Diagnostics.DuplicateAlias, structDefinition.Location, structDefinition.Alias).ToDiagnostic());
+                context.ReportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.DuplicateAlias, structDefinition.Location, structDefinition.Alias).ToDiagnostic());
                 continue;
             }
 

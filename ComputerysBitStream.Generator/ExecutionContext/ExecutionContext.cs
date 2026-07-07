@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using ComputerysBitStream.Generator.Diagnostics;
+using ComputerysBitStream.Generator.EquatableCollections;
 using Microsoft.CodeAnalysis;
 
 namespace ComputerysBitStream.Generator;
@@ -28,7 +30,7 @@ internal readonly ref partial struct ExecutionContext {
                 ImmutableArray<string> interfaces = settings.InterfaceFullyQualifiedNames;
                 return interfaces.IsDefaultOrEmpty ? "(no interfaces)" : string.Join(", ", interfaces);
             }));
-            ReportDiagnostics(ImmutableArray.Create(new DiagnosticValueType(Diagnostics.MultipleGlobalSettings, globalSettingsDataArray[0].Location, conflictingDefinitions)));
+            ReportDiagnostics(ImmutableArray.Create(new DiagnosticValueType(DiagnosticDescriptors.MultipleGlobalSettings, globalSettingsDataArray[0].Location, conflictingDefinitions)));
         }
         _globalSettings = globalSettingsDataArray.Length > 0 ? globalSettingsDataArray[0] : fallbackGlobalSetting;
 
@@ -80,7 +82,7 @@ internal readonly ref partial struct ExecutionContext {
             string key = string.IsNullOrEmpty(definition.TargetTypeFullyQualifiedName) ? string.Empty : $"{definition.TargetTypeFullyQualifiedName}|{definition.Namespace}|{definition.Alias}";
 
             if (!string.IsNullOrEmpty(key) && !seenKeys.Add(key)) {
-                duplicateDiagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicatePrimitiveDefinition, definition.Location, definition.TargetTypeFullyQualifiedName, definition.Alias, definition.Namespace));
+                duplicateDiagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicatePrimitiveDefinition, definition.Location, definition.TargetTypeFullyQualifiedName, definition.Alias, definition.Namespace));
                 continue;
             }
 
@@ -104,7 +106,7 @@ internal readonly ref partial struct ExecutionContext {
             string key = string.IsNullOrEmpty(definition.TypeFullyQualifiedName) ? string.Empty : $"{definition.TypeFullyQualifiedName}|{definition.Alias}";
 
             if (!string.IsNullOrEmpty(key) && !seenKeys.Add(key)) {
-                duplicateDiagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateStructDefinition, definition.Location, definition.TypeFullyQualifiedName, definition.Alias));
+                duplicateDiagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateStructDefinition, definition.Location, definition.TypeFullyQualifiedName, definition.Alias));
                 continue;
             }
 

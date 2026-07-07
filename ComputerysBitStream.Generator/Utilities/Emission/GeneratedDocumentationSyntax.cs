@@ -1,4 +1,4 @@
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Emission;
 
 internal static class GeneratedDocumentationSyntax {
     internal const string WriteValue = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.WriteValue\"/>";

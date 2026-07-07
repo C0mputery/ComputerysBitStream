@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Roslyn;
 
 internal static class AttributeArgumentUtility {
     public static bool TryGetValue<T>(this TypedConstant constant, [NotNullWhen(true)] out T value) {

@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Roslyn;
 
 internal readonly record struct ParameterSpec(ITypeSymbol? Type, RefKind? RefKind);
 

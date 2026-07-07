@@ -1,6 +1,8 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using ComputerysBitStream.Generator.Diagnostics;
+using ComputerysBitStream.Generator.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -30,7 +32,7 @@ internal static class SettingsCollector {
         ImmutableArray<ITypeSymbol>.Builder validSettingsInterfaces = ImmutableArray.CreateBuilder<ITypeSymbol>();
         foreach (ITypeSymbol settingsInterface in settingsInterfaces) {
             if (!settingsInterface.HasAttribute(BitStreamTypeNames.Settings)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidSettingsInterface, attributeLocation, settingsInterface.Name));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidSettingsInterface, attributeLocation, settingsInterface.Name));
                 continue;
             }
 

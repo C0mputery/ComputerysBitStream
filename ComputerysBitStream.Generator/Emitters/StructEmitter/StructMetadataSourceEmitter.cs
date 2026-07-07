@@ -1,4 +1,5 @@
 using ComputerysBitStream.Attributes;
+using ComputerysBitStream.Generator.Emission;
 
 namespace ComputerysBitStream.Generator.Emitters;
 

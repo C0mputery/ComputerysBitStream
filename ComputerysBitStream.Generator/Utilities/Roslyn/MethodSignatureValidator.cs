@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Roslyn;
 
 internal readonly record struct SignatureValidation(bool IsValid, string? ExpectedSignature);
 

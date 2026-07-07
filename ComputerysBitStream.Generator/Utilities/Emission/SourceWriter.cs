@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Emission;
 
 internal sealed class SourceWriter {
     private readonly StringBuilder _builder = new();

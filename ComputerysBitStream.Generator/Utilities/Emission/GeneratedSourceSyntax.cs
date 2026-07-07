@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Emission;
 
 internal static class GeneratedSourceSyntax {
     private static readonly string[] StandardUsings = [

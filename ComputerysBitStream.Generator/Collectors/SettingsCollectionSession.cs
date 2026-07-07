@@ -1,5 +1,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using ComputerysBitStream.Generator.Diagnostics;
+using ComputerysBitStream.Generator.Emission;
+using ComputerysBitStream.Generator.EquatableCollections;
+using ComputerysBitStream.Generator.Roslyn;
 using Microsoft.CodeAnalysis;
 
 namespace ComputerysBitStream.Generator.Collectors;
@@ -22,7 +26,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
     private Collected<SettingsDefinition> CollectSettingsData(ITypeSymbol configInterfaceSymbol, Location? location) {
         if (!TryEnter(configInterfaceSymbol)) {
             return new Collected<SettingsDefinition>(
-                CreateEmptySettings(location), ImmutableArray.Create(new DiagnosticValueType(Diagnostics.CircularSettingsReference, location, configInterfaceSymbol.Name))
+                CreateEmptySettings(location), ImmutableArray.Create(new DiagnosticValueType(DiagnosticDescriptors.CircularSettingsReference, location, configInterfaceSymbol.Name))
             );
         }
 
@@ -40,7 +44,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
 
         foreach (ITypeSymbol settingsInterface in settingsInterfaces) {
             if (!settingsInterface.HasAttribute(BitStreamTypeNames.Settings)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidSettingsInterface, location, settingsInterface.Name));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidSettingsInterface, location, settingsInterface.Name));
                 continue;
             }
 
@@ -59,7 +63,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
         }
 
         ImmutableArray<DiagnosticValueType> diagnosticArray = diagnostics.ToImmutable();
-        if (!Collected<SettingsReference?>.IsValidDiagnostics(diagnosticArray)) {
+        if (DiagnosticValueType.HasErrors(diagnosticArray)) {
             return new Collected<SettingsReference?>(null, diagnosticArray);
         }
 
@@ -81,7 +85,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
 
         foreach (ITypeSymbol settingsInterface in settingsInterfaces) {
             if (!settingsInterface.HasAttribute(BitStreamTypeNames.Settings)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidSettingsInterface, location, settingsInterface.Name));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidSettingsInterface, location, settingsInterface.Name));
                 continue;
             }
 
@@ -125,7 +129,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                 if (!attributeData.IsAttribute(BitStreamTypeNames.Serializer)) { continue; }
 
                 if (!attributeData.TryGetValue("type", out INamedTypeSymbol? serializerSymbol)) {
-                    diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attributeData.GetLocation(), "type", "BitStreamSerializer"));
+                    diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeData.GetLocation(), "type", "BitStreamSerializer"));
                     continue;
                 }
 
@@ -142,7 +146,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                     if (collectedPrimitive.IsValid) {
                         string primitiveKey = collectedPrimitive.Value.ExtensionClassFullyQualifiedName;
                         if (includedPrimitives.ContainsKey(primitiveKey)) {
-                            diagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateIncludedPrimitive, attributeData.GetLocation(), primitiveKey));
+                            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateIncludedPrimitive, attributeData.GetLocation(), primitiveKey));
                         }
                         else {
                             includedPrimitives[primitiveKey] = collectedPrimitive.Value;
@@ -158,7 +162,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                         if (collectedStruct.IsValid) {
                             string structKey = collectedStruct.Value.TypeFullyQualifiedName;
                             if (localStructs.ContainsKey(structKey)) {
-                                diagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateIncludedStruct, attributeData.GetLocation(), structKey));
+                                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateIncludedStruct, attributeData.GetLocation(), structKey));
                             }
                             else {
                                 localStructs[structKey] = collectedStruct.Value;
@@ -173,7 +177,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                         if (collectedProxyStruct.IsValid) {
                             string structKey = collectedProxyStruct.Value.TypeFullyQualifiedName;
                             if (localStructs.ContainsKey(structKey)) {
-                                diagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateIncludedStruct, attributeData.GetLocation(), structKey));
+                                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateIncludedStruct, attributeData.GetLocation(), structKey));
                             }
                             else {
                                 localStructs[structKey] = collectedProxyStruct.Value;
@@ -184,12 +188,12 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                 }
                 else if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.StructMetadata, out AttributeData? metadataAttribute)) {
                     if (!metadataAttribute.TryGetValue("size", out int size)) {
-                        diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, metadataAttribute.GetLocation(), "size", "BitStreamStructMetadata"));
+                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, metadataAttribute.GetLocation(), "size", "BitStreamStructMetadata"));
                         continue;
                     }
 
                     if (!StructMetadataHelper.IsValidSize(size)) {
-                        diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidStructMetadataSize, metadataAttribute.GetLocation(), size.ToString()));
+                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidStructMetadataSize, metadataAttribute.GetLocation(), size.ToString()));
                         continue;
                     }
 
@@ -209,7 +213,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                         ExtensionNamespace: serializerSymbol.GetFullyQualifiedNamespace()
                     );
                     if (externalStructs.ContainsKey(externalStruct.TypeFullyQualifiedName)) {
-                        diagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateIncludedExternalStruct, attributeData.GetLocation(), externalStruct.TypeFullyQualifiedName));
+                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateIncludedExternalStruct, attributeData.GetLocation(), externalStruct.TypeFullyQualifiedName));
                     }
                     else {
                         externalStructs[externalStruct.TypeFullyQualifiedName] = externalStruct;
@@ -217,7 +221,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                     continue;
                 }
 
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidSettingType, attributeData.GetLocation(), serializerSymbol.Name));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidSettingType, attributeData.GetLocation(), serializerSymbol.Name));
             }
         }
 
@@ -248,7 +252,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
     private static void MergeUniquePrimitives(Dictionary<string, PrimitiveDefinition> destination, EquatableImmutableDictionary<string, PrimitiveDefinition> source, ImmutableArray<DiagnosticValueType>.Builder diagnostics) {
         foreach (KeyValuePair<string, PrimitiveDefinition> pair in source) {
             if (destination.ContainsKey(pair.Key)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateIncludedPrimitive, pair.Value.Location, pair.Value.ExtensionClassFullyQualifiedName));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateIncludedPrimitive, pair.Value.Location, pair.Value.ExtensionClassFullyQualifiedName));
                 continue;
             }
 
@@ -259,7 +263,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
     private static void MergeUniqueStructs(Dictionary<string, StructDefinition> destination, EquatableImmutableDictionary<string, StructDefinition> source, ImmutableArray<DiagnosticValueType>.Builder diagnostics) {
         foreach (KeyValuePair<string, StructDefinition> pair in source) {
             if (destination.ContainsKey(pair.Key)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateIncludedStruct, pair.Value.Location, pair.Key));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateIncludedStruct, pair.Value.Location, pair.Key));
                 continue;
             }
 
@@ -270,7 +274,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
     private static void MergeUniqueExternalStructs(Dictionary<string, ExternalStructDefinition> destination, EquatableImmutableDictionary<string, ExternalStructDefinition> source, ImmutableArray<DiagnosticValueType>.Builder diagnostics) {
         foreach (KeyValuePair<string, ExternalStructDefinition> pair in source) {
             if (destination.ContainsKey(pair.Key)) {
-                diagnostics.Add(new DiagnosticValueType(Diagnostics.DuplicateIncludedExternalStruct, null, pair.Key));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateIncludedExternalStruct, null, pair.Key));
                 continue;
             }
 
@@ -279,15 +283,15 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
     }
 
     private DiagnosticDescriptor GetDuplicateIncludedDiagnostic(INamedTypeSymbol serializerSymbol) {
-        if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.Primitive, out _)) { return Diagnostics.DuplicateIncludedPrimitive; }
+        if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.Primitive, out _)) { return DiagnosticDescriptors.DuplicateIncludedPrimitive; }
 
         if (serializerSymbol.IsDefinedIn(compilation)
             && (serializerSymbol.TryGetAttribute(BitStreamTypeNames.Struct, out _) || serializerSymbol.TryGetAttribute(BitStreamTypeNames.ProxyStruct, out _))) {
-            return Diagnostics.DuplicateIncludedStruct;
+            return DiagnosticDescriptors.DuplicateIncludedStruct;
         }
 
-        if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.StructMetadata, out _)) { return Diagnostics.DuplicateIncludedExternalStruct; }
+        if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.StructMetadata, out _)) { return DiagnosticDescriptors.DuplicateIncludedExternalStruct; }
 
-        return Diagnostics.InvalidSettingType;
+        return DiagnosticDescriptors.InvalidSettingType;
     }
 }

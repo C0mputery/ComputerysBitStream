@@ -1,6 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace ComputerysBitStream.Generator;
+namespace ComputerysBitStream.Generator.Diagnostics;
 
 internal readonly record struct DiagnosticValueType(
     DiagnosticDescriptor Descriptor,
@@ -8,9 +10,11 @@ internal readonly record struct DiagnosticValueType(
     params object?[] MessageArgs
 ) {
     public Diagnostic ToDiagnostic() => Diagnostic.Create(Descriptor, Location?.ToLocation(), MessageArgs);
+
+    public static bool HasErrors(IEnumerable<DiagnosticValueType> diagnostics) => diagnostics.Any(static diagnostic => diagnostic.Descriptor.DefaultSeverity == DiagnosticSeverity.Error);
 }
 
-internal static class Diagnostics {
+internal static class DiagnosticDescriptors {
     public static readonly DiagnosticDescriptor DuplicateRole = new(
         id: "CBS001",
         title: "Multiple methods with the same role",

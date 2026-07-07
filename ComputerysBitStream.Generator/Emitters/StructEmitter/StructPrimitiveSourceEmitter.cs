@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using ComputerysBitStream.Attributes;
+using ComputerysBitStream.Generator.Emission;
+using ComputerysBitStream.Generator.EquatableCollections;
 
 namespace ComputerysBitStream.Generator.Emitters;
 

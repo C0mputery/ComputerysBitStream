@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using ComputerysBitStream.Attributes;
+using ComputerysBitStream.Generator.Diagnostics;
+using ComputerysBitStream.Generator.Emission;
+using ComputerysBitStream.Generator.EquatableCollections;
+using ComputerysBitStream.Generator.Roslyn;
 
 namespace ComputerysBitStream.Generator;
 
@@ -36,7 +40,7 @@ internal sealed class StructResolver {
         if (_resolvedStructs.TryGetValue(typeFqn, out ResolvedStructDefinition? cached)) { return cached; }
 
         if (!_computingStructs.Add(typeFqn)) {
-            _reportDiagnostic(new DiagnosticValueType(Diagnostics.CyclicStructReference, structDefinition.Location, typeFqn));
+            _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.CyclicStructReference, structDefinition.Location, typeFqn));
             _resolvedStructs[typeFqn] = null;
             return null;
         }
@@ -66,7 +70,7 @@ internal sealed class StructResolver {
 
         if (anyMemberSkipped || resolvedMembers.Count == 0) {
             if (resolvedMembers.Count == 0) {
-                _reportDiagnostic(new DiagnosticValueType(Diagnostics.StructNoSerializableMembers, structDefinition.Location, typeFqn));
+                _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.StructNoSerializableMembers, structDefinition.Location, typeFqn));
             }
 
             _resolvedStructs[typeFqn] = null;
@@ -116,7 +120,7 @@ internal sealed class StructResolver {
 
         if (member.Quantized is QuantizedDefinition quantized) {
             if (!TryFindPrimitiveByTargetType(effectiveSettings, memberType, PrimitiveSerializationMode.Quantized, out PrimitiveDefinition quantizedPrimitive)) {
-                _reportDiagnostic(new DiagnosticValueType(Diagnostics.QuantizedPrimitiveNotInSettings, member.Location ?? quantized.Location, member.MemberName, memberType));
+                _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.QuantizedPrimitiveNotInSettings, member.Location ?? quantized.Location, member.MemberName, memberType));
                 return false;
             }
 
@@ -147,7 +151,7 @@ internal sealed class StructResolver {
         if (effectiveSettings.Structs.TryGetValue(memberType, out StructDefinition nestedStruct)) {
             ResolvedStructDefinition? nestedResolved = Resolve(nestedStruct);
             if (nestedResolved is not ResolvedStructDefinition nested) {
-                _reportDiagnostic(new DiagnosticValueType(Diagnostics.StructMemberNotSerializable, member.Location, member.MemberName, memberType, settingsLabel));
+                _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.StructMemberNotSerializable, member.Location, member.MemberName, memberType, settingsLabel));
                 return false;
             }
 
@@ -232,16 +236,16 @@ internal sealed class StructResolver {
         }
 
         if (member.IsVariableLength) {
-            _reportDiagnostic(new DiagnosticValueType(Diagnostics.VariableLengthPrimitiveNotInSettings, member.Location, member.MemberName, memberType));
+            _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.VariableLengthPrimitiveNotInSettings, member.Location, member.MemberName, memberType));
             return false;
         }
 
         if (TryFindPrimitiveByTargetType(effectiveSettings, memberType, PrimitiveSerializationMode.Quantized, out _)) {
-            _reportDiagnostic(new DiagnosticValueType(Diagnostics.QuantizedPrimitiveRequiresAttribute, member.Location, member.MemberName, memberType, settingsLabel));
+            _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.QuantizedPrimitiveRequiresAttribute, member.Location, member.MemberName, memberType, settingsLabel));
             return false;
         }
 
-        _reportDiagnostic(new DiagnosticValueType(Diagnostics.DefaultPrimitiveNotInSettings, member.Location, memberType, settingsLabel));
+        _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.DefaultPrimitiveNotInSettings, member.Location, memberType, settingsLabel));
         return false;
     }
 

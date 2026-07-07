@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using ComputerysBitStream.Generator.Diagnostics;
+using ComputerysBitStream.Generator.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -9,7 +11,7 @@ namespace ComputerysBitStream.Generator.Analyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class PrimitiveMethodUsageAnalyzer : DiagnosticAnalyzer {
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Diagnostics.PrimitiveMethodCalledOutsidePrimitive);
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.PrimitiveMethodCalledOutsidePrimitive);
 
     public override void Initialize(AnalysisContext context) {
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
@@ -28,7 +30,7 @@ public sealed class PrimitiveMethodUsageAnalyzer : DiagnosticAnalyzer {
         if (!TryGetInvokedMethod(context.SemanticModel, invocation, context.CancellationToken, out IMethodSymbol? targetMethod)) { return; }
         if (!targetMethod.HasRestrictedPrimitiveMethodAttribute(restrictedAttribute)) { return; }
 
-        context.ReportDiagnostic(Diagnostic.Create(Diagnostics.PrimitiveMethodCalledOutsidePrimitive, invocation.GetLocation(), targetMethod.Name));
+        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.PrimitiveMethodCalledOutsidePrimitive, invocation.GetLocation(), targetMethod.Name));
     }
 
     private static bool TryGetInvokedMethod(SemanticModel semanticModel, InvocationExpressionSyntax invocation, System.Threading.CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? targetMethod) {
