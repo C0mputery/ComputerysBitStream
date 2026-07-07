@@ -1,7 +1,7 @@
 using System;
 using ComputerysBitStream.Attributes;
 
-namespace ComputerysBitStream.Generator.Roslyn;
+namespace ComputerysBitStream.Generator;
 
 internal static class BitStreamTypeNames {
     public static readonly string DefaultSettings = typeof(DefaultBitStreamSettingsAttribute).FullName!;

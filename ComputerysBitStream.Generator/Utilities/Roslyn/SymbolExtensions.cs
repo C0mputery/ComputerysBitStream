@@ -15,9 +15,7 @@ internal static class SymbolExtensions {
         SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers
     );
 
-    private static readonly SymbolDisplayFormat EmitTypeFormat = new(
-        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes | SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers
-    );
+    private static readonly SymbolDisplayFormat EmitTypeFormat = new(miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes | SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers);
 
     public static string GetFullyQualifiedName(this ISymbol symbol) { return symbol.ToDisplayString(FullyQualifiedFormatWithoutUseSpecialTypesAndGlobal); }
 

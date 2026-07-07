@@ -4,12 +4,7 @@ namespace ComputerysBitStream.Generator.Roslyn;
 
 internal readonly record struct SignatureValidation(bool IsValid, string? ExpectedSignature);
 
-internal readonly record struct MethodSignatureRule(
-    ITypeSymbol ReturnType,
-    ParameterSpec[] Parameters,
-    string ExpectedSignature,
-    bool RequiresRefExtension = true
-) {
+internal readonly record struct MethodSignatureRule(ITypeSymbol ReturnType, ParameterSpec[] Parameters, string ExpectedSignature, bool RequiresRefExtension = true ) {
     public MethodSignatureRule AppendParameters(ParameterSpec[] additionalParameters, string additionalSignatureSuffix) => new(
         ReturnType,
         [..Parameters, ..additionalParameters],

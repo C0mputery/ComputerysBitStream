@@ -49,42 +49,50 @@ internal static class PrimitiveCollector {
         }
 
         string alias = arguments.TryGetValue("alias", out string? aliasValue) ? aliasValue : string.Empty;
-        alias = string.IsNullOrEmpty(alias) ? DisplayNameUtility.GetDisplayName(targetType) : alias;
+        if (string.IsNullOrEmpty(alias)) { alias = DisplayNameUtility.GetDisplayName(targetType); }
+
         int? fixedSize = null;
         int? minBits = null;
         int? maxBits = null;
 
         switch (mode) {
             case PrimitiveSerializationMode.FixedSize:
-                if (targetTypeSymbol.TryGetAttribute(BitStreamTypeNames.FixedSizePrimitive, out AttributeData? fixedSizeAttribute)) {
-                    if (!fixedSizeAttribute.TryGetValue("size", out int parsedFixedSize)) {
-                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "size", "BitStreamFixedSizePrimitive"));
-                    }
-                    else {
-                        fixedSize = parsedFixedSize;
-                        if (fixedSize <= 0) { diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidFixedSize, attributeLocation, fixedSize.ToString())); }
-                    }
+                if (!targetTypeSymbol.TryGetAttribute(BitStreamTypeNames.FixedSizePrimitive, out AttributeData? fixedSizeAttribute)) {
+                    diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingCompanionAttribute, attributeLocation, targetTypeSymbol.Name, "FixedSize", "BitStreamFixedSizePrimitive"));
+                    break;
                 }
-                else { diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingCompanionAttribute, attributeLocation, targetTypeSymbol.Name, "FixedSize", "BitStreamFixedSizePrimitive")); }
+
+                if (!fixedSizeAttribute.TryGetValue("size", out int parsedFixedSize)) {
+                    diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "size", "BitStreamFixedSizePrimitive"));
+                    break;
+                }
+
+                fixedSize = parsedFixedSize;
+                if (fixedSize <= 0) {
+                    diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidFixedSize, attributeLocation, fixedSize.ToString()));
+                }
+
                 break;
             case PrimitiveSerializationMode.Quantized:
-                if (targetTypeSymbol.TryGetAttribute(BitStreamTypeNames.QuantizedPrimitive, out AttributeData? quantizedAttribute)) {
-                    ImmutableDictionary<string, TypedConstant> quantizedArguments = quantizedAttribute.GetConstructorArgumentsByName();
-                    if (!quantizedArguments.TryGetValue("minimumBits", out int parsedMinBits)) {
-                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "minimumBits", "BitStreamQuantizedPrimitive"));
-                    }
-                    else { minBits = parsedMinBits; }
-
-                    if (!quantizedArguments.TryGetValue("maximumBits", out int parsedMaxBits)) {
-                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "maximumBits", "BitStreamQuantizedPrimitive"));
-                    }
-                    else { maxBits = parsedMaxBits; }
-
-                    if (minBits is not null && maxBits is not null && (minBits <= 0 || maxBits < minBits)) {
-                        diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidQuantizedBitRange, attributeLocation, minBits.ToString(), maxBits.ToString()));
-                    }
+                if (!targetTypeSymbol.TryGetAttribute(BitStreamTypeNames.QuantizedPrimitive, out AttributeData? quantizedAttribute)) {
+                    diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingCompanionAttribute, attributeLocation, targetTypeSymbol.Name, "Quantized", "BitStreamQuantizedPrimitive"));
+                    break;
                 }
-                else { diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingCompanionAttribute, attributeLocation, targetTypeSymbol.Name, "Quantized", "BitStreamQuantizedPrimitive")); }
+
+                ImmutableDictionary<string, TypedConstant> quantizedArguments = quantizedAttribute.GetConstructorArgumentsByName();
+                if (!quantizedArguments.TryGetValue("minimumBits", out int parsedMinBits)) {
+                    diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "minimumBits", "BitStreamQuantizedPrimitive"));
+                }
+                else { minBits = parsedMinBits; }
+
+                if (!quantizedArguments.TryGetValue("maximumBits", out int parsedMaxBits)) {
+                    diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "maximumBits", "BitStreamQuantizedPrimitive"));
+                }
+                else { maxBits = parsedMaxBits; }
+
+                if (minBits is not null && maxBits is not null && (minBits <= 0 || maxBits < minBits)) {
+                    diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidQuantizedBitRange, attributeLocation, minBits.ToString(), maxBits.ToString()));
+                }
                 break;
             case PrimitiveSerializationMode.VariableLength:
             default:
@@ -146,8 +154,7 @@ internal static class PrimitiveCollector {
     }
 
     private static Collected<PrimitiveDefinition> CreateInvalidPrimitiveDefinition(
-        INamedTypeSymbol targetTypeSymbol,
-        Location? attributeLocation,
+        INamedTypeSymbol targetTypeSymbol, Location? attributeLocation,
         ImmutableArray<DiagnosticValueType>.Builder diagnostics
     ) {
         return CreateInvalidPrimitiveDefinition(targetTypeSymbol, null, attributeLocation, diagnostics);
@@ -185,23 +192,29 @@ internal static class PrimitiveCollector {
     }
 
     private static Dictionary<BitStreamPrimitiveRole, PrimitiveMethodDefinition> CollectPrimitiveMethods(
-        INamedTypeSymbol targetTypeSymbol,
-        PrimitiveSerializationMode mode,
-        PrimitiveSignatureContext signatureContext,
+        INamedTypeSymbol targetTypeSymbol, PrimitiveSerializationMode mode, PrimitiveSignatureContext signatureContext,
         ImmutableArray<DiagnosticValueType>.Builder diagnostics
     ) {
         Dictionary<BitStreamPrimitiveRole, PrimitiveMethodDefinition> methodsByRole = new();
+        Dictionary<BitStreamPrimitiveRole, Location?> roleLocations = new();
 
         foreach (IMethodSymbol member in targetTypeSymbol.GetMembers().OfType<IMethodSymbol>()) {
             if (!member.TryGetAttribute(BitStreamTypeNames.PrimitiveMethod, out AttributeData? methodAttribute)) { continue; }
 
+            Location? methodLocation = methodAttribute.GetLocation();
+
             if (!methodAttribute.TryGetValue("role", out BitStreamPrimitiveRole role)) {
-                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, methodAttribute.GetLocation(), "role", "BitStreamPrimitiveMethod"));
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, methodLocation, "role", "BitStreamPrimitiveMethod"));
                 continue;
             }
 
             if (methodsByRole.ContainsKey(role)) {
-                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateRole, methodAttribute.GetLocation(), role));
+                if (roleLocations.TryGetValue(role, out Location? firstLocation)) {
+                    diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateRole, firstLocation, role));
+                    roleLocations.Remove(role);
+                }
+
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.DuplicateRole, methodLocation, role));
                 continue;
             }
 
@@ -217,47 +230,70 @@ internal static class PrimitiveCollector {
 
             bool isValid = isPublicStatic && validation.IsValid;
             methodsByRole[role] = new PrimitiveMethodDefinition(member.Name, isValid);
+            roleLocations[role] = methodLocation;
         }
 
         return methodsByRole;
     }
 
     private static SignatureValidation ValidatePrimitiveMethodSignature(IMethodSymbol method, BitStreamPrimitiveRole role, PrimitiveSerializationMode mode, PrimitiveSignatureContext context) {
-        MethodSignatureRule rule = GetRoleSignatureRule(role, context);
-        if (mode == PrimitiveSerializationMode.Quantized && role != BitStreamPrimitiveRole.Size && role != BitStreamPrimitiveRole.TryRead) { rule = WithQuantization(rule, context); }
-
-        return MethodSignatureValidator.Validate(method, rule);
+        return MethodSignatureValidator.Validate(method, GetSignatureRule(role, mode, context));
     }
 
-    private static MethodSignatureRule GetRoleSignatureRule(BitStreamPrimitiveRole role, PrimitiveSignatureContext context) {
+    private static MethodSignatureRule GetSignatureRule(BitStreamPrimitiveRole role, PrimitiveSerializationMode mode, PrimitiveSignatureContext context) {
         string typeName = context.TypeName;
 
-        return role switch {
-            BitStreamPrimitiveRole.Size => new MethodSignatureRule(
+        return (role, mode) switch {
+            (BitStreamPrimitiveRole.Size, _) => new MethodSignatureRule(
                 context.IntType, [MethodSignatureUtility.Value(context.TargetType)],
                 $"public static int MethodName({typeName} value)", RequiresRefExtension: false
             ),
-            BitStreamPrimitiveRole.Write => new MethodSignatureRule(
-                context.VoidType, [MethodSignatureUtility.Ref(context.WriteContext), MethodSignatureUtility.Value(context.TargetType)],
-                $"public static void MethodName(this ref WriteContext context, {typeName} value)"
-            ),
-            BitStreamPrimitiveRole.WriteSpan => new MethodSignatureRule(
-                context.VoidType, [MethodSignatureUtility.Ref(context.WriteContext), MethodSignatureUtility.Value(context.ReadOnlySpanOfTarget)],
-                $"public static void MethodName(this ref WriteContext context, ReadOnlySpan<{typeName}> values)"
-            ),
-            BitStreamPrimitiveRole.TryRead => new MethodSignatureRule(
+            (BitStreamPrimitiveRole.TryRead, _) => new MethodSignatureRule(
                 context.BoolType, [MethodSignatureUtility.Ref(context.ReadContext), MethodSignatureUtility.Out(context.TargetType)],
                 $"public static bool MethodName(this ref ReadContext context, out {typeName} value)"
             ),
-            BitStreamPrimitiveRole.Peek or BitStreamPrimitiveRole.Read => new MethodSignatureRule(
+            (BitStreamPrimitiveRole.Write, PrimitiveSerializationMode.Quantized) => new MethodSignatureRule(
+                context.VoidType,
+                [MethodSignatureUtility.Ref(context.WriteContext), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.IntType)],
+                $"public static void MethodName(this ref WriteContext context, {typeName} value, {typeName} min, {typeName} max, int bitCount)"
+            ),
+            (BitStreamPrimitiveRole.Write, _) => new MethodSignatureRule(
+                context.VoidType, [MethodSignatureUtility.Ref(context.WriteContext), MethodSignatureUtility.Value(context.TargetType)],
+                $"public static void MethodName(this ref WriteContext context, {typeName} value)"
+            ),
+            (BitStreamPrimitiveRole.WriteSpan, PrimitiveSerializationMode.Quantized) => new MethodSignatureRule(
+                context.VoidType,
+                [MethodSignatureUtility.Ref(context.WriteContext), MethodSignatureUtility.Value(context.ReadOnlySpanOfTarget), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.IntType)],
+                $"public static void MethodName(this ref WriteContext context, ReadOnlySpan<{typeName}> values, {typeName} min, {typeName} max, int bitCount)"
+            ),
+            (BitStreamPrimitiveRole.WriteSpan, _) => new MethodSignatureRule(
+                context.VoidType, [MethodSignatureUtility.Ref(context.WriteContext), MethodSignatureUtility.Value(context.ReadOnlySpanOfTarget)],
+                $"public static void MethodName(this ref WriteContext context, ReadOnlySpan<{typeName}> values)"
+            ),
+            (BitStreamPrimitiveRole.Peek or BitStreamPrimitiveRole.Read, PrimitiveSerializationMode.Quantized) => new MethodSignatureRule(
+                context.TargetType,
+                [MethodSignatureUtility.Ref(context.ReadContext), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.IntType)],
+                $"public static {typeName} MethodName(this ref ReadContext context, {typeName} min, {typeName} max, int bitCount)"
+            ),
+            (BitStreamPrimitiveRole.Peek or BitStreamPrimitiveRole.Read, _) => new MethodSignatureRule(
                 context.TargetType, [MethodSignatureUtility.Ref(context.ReadContext)],
                 $"public static {typeName} MethodName(this ref ReadContext context)"
             ),
-            BitStreamPrimitiveRole.PeekArray or BitStreamPrimitiveRole.ReadArray => new MethodSignatureRule(
+            (BitStreamPrimitiveRole.PeekArray or BitStreamPrimitiveRole.ReadArray, PrimitiveSerializationMode.Quantized) => new MethodSignatureRule(
+                context.ArrayOfTarget,
+                [MethodSignatureUtility.Ref(context.ReadContext), MethodSignatureUtility.Value(context.IntType), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.IntType)],
+                $"public static {typeName}[] MethodName(this ref ReadContext context, int count, {typeName} min, {typeName} max, int bitCount)"
+            ),
+            (BitStreamPrimitiveRole.PeekArray or BitStreamPrimitiveRole.ReadArray, _) => new MethodSignatureRule(
                 context.ArrayOfTarget, [MethodSignatureUtility.Ref(context.ReadContext), MethodSignatureUtility.Value(context.IntType)],
                 $"public static {typeName}[] MethodName(this ref ReadContext context, int count)"
             ),
-            BitStreamPrimitiveRole.PeekSpan or BitStreamPrimitiveRole.ReadSpan => new MethodSignatureRule(
+            (BitStreamPrimitiveRole.PeekSpan or BitStreamPrimitiveRole.ReadSpan, PrimitiveSerializationMode.Quantized) => new MethodSignatureRule(
+                context.VoidType,
+                [MethodSignatureUtility.Ref(context.ReadContext), MethodSignatureUtility.Value(context.IntType), MethodSignatureUtility.Value(context.SpanOfTarget), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.IntType)],
+                $"public static void MethodName(this ref ReadContext context, int count, Span<{typeName}> destination, {typeName} min, {typeName} max, int bitCount)"
+            ),
+            (BitStreamPrimitiveRole.PeekSpan or BitStreamPrimitiveRole.ReadSpan, _) => new MethodSignatureRule(
                 context.VoidType,
                 [MethodSignatureUtility.Ref(context.ReadContext), MethodSignatureUtility.Value(context.IntType), MethodSignatureUtility.Value(context.SpanOfTarget)],
                 $"public static void MethodName(this ref ReadContext context, int count, Span<{typeName}> destination)"
@@ -266,24 +302,10 @@ internal static class PrimitiveCollector {
         };
     }
 
-    private static MethodSignatureRule WithQuantization(MethodSignatureRule rule, PrimitiveSignatureContext context) {
-        string typeName = context.TypeName;
-        return rule.AppendParameters(
-            [MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.TargetType), MethodSignatureUtility.Value(context.IntType)],
-            $", {typeName} min, {typeName} max, int bitCount)"
-        );
-    }
-
     private readonly record struct PrimitiveSignatureContext(
-        ITypeSymbol TargetType,
-        INamedTypeSymbol? WriteContext,
-        INamedTypeSymbol? ReadContext,
-        ITypeSymbol? ReadOnlySpanOfTarget,
-        ITypeSymbol? SpanOfTarget,
-        ITypeSymbol ArrayOfTarget,
-        ITypeSymbol IntType,
-        ITypeSymbol VoidType,
-        ITypeSymbol BoolType
+        ITypeSymbol TargetType, INamedTypeSymbol? WriteContext, INamedTypeSymbol? ReadContext,
+        ITypeSymbol? ReadOnlySpanOfTarget, ITypeSymbol? SpanOfTarget, ITypeSymbol ArrayOfTarget,
+        ITypeSymbol IntType, ITypeSymbol VoidType, ITypeSymbol BoolType
     ) {
         public static PrimitiveSignatureContext Create(Compilation compilation, ITypeSymbol targetType) {
             INamedTypeSymbol? readOnlySpanType = compilation.GetTypeByMetadataName(BitStreamTypeNames.ReadOnlySpan);
