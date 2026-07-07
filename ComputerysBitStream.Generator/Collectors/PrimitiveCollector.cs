@@ -11,7 +11,7 @@ namespace ComputerysBitStream.Generator.Collectors;
 internal static class PrimitiveCollector {
     public static IncrementalValuesProvider<Collected<PrimitiveDefinition>> GetPrimitiveData(IncrementalGeneratorInitializationContext context) {
         return context.SyntaxProvider.ForAttributeWithMetadataName(
-            fullyQualifiedMetadataName: BitStreamMetadataNames.Primitive,
+            fullyQualifiedMetadataName: BitStreamTypeNames.Primitive,
             predicate: (SyntaxNode node, CancellationToken _) => node is ClassDeclarationSyntax,
             transform: PrimitiveAttributeDataTransform
         );
@@ -54,7 +54,7 @@ internal static class PrimitiveCollector {
 
         switch (mode) {
             case PrimitiveSerializationMode.FixedSize:
-                if (targetTypeSymbol.TryGetAttribute(BitStreamMetadataNames.FixedSizePrimitive, out AttributeData? fixedSizeAttribute)) {
+                if (targetTypeSymbol.TryGetAttribute(BitStreamTypeNames.FixedSizePrimitive, out AttributeData? fixedSizeAttribute)) {
                     if (!fixedSizeAttribute.TryGetValue("size", out int parsedFixedSize)) {
                         diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attributeLocation, "size", "BitStreamFixedSizePrimitive"));
                     }
@@ -66,7 +66,7 @@ internal static class PrimitiveCollector {
                 else { diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingCompanionAttribute, attributeLocation, targetTypeSymbol.Name, "FixedSize", "BitStreamFixedSizePrimitive")); }
                 break;
             case PrimitiveSerializationMode.Quantized:
-                if (targetTypeSymbol.TryGetAttribute(BitStreamMetadataNames.QuantizedPrimitive, out AttributeData? quantizedAttribute)) {
+                if (targetTypeSymbol.TryGetAttribute(BitStreamTypeNames.QuantizedPrimitive, out AttributeData? quantizedAttribute)) {
                     ImmutableDictionary<string, TypedConstant> quantizedArguments = quantizedAttribute.GetConstructorArgumentsByName();
                     if (!quantizedArguments.TryGetValue("minimumBits", out int parsedMinBits)) {
                         diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attributeLocation, "minimumBits", "BitStreamQuantizedPrimitive"));
@@ -191,7 +191,7 @@ internal static class PrimitiveCollector {
         Dictionary<BitStreamPrimitiveRole, PrimitiveMethodDefinition> methodsByRole = new();
 
         foreach (IMethodSymbol member in targetTypeSymbol.GetMembers().OfType<IMethodSymbol>()) {
-            if (!member.TryGetAttribute(BitStreamMetadataNames.PrimitiveMethod, out AttributeData? methodAttribute)) { continue; }
+            if (!member.TryGetAttribute(BitStreamTypeNames.PrimitiveMethod, out AttributeData? methodAttribute)) { continue; }
 
             if (!methodAttribute.TryGetValue("role", out BitStreamPrimitiveRole role)) {
                 diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, methodAttribute.GetLocation(), "role", "BitStreamPrimitiveMethod"));
@@ -284,13 +284,13 @@ internal static class PrimitiveCollector {
         ITypeSymbol BoolType
     ) {
         public static PrimitiveSignatureContext Create(Compilation compilation, ITypeSymbol targetType) {
-            INamedTypeSymbol? readOnlySpanType = compilation.GetTypeByMetadataName(BitStreamMetadataNames.ReadOnlySpan);
-            INamedTypeSymbol? spanType = compilation.GetTypeByMetadataName(BitStreamMetadataNames.Span);
+            INamedTypeSymbol? readOnlySpanType = compilation.GetTypeByMetadataName(BitStreamTypeNames.ReadOnlySpan);
+            INamedTypeSymbol? spanType = compilation.GetTypeByMetadataName(BitStreamTypeNames.Span);
 
             return new PrimitiveSignatureContext(
                 TargetType: targetType,
-                WriteContext: compilation.GetTypeByMetadataName(BitStreamMetadataNames.WriteContext),
-                ReadContext: compilation.GetTypeByMetadataName(BitStreamMetadataNames.ReadContext),
+                WriteContext: compilation.GetTypeByMetadataName(BitStreamTypeNames.WriteContext),
+                ReadContext: compilation.GetTypeByMetadataName(BitStreamTypeNames.ReadContext),
                 ReadOnlySpanOfTarget: readOnlySpanType?.Construct(targetType),
                 SpanOfTarget: spanType?.Construct(targetType),
                 ArrayOfTarget: compilation.CreateArrayTypeSymbol(targetType),

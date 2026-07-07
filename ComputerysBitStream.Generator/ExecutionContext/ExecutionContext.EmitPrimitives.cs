@@ -54,7 +54,7 @@ internal readonly ref partial struct ExecutionContext {
         foreach (KeyValuePair<string, PrimitiveDefinition> pair in settings.Primitives) {
             PrimitiveDefinition candidate = pair.Value;
             if (candidate.Mode != PrimitiveSerializationMode.FixedSize) { continue; } // TODO: make this support Variable length types as well.
-            if (!string.Equals(candidate.TargetTypeFullyQualifiedName, BitStreamMetadataNames.Int32, StringComparison.Ordinal)) { continue; }
+            if (!string.Equals(candidate.TargetTypeFullyQualifiedName, BitStreamTypeNames.Int32, StringComparison.Ordinal)) { continue; }
             if (candidate.FixedSize is not int fixedSize || fixedSize <= 0) { continue; }
             if (!PrimitiveWrapperSourceEmitter.HasValidMethod(candidate, BitStreamPrimitiveRole.Write)) { continue; }
             if (!PrimitiveWrapperSourceEmitter.HasValidMethod(candidate, BitStreamPrimitiveRole.Peek)) { continue; }

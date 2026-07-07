@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,9 +15,8 @@ public sealed class PrimitiveMethodUsageAnalyzer : DiagnosticAnalyzer {
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
         context.RegisterCompilationStartAction(startContext => {
-            INamedTypeSymbol? restrictedAttribute = startContext.Compilation.GetTypeByMetadataName(BitStreamMetadataNames.RestrictedPrimitiveMethod);
+            INamedTypeSymbol? restrictedAttribute = startContext.Compilation.GetTypeByMetadataName(BitStreamTypeNames.RestrictedPrimitiveMethod);
             if (restrictedAttribute is null) { return; }
-
             startContext.RegisterSyntaxNodeAction(analysisContext => AnalyzeInvocation(analysisContext, restrictedAttribute), SyntaxKind.InvocationExpression);
         });
     }
@@ -25,20 +25,24 @@ public sealed class PrimitiveMethodUsageAnalyzer : DiagnosticAnalyzer {
         if (IsAllowedCaller(context.ContainingSymbol)) { return; }
 
         InvocationExpressionSyntax invocation = (InvocationExpressionSyntax)context.Node;
-        IMethodSymbol? targetMethod = GetInvokedMethod(context.SemanticModel, invocation, context.CancellationToken);
-        if (targetMethod is null || !targetMethod.HasRestrictedPrimitiveMethodAttribute(restrictedAttribute)) { return; }
+        if (!TryGetInvokedMethod(context.SemanticModel, invocation, context.CancellationToken, out IMethodSymbol? targetMethod)) { return; }
+        if (!targetMethod.HasRestrictedPrimitiveMethodAttribute(restrictedAttribute)) { return; }
 
         context.ReportDiagnostic(Diagnostic.Create(Diagnostics.PrimitiveMethodCalledOutsidePrimitive, invocation.GetLocation(), targetMethod.Name));
     }
 
-    private static IMethodSymbol? GetInvokedMethod(SemanticModel semanticModel, InvocationExpressionSyntax invocation, System.Threading.CancellationToken cancellationToken) {
+    private static bool TryGetInvokedMethod(SemanticModel semanticModel, InvocationExpressionSyntax invocation, System.Threading.CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? targetMethod) {
         SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(invocation, cancellationToken);
-        if (symbolInfo.Symbol is not IMethodSymbol method) { return null; }
+        if (symbolInfo.Symbol is not IMethodSymbol method) {
+            targetMethod = null;
+            return false;
+        }
 
-        return method.ReducedFrom ?? method;
+        targetMethod = method.ReducedFrom ?? method;
+        return true;
     }
 
     private static bool IsAllowedCaller(ISymbol? containingSymbol) {
-        return containingSymbol.IsInTypeWithAttribute(BitStreamMetadataNames.Primitive) || containingSymbol.IsInTypeWithAttribute(BitStreamMetadataNames.PrimitiveContext);
+        return containingSymbol.IsInTypeWithAttribute(BitStreamTypeNames.Primitive) || containingSymbol.IsInTypeWithAttribute(BitStreamTypeNames.PrimitiveContext);
     }
 }

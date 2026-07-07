@@ -9,7 +9,7 @@ namespace ComputerysBitStream.Generator.Collectors;
 internal static class SettingsCollector {
     public static IncrementalValuesProvider<Collected<SettingsDefinition>> GetGlobalSettingsData(IncrementalGeneratorInitializationContext context) {
         IncrementalValuesProvider<ImmutableArray<Collected<SettingsDefinition>>> globalSettings = context.SyntaxProvider.ForAttributeWithMetadataName(
-            fullyQualifiedMetadataName: BitStreamMetadataNames.DefaultSettings,
+            fullyQualifiedMetadataName: BitStreamTypeNames.DefaultSettings,
             predicate: (SyntaxNode node, CancellationToken _) => node is CompilationUnitSyntax,
             transform: GlobalSettingsAttributeDataTransform
         );
@@ -29,7 +29,7 @@ internal static class SettingsCollector {
 
         ImmutableArray<ITypeSymbol>.Builder validSettingsInterfaces = ImmutableArray.CreateBuilder<ITypeSymbol>();
         foreach (ITypeSymbol settingsInterface in settingsInterfaces) {
-            if (!settingsInterface.HasAttribute(BitStreamMetadataNames.Settings)) {
+            if (!settingsInterface.HasAttribute(BitStreamTypeNames.Settings)) {
                 diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidSettingsInterface, attributeLocation, settingsInterface.Name));
                 continue;
             }
@@ -43,7 +43,7 @@ internal static class SettingsCollector {
     }
 
     public static Collected<SettingsDefinition> GetFallbackGlobalSettings(Compilation compilation, CancellationToken _) {
-        INamedTypeSymbol? defaultSettingsSymbol = compilation.GetTypeByMetadataName(BitStreamMetadataNames.DefaultSettingsInterface);
+        INamedTypeSymbol? defaultSettingsSymbol = compilation.GetTypeByMetadataName(BitStreamTypeNames.DefaultSettingsInterface);
         if (defaultSettingsSymbol is not null) { return SettingsCollectionSession.CollectSettingsData(compilation, defaultSettingsSymbol, null); }
         return new Collected<SettingsDefinition>(CreateEmptySettings(), ImmutableArray<DiagnosticValueType>.Empty);
     }
@@ -60,7 +60,7 @@ internal static class SettingsCollector {
 
     public static IncrementalValuesProvider<Collected<SettingsDefinition>> GetSettingsData(IncrementalGeneratorInitializationContext context) {
         return context.SyntaxProvider.ForAttributeWithMetadataName(
-            fullyQualifiedMetadataName: BitStreamMetadataNames.Settings,
+            fullyQualifiedMetadataName: BitStreamTypeNames.Settings,
             predicate: (SyntaxNode node, CancellationToken _) => node is InterfaceDeclarationSyntax,
             transform: SettingsAttributeDataTransform
         );

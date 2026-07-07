@@ -81,7 +81,7 @@ internal record struct ExternalStructDefinition(
     int Size,
     string? ExtensionNamespace
 ) {
-    public bool IsVariableLength => StructMetadataConstants.IsVariableLength(Size);
+    public bool IsVariableLength => StructMetadataHelper.IsVariableLength(Size);
 }
 
 internal enum ResolvedStructMemberKind {

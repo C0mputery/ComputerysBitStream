@@ -39,7 +39,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
         HashSet<string> seenLocalInterfaces = [];
 
         foreach (ITypeSymbol settingsInterface in settingsInterfaces) {
-            if (!settingsInterface.HasAttribute(BitStreamMetadataNames.Settings)) {
+            if (!settingsInterface.HasAttribute(BitStreamTypeNames.Settings)) {
                 diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidSettingsInterface, location, settingsInterface.Name));
                 continue;
             }
@@ -80,7 +80,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
         ImmutableArray<string>.Builder mergedNamesBuilder = ImmutableArray.CreateBuilder<string>();
 
         foreach (ITypeSymbol settingsInterface in settingsInterfaces) {
-            if (!settingsInterface.HasAttribute(BitStreamMetadataNames.Settings)) {
+            if (!settingsInterface.HasAttribute(BitStreamTypeNames.Settings)) {
                 diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidSettingsInterface, location, settingsInterface.Name));
                 continue;
             }
@@ -122,7 +122,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
 
         foreach (ITypeSymbol symbol in symbolsToInspect) {
             foreach (AttributeData attributeData in symbol.GetAttributes()) {
-                if (!attributeData.IsAttribute(BitStreamMetadataNames.Serializer)) { continue; }
+                if (!attributeData.IsAttribute(BitStreamTypeNames.Serializer)) { continue; }
 
                 if (!attributeData.TryGetValue("type", out INamedTypeSymbol? serializerSymbol)) {
                     diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, attributeData.GetLocation(), "type", "BitStreamSerializer"));
@@ -136,7 +136,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                     continue;
                 }
 
-                if (serializerSymbol.TryGetAttribute(BitStreamMetadataNames.Primitive, out AttributeData? primitiveAttribute)) {
+                if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.Primitive, out AttributeData? primitiveAttribute)) {
                     Collected<PrimitiveDefinition> collectedPrimitive = PrimitiveCollector.CollectPrimitiveData(primitiveAttribute, serializerSymbol, compilation, includeSettings: false);
                     diagnostics.AddRange(collectedPrimitive.Diagnostics);
                     if (collectedPrimitive.IsValid) {
@@ -152,7 +152,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                 }
 
                 if (serializerSymbol.IsDefinedIn(compilation)) {
-                    if (serializerSymbol.TryGetAttribute(BitStreamMetadataNames.Struct, out AttributeData? structAttribute)) {
+                    if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.Struct, out AttributeData? structAttribute)) {
                         Collected<StructDefinition> collectedStruct = StructCollector.CollectStructData(structAttribute, serializerSymbol, compilation, includeSettings: false);
                         diagnostics.AddRange(collectedStruct.Diagnostics);
                         if (collectedStruct.IsValid) {
@@ -167,7 +167,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                         continue;
                     }
 
-                    if (serializerSymbol.TryGetAttribute(BitStreamMetadataNames.ProxyStruct, out AttributeData? proxyAttribute)) {
+                    if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.ProxyStruct, out AttributeData? proxyAttribute)) {
                         Collected<StructDefinition> collectedProxyStruct = StructCollector.CollectProxyStructData(proxyAttribute, serializerSymbol, compilation, includeSettings: false);
                         diagnostics.AddRange(collectedProxyStruct.Diagnostics);
                         if (collectedProxyStruct.IsValid) {
@@ -182,20 +182,20 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                         continue;
                     }
                 }
-                else if (serializerSymbol.TryGetAttribute(BitStreamMetadataNames.StructMetadata, out AttributeData? metadataAttribute)) {
+                else if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.StructMetadata, out AttributeData? metadataAttribute)) {
                     if (!metadataAttribute.TryGetValue("size", out int size)) {
                         diagnostics.Add(new DiagnosticValueType(Diagnostics.MissingAttributeArgument, metadataAttribute.GetLocation(), "size", "BitStreamStructMetadata"));
                         continue;
                     }
 
-                    if (!StructMetadataConstants.IsValidSize(size)) {
+                    if (!StructMetadataHelper.IsValidSize(size)) {
                         diagnostics.Add(new DiagnosticValueType(Diagnostics.InvalidStructMetadataSize, metadataAttribute.GetLocation(), size.ToString()));
                         continue;
                     }
 
                     INamedTypeSymbol resolvedTypeSymbol = serializerSymbol;
                     string resolvedAlias = DisplayNameUtility.GetDisplayName(serializerSymbol);
-                    if (serializerSymbol.TryGetAttribute(BitStreamMetadataNames.ProxyStruct, out AttributeData? proxyAttribute)
+                    if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.ProxyStruct, out AttributeData? proxyAttribute)
                         && proxyAttribute.TryGetConstructorArgumentByName("targetStruct", out TypedConstant targetStructArgument)
                         && targetStructArgument.Value is INamedTypeSymbol targetStruct) {
                         resolvedTypeSymbol = targetStruct;
@@ -279,14 +279,14 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
     }
 
     private DiagnosticDescriptor GetDuplicateIncludedDiagnostic(INamedTypeSymbol serializerSymbol) {
-        if (serializerSymbol.TryGetAttribute(BitStreamMetadataNames.Primitive, out _)) { return Diagnostics.DuplicateIncludedPrimitive; }
+        if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.Primitive, out _)) { return Diagnostics.DuplicateIncludedPrimitive; }
 
         if (serializerSymbol.IsDefinedIn(compilation)
-            && (serializerSymbol.TryGetAttribute(BitStreamMetadataNames.Struct, out _) || serializerSymbol.TryGetAttribute(BitStreamMetadataNames.ProxyStruct, out _))) {
+            && (serializerSymbol.TryGetAttribute(BitStreamTypeNames.Struct, out _) || serializerSymbol.TryGetAttribute(BitStreamTypeNames.ProxyStruct, out _))) {
             return Diagnostics.DuplicateIncludedStruct;
         }
 
-        if (serializerSymbol.TryGetAttribute(BitStreamMetadataNames.StructMetadata, out _)) { return Diagnostics.DuplicateIncludedExternalStruct; }
+        if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.StructMetadata, out _)) { return Diagnostics.DuplicateIncludedExternalStruct; }
 
         return Diagnostics.InvalidSettingType;
     }

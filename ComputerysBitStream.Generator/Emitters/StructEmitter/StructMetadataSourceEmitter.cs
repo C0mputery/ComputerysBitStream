@@ -5,10 +5,10 @@ namespace ComputerysBitStream.Generator.Emitters;
 internal static class StructMetadataSourceEmitter {
     internal static string Emit(in ResolvedStructDefinition resolved) {
         int metadataSize = resolved.Mode == PrimitiveSerializationMode.VariableLength
-            ? StructMetadataConstants.VariableLengthSize
+            ? StructMetadataHelper.VariableLengthSize
             : resolved.FixedSize ?? 0;
 
-        if (!StructMetadataConstants.IsValidSize(metadataSize)) { return string.Empty; }
+        if (!StructMetadataHelper.IsValidSize(metadataSize)) { return string.Empty; }
 
         StructDefinition source = resolved.Source;
         string typeKind = source.IsProxyClass ? "static partial class" : "partial struct";

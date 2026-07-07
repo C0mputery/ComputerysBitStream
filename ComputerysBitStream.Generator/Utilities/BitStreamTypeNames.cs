@@ -3,16 +3,7 @@ using ComputerysBitStream.Attributes;
 
 namespace ComputerysBitStream.Generator;
 
-internal static class StructMetadataConstants {
-    /// <summary>Metadata size value indicating a variable-length struct.</summary>
-    internal const int VariableLengthSize = -1;
-
-    internal static bool IsValidSize(int size) => size == VariableLengthSize || size > 0;
-
-    internal static bool IsVariableLength(int size) => size == VariableLengthSize;
-}
-
-internal static class BitStreamMetadataNames {
+internal static class BitStreamTypeNames {
     public static readonly string DefaultSettings = typeof(DefaultBitStreamSettingsAttribute).FullName!;
     public static readonly string Settings = typeof(BitStreamSettingsAttribute).FullName!;
     public static readonly string Serializer = typeof(BitStreamSerializerAttribute).FullName!;

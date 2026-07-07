@@ -22,7 +22,7 @@ internal static class StructCollector {
 
     public static IncrementalValuesProvider<Collected<StructDefinition>> GetStructData(IncrementalGeneratorInitializationContext context) {
         return context.SyntaxProvider.ForAttributeWithMetadataName(
-            fullyQualifiedMetadataName: BitStreamMetadataNames.Struct,
+            fullyQualifiedMetadataName: BitStreamTypeNames.Struct,
             predicate: (SyntaxNode node, CancellationToken _) => node is StructDeclarationSyntax || (node is RecordDeclarationSyntax record && record.IsKind(SyntaxKind.RecordStructDeclaration)),
             transform: StructAttributeDataTransform
         );
@@ -82,7 +82,7 @@ internal static class StructCollector {
 
     public static IncrementalValuesProvider<Collected<StructDefinition>> GetProxyStructData(IncrementalGeneratorInitializationContext context) {
         return context.SyntaxProvider.ForAttributeWithMetadataName(
-            fullyQualifiedMetadataName: BitStreamMetadataNames.ProxyStruct,
+            fullyQualifiedMetadataName: BitStreamTypeNames.ProxyStruct,
             predicate: (SyntaxNode node, CancellationToken _) => node is ClassDeclarationSyntax,
             transform: ProxyStructAttributeDataTransform
         );
@@ -187,8 +187,8 @@ internal static class StructCollector {
         ISymbol member, HashSet<string> excludedMembers, HashSet<string> includedMembers,
         ImmutableArray<DiagnosticValueType>.Builder diagnostics, bool reportInaccessibleInclude = true
     ) {
-        bool hasIgnore = member.HasAttribute(BitStreamMetadataNames.StructIgnore);
-        bool hasInclude = member.HasAttribute(BitStreamMetadataNames.StructInclude);
+        bool hasIgnore = member.HasAttribute(BitStreamTypeNames.StructIgnore);
+        bool hasInclude = member.HasAttribute(BitStreamTypeNames.StructInclude);
 
         if (hasIgnore && hasInclude) {
             diagnostics.Add(new DiagnosticValueType(Diagnostics.ConflictingStructMemberAttributes, member.Locations.FirstOrDefault(), member.Name));
@@ -449,7 +449,7 @@ internal static class StructCollector {
     private static StructMemberDefinition CreateMemberData(string memberName, ITypeSymbol memberType, bool isProperty, bool isInitOnly, ISymbol memberSymbol, ImmutableArray<DiagnosticValueType>.Builder diagnostics) {
         string? serializerExtensionClass = null;
         foreach (AttributeData attribute in memberSymbol.GetAttributes()) {
-            if (!attribute.IsAttribute(BitStreamMetadataNames.Serializer)) { continue; }
+            if (!attribute.IsAttribute(BitStreamTypeNames.Serializer)) { continue; }
 
             if (attribute.TryGetConstructorArgumentByName("type", out TypedConstant typeArgument)) {
                 if (typeArgument.TryGetValue(out INamedTypeSymbol? serializerType)) {
@@ -467,13 +467,13 @@ internal static class StructCollector {
         }
 
         QuantizedDefinition? quantized = null;
-        if (memberSymbol.TryGetAttribute(BitStreamMetadataNames.StructQuantized, out AttributeData? quantizedAttribute)) {
+        if (memberSymbol.TryGetAttribute(BitStreamTypeNames.StructQuantized, out AttributeData? quantizedAttribute)) {
             if (TryParseQuantized(quantizedAttribute, memberSymbol, diagnostics, out QuantizedDefinition parsedQuantized)) {
                 quantized = parsedQuantized;
             }
         }
 
-        bool isVariableLength = memberSymbol.TryGetAttribute(BitStreamMetadataNames.StructVariableLength, out _);
+        bool isVariableLength = memberSymbol.TryGetAttribute(BitStreamTypeNames.StructVariableLength, out _);
         if (isVariableLength && quantized is not null) {
             diagnostics.Add(new DiagnosticValueType(Diagnostics.ConflictingStructMemberSerializationAttributes, memberSymbol.Locations.FirstOrDefault(), memberName));
             isVariableLength = false;
