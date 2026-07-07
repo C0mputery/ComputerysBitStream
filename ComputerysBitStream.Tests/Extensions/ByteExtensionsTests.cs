@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class ByteExtensionsTests : ExtensionTestSuite<byte> {
+public class ByteExtensionsTests : PrimitiveSerializationTestSuite<byte> {
     protected override byte Value => 42;
     protected override byte[] Values => [42, 100, 42, 42, 100];
 

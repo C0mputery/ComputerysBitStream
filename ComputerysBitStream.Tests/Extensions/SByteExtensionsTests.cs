@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class SByteExtensionsTests : ExtensionTestSuite<sbyte> {
+public class SByteExtensionsTests : PrimitiveSerializationTestSuite<sbyte> {
     protected override sbyte Value => 42;
     protected override sbyte[] Values => [42, -42, 42, 42, -42];
 

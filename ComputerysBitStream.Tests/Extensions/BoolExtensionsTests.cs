@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class BoolExtensionsTests : ExtensionTestSuite<bool> {
+public class BoolExtensionsTests : PrimitiveSerializationTestSuite<bool> {
     protected override bool Value => true;
     protected override bool[] Values => [true, false, true, true, false];
 

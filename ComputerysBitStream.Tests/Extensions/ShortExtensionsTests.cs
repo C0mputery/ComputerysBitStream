@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class ShortExtensionsTests : ExtensionTestSuite<short> {
+public class ShortExtensionsTests : PrimitiveSerializationTestSuite<short> {
     protected override short Value => 42;
     protected override short[] Values => [42, -42, 42, 42, -42];
 

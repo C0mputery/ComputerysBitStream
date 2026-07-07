@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class UIntExtensionsTests : ExtensionTestSuite<uint> {
+public class UIntExtensionsTests : PrimitiveSerializationTestSuite<uint> {
     protected override uint Value => 42u;
     protected override uint[] Values => [42u, 100u, 42u, 42u, 100u];
 

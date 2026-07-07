@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class FloatExtensionsTests : ExtensionTestSuite<float> {
+public class FloatExtensionsTests : PrimitiveSerializationTestSuite<float> {
     protected override float Value => 1.23f;
     protected override float[] Values => [1.23f, 4.56f, 1.23f, 1.23f, 4.56f];
 

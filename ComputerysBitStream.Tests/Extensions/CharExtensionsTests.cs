@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class CharExtensionsTests : ExtensionTestSuite<char> {
+public class CharExtensionsTests : PrimitiveSerializationTestSuite<char> {
     protected override char Value => 'a';
     protected override char[] Values => ['a', 'b', 'a', 'a', 'b'];
 

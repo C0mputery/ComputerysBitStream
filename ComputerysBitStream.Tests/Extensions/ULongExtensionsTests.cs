@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class ULongExtensionsTests : ExtensionTestSuite<ulong> {
+public class ULongExtensionsTests : PrimitiveSerializationTestSuite<ulong> {
     protected override ulong Value => 42ul;
     protected override ulong[] Values => [42ul, 100ul, 42ul, 42ul, 100ul];
 

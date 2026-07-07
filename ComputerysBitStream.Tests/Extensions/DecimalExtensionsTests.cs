@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class DecimalExtensionsTests : ExtensionTestSuite<decimal> {
+public class DecimalExtensionsTests : PrimitiveSerializationTestSuite<decimal> {
     protected override decimal Value => 1.23m;
     protected override decimal[] Values => [1.23m, 4.56m, 1.23m, 1.23m, 4.56m];
 

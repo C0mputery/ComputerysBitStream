@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class DateTimeExtensionsTests : ExtensionTestSuite<DateTime> {
+public class DateTimeExtensionsTests : PrimitiveSerializationTestSuite<DateTime> {
     protected override DateTime Value => new(2024, 1, 1, 12, 0, 0, DateTimeKind.Utc);
 
     protected override DateTime[] Values => [

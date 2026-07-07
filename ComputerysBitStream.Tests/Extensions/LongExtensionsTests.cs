@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class LongExtensionsTests : ExtensionTestSuite<long> {
+public class LongExtensionsTests : PrimitiveSerializationTestSuite<long> {
     protected override long Value => 42L;
     protected override long[] Values => [42L, -42L, 42L, 42L, -42L];
 

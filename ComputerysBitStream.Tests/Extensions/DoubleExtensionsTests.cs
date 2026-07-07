@@ -1,7 +1,7 @@
 namespace ComputerysBitStream.Tests.Extensions;
 
 [BitStreamPrimitiveContext]
-public class DoubleExtensionsTests : ExtensionTestSuite<double> {
+public class DoubleExtensionsTests : PrimitiveSerializationTestSuite<double> {
     protected override double Value => 1.23;
     protected override double[] Values => [1.23, 4.56, 1.23, 1.23, 4.56];
 
