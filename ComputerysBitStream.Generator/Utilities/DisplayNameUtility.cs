@@ -4,6 +4,8 @@ using Microsoft.CodeAnalysis;
 namespace ComputerysBitStream.Generator;
 
 internal static class DisplayNameUtility {
+    internal const string DefaultInt32Alias = "Int";
+
     private static readonly SymbolDisplayFormat CSharpDefaultFormat = new(
         typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameOnly,
         genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
@@ -17,7 +19,7 @@ internal static class DisplayNameUtility {
             SpecialType.System_SByte => "SByte",
             SpecialType.System_Int16 => "Short",
             SpecialType.System_UInt16 => "UShort",
-            SpecialType.System_Int32 => "Int",
+            SpecialType.System_Int32 => DefaultInt32Alias,
             SpecialType.System_UInt32 => "UInt",
             SpecialType.System_Int64 => "Long",
             SpecialType.System_UInt64 => "ULong",

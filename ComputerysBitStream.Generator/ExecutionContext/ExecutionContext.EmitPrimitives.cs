@@ -66,8 +66,8 @@ internal readonly ref partial struct ExecutionContext {
     }
 
     private static bool IsPreferredLengthPrefixHandler(in PrimitiveDefinition candidate, in PrimitiveDefinition current) {
-        bool candidateIsDefaultAlias = candidate.Alias == "Int";
-        bool currentIsDefaultAlias = current.Alias == "Int";
+        bool candidateIsDefaultAlias = string.Equals(candidate.Alias, DisplayNameUtility.DefaultInt32Alias, StringComparison.Ordinal);
+        bool currentIsDefaultAlias = string.Equals(current.Alias, DisplayNameUtility.DefaultInt32Alias, StringComparison.Ordinal);
         if (candidateIsDefaultAlias != currentIsDefaultAlias) { return candidateIsDefaultAlias; }
 
         return string.CompareOrdinal(candidate.ExtensionClassFullyQualifiedName, current.ExtensionClassFullyQualifiedName) < 0;
