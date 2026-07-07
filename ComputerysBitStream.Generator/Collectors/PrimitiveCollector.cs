@@ -40,12 +40,12 @@ internal static class PrimitiveCollector {
 
         if (!arguments.TryGetValue("target", out ITypeSymbol? targetType)) {
             diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "target", "BitStreamPrimitive"));
-            return CreateInvalidPrimitiveDefinition(targetTypeSymbol, attributeLocation, diagnostics);
+            return new Collected<PrimitiveDefinition>(default, diagnostics.ToImmutable());
         }
 
         if (!arguments.TryGetValue("serializationMode", out PrimitiveSerializationMode mode)) {
             diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MissingAttributeArgument, attributeLocation, "serializationMode", "BitStreamPrimitive"));
-            return CreateInvalidPrimitiveDefinition(targetTypeSymbol, targetType, attributeLocation, diagnostics);
+            return new Collected<PrimitiveDefinition>(default, diagnostics.ToImmutable());
         }
 
         string alias = arguments.TryGetValue("alias", out string? aliasValue) ? aliasValue : string.Empty;
@@ -153,40 +153,6 @@ internal static class PrimitiveCollector {
         return new Collected<PrimitiveDefinition>(definition, diagnostics.ToImmutable());
     }
 
-    private static Collected<PrimitiveDefinition> CreateInvalidPrimitiveDefinition(
-        INamedTypeSymbol targetTypeSymbol, Location? attributeLocation,
-        ImmutableArray<DiagnosticValueType>.Builder diagnostics
-    ) {
-        return CreateInvalidPrimitiveDefinition(targetTypeSymbol, null, attributeLocation, diagnostics);
-    }
-
-    private static Collected<PrimitiveDefinition> CreateInvalidPrimitiveDefinition(
-        INamedTypeSymbol targetTypeSymbol,
-        ITypeSymbol? targetType,
-        Location? attributeLocation,
-        ImmutableArray<DiagnosticValueType>.Builder diagnostics
-    ) {
-        string targetTypeName = targetType?.GetFullyQualifiedName() ?? targetTypeSymbol.GetFullyQualifiedName();
-        ITypeSymbol targetTypeForEmit = targetType ?? targetTypeSymbol;
-        PrimitiveDefinition definition = new(
-            ExtensionClassFullyQualifiedName: targetTypeSymbol.GetFullyQualifiedName(),
-            TargetTypeFullyQualifiedName: targetTypeName,
-            TargetTypeNamespace: targetTypeForEmit.GetFullyQualifiedNamespace(),
-            TargetTypeEmitName: targetTypeForEmit.GetEmitTypeName(),
-            Alias: DisplayNameUtility.GetDisplayName(targetType ?? targetTypeSymbol),
-            Namespace: targetTypeSymbol.GetFullyQualifiedNamespace(),
-            Mode: default,
-            FixedSize: null,
-            MinBits: null,
-            MaxBits: null,
-            Methods: ImmutableDictionary<BitStreamPrimitiveRole, PrimitiveMethodDefinition>.Empty,
-            Settings: null,
-            Location: attributeLocation
-        );
-
-        return new Collected<PrimitiveDefinition>(definition, diagnostics.ToImmutable());
-    }
-
     private static bool HasValidMethod(Dictionary<BitStreamPrimitiveRole, PrimitiveMethodDefinition> methodsByRole, BitStreamPrimitiveRole role) {
         return methodsByRole.TryGetValue(role, out PrimitiveMethodDefinition method) && method.IsValid;
     }
@@ -223,7 +189,7 @@ internal static class PrimitiveCollector {
                 diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.MethodNotPublicStatic, methodAttribute.GetLocation(), member.Name));
             }
 
-            SignatureValidation validation = ValidatePrimitiveMethodSignature(member, role, mode, signatureContext);
+            SignatureValidation validation = GetSignatureRule(role, mode, signatureContext).Validate(member);
             if (validation.ExpectedSignature is not null && !validation.IsValid) {
                 diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.InvalidPrimitiveMethodSignature, methodAttribute.GetLocation(), member.Name, role.ToString(), validation.ExpectedSignature));
             }
@@ -234,10 +200,6 @@ internal static class PrimitiveCollector {
         }
 
         return methodsByRole;
-    }
-
-    private static SignatureValidation ValidatePrimitiveMethodSignature(IMethodSymbol method, BitStreamPrimitiveRole role, PrimitiveSerializationMode mode, PrimitiveSignatureContext context) {
-        return MethodSignatureValidator.Validate(method, GetSignatureRule(role, mode, context));
     }
 
     private static MethodSignatureRule GetSignatureRule(BitStreamPrimitiveRole role, PrimitiveSerializationMode mode, PrimitiveSignatureContext context) {
