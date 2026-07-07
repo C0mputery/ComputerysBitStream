@@ -13,10 +13,10 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         _writer.Indent++;
 
         List<string> methods = [];
-        if (hasWrite) { methods.Add(EmitWriteAlias()); }
+        if (hasWrite) { methods.Add(EmitWriteValue()); }
         if (hasWriteSpan) {
-            if (_hasIntWrite) { methods.Add(EmitWriteAliass()); }
-            methods.Add(EmitWriteAliassWithoutLength());
+            if (_hasIntWrite) { methods.Add(EmitWriteValuesWithLength()); }
+            methods.Add(EmitWriteValuesWithoutLength());
         }
         _writer.WriteBlocks(methods);
 
@@ -25,7 +25,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         _writer.WriteLine();
     }
 
-    private string EmitWriteAlias() {
+    private string EmitWriteValue() {
         string guard = _mode switch {
             PrimitiveSerializationMode.Quantized => $"""
                                                      {BitCountValidationThrow}
@@ -46,13 +46,13 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  """;
     }
 
-    private string EmitWriteAliass() {
+    private string EmitWriteValuesWithLength() {
         string guard = SpanWriteGuard(includeLengthPrefix: true, operation: $"{_alias} array");
 
         return $$"""
                  {{GeneratedDocumentationSyntax.WriteValuesWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                 public static void Write{{_alias}}s(this ref WriteContext context, ReadOnlySpan<{{_targetType}}> values{{_extraParams}}) {
+                 public static void Write{{_pluralAlias}}(this ref WriteContext context, ReadOnlySpan<{{_targetType}}> values{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(guard, 1)}}
 
                      {{_intExtensionClass}}.{{_intWriteMethodName}}(ref context, values.Length);
@@ -61,13 +61,13 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  """;
     }
 
-    private string EmitWriteAliassWithoutLength() {
+    private string EmitWriteValuesWithoutLength() {
         string guard = SpanWriteGuard(includeLengthPrefix: false, operation: $"{_alias} span");
 
         return $$"""
                  {{GeneratedDocumentationSyntax.WriteValuesWithoutLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                 public static void Write{{_alias}}sWithoutLength(this ref WriteContext context, ReadOnlySpan<{{_targetType}}> values{{_extraParams}}) {
+                 public static void Write{{_pluralAlias}}WithoutLength(this ref WriteContext context, ReadOnlySpan<{{_targetType}}> values{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(guard, 1)}}
 
                      {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.WriteSpan)}}(ref context, values{{_extraArgs}});

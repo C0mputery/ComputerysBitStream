@@ -13,6 +13,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private readonly PrimitiveDefinition _definition;
 
     private readonly string _alias;
+    private readonly string _pluralAlias;
     private readonly string _targetType;
     private readonly string _extensionClass;
     private readonly string[] _additionalUsings;
@@ -30,6 +31,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private PrimitiveWrapperSourceEmitter(in PrimitiveDefinition definition, PrimitiveDefinition? intHandler) {
         _definition = definition;
         _alias = definition.Alias;
+        _pluralAlias = $"{definition.Alias}s";
         _targetType = definition.TargetTypeEmitName;
         _mode = definition.Mode;
 
@@ -136,27 +138,27 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
     private string TryReadScalarCall() => $"context.TryRead{_alias}({_extraArgsPrefix}out {_targetType} value)";
 
-    private string TryPeekArrayCall() => $"context.TryPeek{_alias}s({_extraArgsPrefix}out {TargetTypeArray} values)";
+    private string TryPeekArrayCall() => $"context.TryPeek{_pluralAlias}({_extraArgsPrefix}out {TargetTypeArray} values)";
 
-    private string TryReadArrayCall() => $"context.TryRead{_alias}s({_extraArgsPrefix}out {TargetTypeArray} values)";
+    private string TryReadArrayCall() => $"context.TryRead{_pluralAlias}({_extraArgsPrefix}out {TargetTypeArray} values)";
 
-    private string TryPeekArrayWithCountCall() => $"context.TryPeek{_alias}s(count{_extraArgs}, out {TargetTypeArray} values)";
+    private string TryPeekArrayWithCountCall() => $"context.TryPeek{_pluralAlias}(count{_extraArgs}, out {TargetTypeArray} values)";
 
-    private string TryReadArrayWithCountCall() => $"context.TryRead{_alias}s(count{_extraArgs}, out {TargetTypeArray} values)";
+    private string TryReadArrayWithCountCall() => $"context.TryRead{_pluralAlias}(count{_extraArgs}, out {TargetTypeArray} values)";
 
-    private string TryPeekSpanCall() => $"context.TryPeek{_alias}s(destination{_extraArgs})";
+    private string TryPeekSpanCall() => $"context.TryPeek{_pluralAlias}(destination{_extraArgs})";
 
-    private string TryReadSpanCall() => $"context.TryRead{_alias}s(destination{_extraArgs})";
+    private string TryReadSpanCall() => $"context.TryRead{_pluralAlias}(destination{_extraArgs})";
 
-    private string TryPeekSpanWithCountCall() => $"context.TryPeek{_alias}s(count, destination{_extraArgs})";
+    private string TryPeekSpanWithCountCall() => $"context.TryPeek{_pluralAlias}(count, destination{_extraArgs})";
 
-    private string TryReadSpanWithCountCall() => $"context.TryRead{_alias}s(count, destination{_extraArgs})";
+    private string TryReadSpanWithCountCall() => $"context.TryRead{_pluralAlias}(count, destination{_extraArgs})";
 
-    private string TryPeekArrayWithMaxCountCall() => $"context.TryPeek{_alias}s(maxCount{_extraArgs}, out {TargetTypeArray} values)";
+    private string TryPeekArrayWithMaxCountCall() => $"context.TryPeek{_pluralAlias}(maxCount{_extraArgs}, out {TargetTypeArray} values)";
 
-    private string TryReadArrayWithMaxCountCall() => $"context.TryRead{_alias}s(maxCount{_extraArgs}, out {TargetTypeArray} values)";
+    private string TryReadArrayWithMaxCountCall() => $"context.TryRead{_pluralAlias}(maxCount{_extraArgs}, out {TargetTypeArray} values)";
 
-    private string TryPeekSpanWithMaxCountCall() => $"context.TryPeek{_alias}s(maxCount, destination{_extraArgs})";
+    private string TryPeekSpanWithMaxCountCall() => $"context.TryPeek{_pluralAlias}(maxCount, destination{_extraArgs})";
 
-    private string TryReadSpanWithMaxCountCall() => $"context.TryRead{_alias}s(maxCount, destination{_extraArgs})";
+    private string TryReadSpanWithMaxCountCall() => $"context.TryRead{_pluralAlias}(maxCount, destination{_extraArgs})";
 }
