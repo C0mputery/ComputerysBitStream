@@ -68,6 +68,24 @@ public class VariableLengthLongExtensionsTests : VariableLengthExtensionTestSuit
         return values;
     }
 
+    protected override long[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekVariableLengthLongsWithMaxCount(maxCount);
+    protected override long[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadVariableLengthLongsWithMaxCount(maxCount);
+
+    protected override long[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekVariableLengthLongsWithMaxCount(maxCount, out long[] values));
+        return values;
+    }
+
+    protected override long[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadVariableLengthLongsWithMaxCount(maxCount, out long[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<long> destination) => context.PeekVariableLengthLongsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<long> destination) => context.ReadVariableLengthLongsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<long> destination) { Assert.True(context.TryPeekVariableLengthLongsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<long> destination) { Assert.True(context.TryReadVariableLengthLongsWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<long> TryOperations => new() {
         TryPeekValue = (ReadContext c, out long v) => c.TryPeekVariableLengthLong(out v),
         TryReadValue = (ReadContext c, out long v) => c.TryReadVariableLengthLong(out v),
@@ -79,5 +97,9 @@ public class VariableLengthLongExtensionsTests : VariableLengthExtensionTestSuit
         TryReadSpanWithLength = (ReadContext c, Span<long> d) => c.TryReadVariableLengthLongs(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<long> d) => c.TryPeekVariableLengthLongs(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<long> d) => c.TryReadVariableLengthLongs(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out long[] v) => c.TryPeekVariableLengthLongsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out long[] v) => c.TryReadVariableLengthLongsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<long> d) => c.TryPeekVariableLengthLongsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<long> d) => c.TryReadVariableLengthLongsWithMaxCount(maxCount, d),
     };
 }

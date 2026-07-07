@@ -88,6 +88,38 @@ public static class RoundTripTestHarness<T> {
         assert(values, readBackValues);
     }
 
+    public static void AssertArrayWithMaxCountRoundTrip(int initialOffset, T[] values, int maxCount, WriteArrayDelegate writeValues, Func<ReadContext, int, T[]> peekValues, Func<ReadContext, int, T[]> readValues, Action<T[], T[]>? assertEqual = null) {
+        Action<T[], T[]> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
+        WriteContext writeCtx = new(buffer, initialOffset);
+
+        writeValues(ref writeCtx, values);
+
+        ReadContext readCtx = new(buffer, initialOffset);
+        T[] peekedValues = peekValues(readCtx, maxCount);
+        T[] readBackValues = readValues(readCtx, maxCount);
+
+        assert(values, peekedValues);
+        assert(values, readBackValues);
+    }
+
+    public static void AssertSpanWithMaxCountRoundTrip(int initialOffset, T[] values, int maxCount, WriteSpanDelegate writeValues, PeekSpanWithMaxCountDelegate peekSpan, ReadSpanWithMaxCountDelegate readSpan, Action<T[], T[]>? assertEqual = null) {
+        Action<T[], T[]> assert = assertEqual ?? ((expected, actual) => Assert.Equal(expected, actual));
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
+        WriteContext writeCtx = new(buffer, initialOffset);
+
+        writeValues(ref writeCtx, values);
+
+        ReadContext readCtx = new(buffer, initialOffset);
+        Span<T> peekValues = new T[values.Length];
+        peekSpan(readCtx, maxCount, peekValues);
+        Span<T> readValues = new T[values.Length];
+        readSpan(readCtx, maxCount, readValues);
+
+        assert(values, peekValues.ToArray());
+        assert(values, readValues.ToArray());
+    }
+
     public delegate void PeekSpanDelegate(ReadContext context, Span<T> destination);
 
     public delegate void PeekSpanDelegateWithoutLength(ReadContext context, int count, Span<T> destination);
@@ -95,4 +127,8 @@ public static class RoundTripTestHarness<T> {
     public delegate void ReadSpanDelegate(ReadContext context, Span<T> destination);
 
     public delegate void ReadSpanDelegateWithoutLength(ReadContext context, int count, Span<T> destination);
+
+    public delegate void PeekSpanWithMaxCountDelegate(ReadContext context, int maxCount, Span<T> destination);
+
+    public delegate void ReadSpanWithMaxCountDelegate(ReadContext context, int maxCount, Span<T> destination);
 }

@@ -76,6 +76,24 @@ public class QuantizedDoubleExtensionsTests : QuantizedExtensionTestSuite<double
         return values;
     }
 
+    protected override double[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekQuantizedDoublesWithMaxCount(maxCount, Min, Max, BitCount);
+    protected override double[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadQuantizedDoublesWithMaxCount(maxCount, Min, Max, BitCount);
+
+    protected override double[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekQuantizedDoublesWithMaxCount(maxCount, Min, Max, BitCount, out double[] values));
+        return values;
+    }
+
+    protected override double[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadQuantizedDoublesWithMaxCount(maxCount, Min, Max, BitCount, out double[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<double> destination) => context.PeekQuantizedDoublesWithMaxCount(maxCount, destination, Min, Max, BitCount);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<double> destination) => context.ReadQuantizedDoublesWithMaxCount(maxCount, destination, Min, Max, BitCount);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<double> destination) { Assert.True(context.TryPeekQuantizedDoublesWithMaxCount(maxCount, destination, Min, Max, BitCount)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<double> destination) { Assert.True(context.TryReadQuantizedDoublesWithMaxCount(maxCount, destination, Min, Max, BitCount)); }
+
     protected override TryReadOperationSet<double> TryOperations => new() {
         TryPeekValue = (ReadContext c, out double v) => c.TryPeekQuantizedDouble(Min, Max, BitCount, out v),
         TryReadValue = (ReadContext c, out double v) => c.TryReadQuantizedDouble(Min, Max, BitCount, out v),
@@ -87,5 +105,9 @@ public class QuantizedDoubleExtensionsTests : QuantizedExtensionTestSuite<double
         TryReadSpanWithLength = (ReadContext c, Span<double> d) => c.TryReadQuantizedDoubles(d, Min, Max, BitCount),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<double> d) => c.TryPeekQuantizedDoubles(count, d, Min, Max, BitCount),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<double> d) => c.TryReadQuantizedDoubles(count, d, Min, Max, BitCount),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out double[] v) => c.TryPeekQuantizedDoublesWithMaxCount(maxCount, Min, Max, BitCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out double[] v) => c.TryReadQuantizedDoublesWithMaxCount(maxCount, Min, Max, BitCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<double> d) => c.TryPeekQuantizedDoublesWithMaxCount(maxCount, d, Min, Max, BitCount),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<double> d) => c.TryReadQuantizedDoublesWithMaxCount(maxCount, d, Min, Max, BitCount),
     };
 }

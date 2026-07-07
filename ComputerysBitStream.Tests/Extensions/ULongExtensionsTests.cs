@@ -67,6 +67,24 @@ public class ULongExtensionsTests : PrimitiveSerializationTestSuite<ulong> {
         return values;
     }
 
+    protected override ulong[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekULongsWithMaxCount(maxCount);
+    protected override ulong[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadULongsWithMaxCount(maxCount);
+
+    protected override ulong[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekULongsWithMaxCount(maxCount, out ulong[] values));
+        return values;
+    }
+
+    protected override ulong[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadULongsWithMaxCount(maxCount, out ulong[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<ulong> destination) => context.PeekULongsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<ulong> destination) => context.ReadULongsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<ulong> destination) { Assert.True(context.TryPeekULongsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<ulong> destination) { Assert.True(context.TryReadULongsWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<ulong> TryOperations => new() {
         TryPeekValue = (ReadContext c, out ulong v) => c.TryPeekULong(out v),
         TryReadValue = (ReadContext c, out ulong v) => c.TryReadULong(out v),
@@ -78,5 +96,9 @@ public class ULongExtensionsTests : PrimitiveSerializationTestSuite<ulong> {
         TryReadSpanWithLength = (ReadContext c, Span<ulong> d) => c.TryReadULongs(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<ulong> d) => c.TryPeekULongs(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<ulong> d) => c.TryReadULongs(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out ulong[] v) => c.TryPeekULongsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out ulong[] v) => c.TryReadULongsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<ulong> d) => c.TryPeekULongsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<ulong> d) => c.TryReadULongsWithMaxCount(maxCount, d),
     };
 }

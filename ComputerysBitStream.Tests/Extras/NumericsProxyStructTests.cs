@@ -39,6 +39,24 @@ public class Vector2Tests : StructTestSuite<Vector2> {
         return v;
     }
 
+    protected override Vector2[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekVector2sWithMaxCount(maxCount);
+    protected override Vector2[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadVector2sWithMaxCount(maxCount);
+
+    protected override Vector2[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekVector2sWithMaxCount(maxCount, out Vector2[] values));
+        return values;
+    }
+
+    protected override Vector2[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadVector2sWithMaxCount(maxCount, out Vector2[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector2> destination) => context.PeekVector2sWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector2> destination) => context.ReadVector2sWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector2> destination) { Assert.True(context.TryPeekVector2sWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector2> destination) { Assert.True(context.TryReadVector2sWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, Vector2[] values) => context.WriteVector2sWithoutLength(values);
     protected override Vector2[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekVector2s(count);
     protected override Vector2[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadVector2s(count);
@@ -78,6 +96,10 @@ public class Vector2Tests : StructTestSuite<Vector2> {
         TryReadSpanWithLength = (ReadContext c, Span<Vector2> d) => c.TryReadVector2s(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Vector2> d) => c.TryPeekVector2s(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Vector2> d) => c.TryReadVector2s(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Vector2[] v) => c.TryPeekVector2sWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Vector2[] v) => c.TryReadVector2sWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector2> d) => c.TryPeekVector2sWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector2> d) => c.TryReadVector2sWithMaxCount(maxCount, d),
     };
 }
 
@@ -120,6 +142,24 @@ public class Vector3Tests : StructTestSuite<Vector3> {
         return v;
     }
 
+    protected override Vector3[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekVector3sWithMaxCount(maxCount);
+    protected override Vector3[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadVector3sWithMaxCount(maxCount);
+
+    protected override Vector3[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekVector3sWithMaxCount(maxCount, out Vector3[] values));
+        return values;
+    }
+
+    protected override Vector3[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadVector3sWithMaxCount(maxCount, out Vector3[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector3> destination) => context.PeekVector3sWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector3> destination) => context.ReadVector3sWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector3> destination) { Assert.True(context.TryPeekVector3sWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector3> destination) { Assert.True(context.TryReadVector3sWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, Vector3[] values) => context.WriteVector3sWithoutLength(values);
     protected override Vector3[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekVector3s(count);
     protected override Vector3[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadVector3s(count);
@@ -159,6 +199,10 @@ public class Vector3Tests : StructTestSuite<Vector3> {
         TryReadSpanWithLength = (ReadContext c, Span<Vector3> d) => c.TryReadVector3s(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Vector3> d) => c.TryPeekVector3s(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Vector3> d) => c.TryReadVector3s(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Vector3[] v) => c.TryPeekVector3sWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Vector3[] v) => c.TryReadVector3sWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector3> d) => c.TryPeekVector3sWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector3> d) => c.TryReadVector3sWithMaxCount(maxCount, d),
     };
 }
 
@@ -201,6 +245,24 @@ public class Vector4Tests : StructTestSuite<Vector4> {
         return v;
     }
 
+    protected override Vector4[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekVector4sWithMaxCount(maxCount);
+    protected override Vector4[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadVector4sWithMaxCount(maxCount);
+
+    protected override Vector4[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekVector4sWithMaxCount(maxCount, out Vector4[] values));
+        return values;
+    }
+
+    protected override Vector4[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadVector4sWithMaxCount(maxCount, out Vector4[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector4> destination) => context.PeekVector4sWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector4> destination) => context.ReadVector4sWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector4> destination) { Assert.True(context.TryPeekVector4sWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector4> destination) { Assert.True(context.TryReadVector4sWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, Vector4[] values) => context.WriteVector4sWithoutLength(values);
     protected override Vector4[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekVector4s(count);
     protected override Vector4[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadVector4s(count);
@@ -240,6 +302,10 @@ public class Vector4Tests : StructTestSuite<Vector4> {
         TryReadSpanWithLength = (ReadContext c, Span<Vector4> d) => c.TryReadVector4s(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Vector4> d) => c.TryPeekVector4s(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Vector4> d) => c.TryReadVector4s(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Vector4[] v) => c.TryPeekVector4sWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Vector4[] v) => c.TryReadVector4sWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector4> d) => c.TryPeekVector4sWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector4> d) => c.TryReadVector4sWithMaxCount(maxCount, d),
     };
 }
 
@@ -282,6 +348,24 @@ public class QuaternionTests : StructTestSuite<Quaternion> {
         return v;
     }
 
+    protected override Quaternion[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekQuaternionsWithMaxCount(maxCount);
+    protected override Quaternion[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadQuaternionsWithMaxCount(maxCount);
+
+    protected override Quaternion[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekQuaternionsWithMaxCount(maxCount, out Quaternion[] values));
+        return values;
+    }
+
+    protected override Quaternion[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadQuaternionsWithMaxCount(maxCount, out Quaternion[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Quaternion> destination) => context.PeekQuaternionsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Quaternion> destination) => context.ReadQuaternionsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Quaternion> destination) { Assert.True(context.TryPeekQuaternionsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Quaternion> destination) { Assert.True(context.TryReadQuaternionsWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, Quaternion[] values) => context.WriteQuaternionsWithoutLength(values);
     protected override Quaternion[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekQuaternions(count);
     protected override Quaternion[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadQuaternions(count);
@@ -321,6 +405,10 @@ public class QuaternionTests : StructTestSuite<Quaternion> {
         TryReadSpanWithLength = (ReadContext c, Span<Quaternion> d) => c.TryReadQuaternions(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Quaternion> d) => c.TryPeekQuaternions(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Quaternion> d) => c.TryReadQuaternions(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Quaternion[] v) => c.TryPeekQuaternionsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Quaternion[] v) => c.TryReadQuaternionsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Quaternion> d) => c.TryPeekQuaternionsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Quaternion> d) => c.TryReadQuaternionsWithMaxCount(maxCount, d),
     };
 }
 
@@ -372,6 +460,24 @@ public class Matrix4x4Tests : StructTestSuite<Matrix4x4> {
         return v;
     }
 
+    protected override Matrix4x4[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekMatrix4x4sWithMaxCount(maxCount);
+    protected override Matrix4x4[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadMatrix4x4sWithMaxCount(maxCount);
+
+    protected override Matrix4x4[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekMatrix4x4sWithMaxCount(maxCount, out Matrix4x4[] values));
+        return values;
+    }
+
+    protected override Matrix4x4[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadMatrix4x4sWithMaxCount(maxCount, out Matrix4x4[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Matrix4x4> destination) => context.PeekMatrix4x4sWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Matrix4x4> destination) => context.ReadMatrix4x4sWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Matrix4x4> destination) { Assert.True(context.TryPeekMatrix4x4sWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Matrix4x4> destination) { Assert.True(context.TryReadMatrix4x4sWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, Matrix4x4[] values) => context.WriteMatrix4x4sWithoutLength(values);
     protected override Matrix4x4[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekMatrix4x4s(count);
     protected override Matrix4x4[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadMatrix4x4s(count);
@@ -411,6 +517,10 @@ public class Matrix4x4Tests : StructTestSuite<Matrix4x4> {
         TryReadSpanWithLength = (ReadContext c, Span<Matrix4x4> d) => c.TryReadMatrix4x4s(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Matrix4x4> d) => c.TryPeekMatrix4x4s(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Matrix4x4> d) => c.TryReadMatrix4x4s(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Matrix4x4[] v) => c.TryPeekMatrix4x4sWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Matrix4x4[] v) => c.TryReadMatrix4x4sWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Matrix4x4> d) => c.TryPeekMatrix4x4sWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Matrix4x4> d) => c.TryReadMatrix4x4sWithMaxCount(maxCount, d),
     };
 }
 
@@ -453,6 +563,24 @@ public class PlaneTests : StructTestSuite<Plane> {
         return v;
     }
 
+    protected override Plane[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekPlanesWithMaxCount(maxCount);
+    protected override Plane[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadPlanesWithMaxCount(maxCount);
+
+    protected override Plane[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekPlanesWithMaxCount(maxCount, out Plane[] values));
+        return values;
+    }
+
+    protected override Plane[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadPlanesWithMaxCount(maxCount, out Plane[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Plane> destination) => context.PeekPlanesWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Plane> destination) => context.ReadPlanesWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Plane> destination) { Assert.True(context.TryPeekPlanesWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Plane> destination) { Assert.True(context.TryReadPlanesWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, Plane[] values) => context.WritePlanesWithoutLength(values);
     protected override Plane[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekPlanes(count);
     protected override Plane[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadPlanes(count);
@@ -492,5 +620,9 @@ public class PlaneTests : StructTestSuite<Plane> {
         TryReadSpanWithLength = (ReadContext c, Span<Plane> d) => c.TryReadPlanes(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Plane> d) => c.TryPeekPlanes(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Plane> d) => c.TryReadPlanes(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Plane[] v) => c.TryPeekPlanesWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Plane[] v) => c.TryReadPlanesWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Plane> d) => c.TryPeekPlanesWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Plane> d) => c.TryReadPlanesWithMaxCount(maxCount, d),
     };
 }

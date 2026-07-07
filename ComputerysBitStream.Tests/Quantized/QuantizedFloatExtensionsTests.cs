@@ -76,6 +76,24 @@ public class QuantizedFloatExtensionsTests : QuantizedExtensionTestSuite<float> 
         return values;
     }
 
+    protected override float[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekQuantizedFloatsWithMaxCount(maxCount, Min, Max, BitCount);
+    protected override float[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadQuantizedFloatsWithMaxCount(maxCount, Min, Max, BitCount);
+
+    protected override float[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekQuantizedFloatsWithMaxCount(maxCount, Min, Max, BitCount, out float[] values));
+        return values;
+    }
+
+    protected override float[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadQuantizedFloatsWithMaxCount(maxCount, Min, Max, BitCount, out float[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<float> destination) => context.PeekQuantizedFloatsWithMaxCount(maxCount, destination, Min, Max, BitCount);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<float> destination) => context.ReadQuantizedFloatsWithMaxCount(maxCount, destination, Min, Max, BitCount);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<float> destination) { Assert.True(context.TryPeekQuantizedFloatsWithMaxCount(maxCount, destination, Min, Max, BitCount)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<float> destination) { Assert.True(context.TryReadQuantizedFloatsWithMaxCount(maxCount, destination, Min, Max, BitCount)); }
+
     protected override TryReadOperationSet<float> TryOperations => new() {
         TryPeekValue = (ReadContext c, out float v) => c.TryPeekQuantizedFloat(Min, Max, BitCount, out v),
         TryReadValue = (ReadContext c, out float v) => c.TryReadQuantizedFloat(Min, Max, BitCount, out v),
@@ -87,5 +105,9 @@ public class QuantizedFloatExtensionsTests : QuantizedExtensionTestSuite<float> 
         TryReadSpanWithLength = (ReadContext c, Span<float> d) => c.TryReadQuantizedFloats(d, Min, Max, BitCount),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<float> d) => c.TryPeekQuantizedFloats(count, d, Min, Max, BitCount),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<float> d) => c.TryReadQuantizedFloats(count, d, Min, Max, BitCount),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out float[] v) => c.TryPeekQuantizedFloatsWithMaxCount(maxCount, Min, Max, BitCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out float[] v) => c.TryReadQuantizedFloatsWithMaxCount(maxCount, Min, Max, BitCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<float> d) => c.TryPeekQuantizedFloatsWithMaxCount(maxCount, d, Min, Max, BitCount),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<float> d) => c.TryReadQuantizedFloatsWithMaxCount(maxCount, d, Min, Max, BitCount),
     };
 }

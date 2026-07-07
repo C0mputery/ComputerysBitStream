@@ -76,6 +76,24 @@ public class QuantizedDecimalExtensionsTests : QuantizedExtensionTestSuite<decim
         return values;
     }
 
+    protected override decimal[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekQuantizedDecimalsWithMaxCount(maxCount, Min, Max, BitCount);
+    protected override decimal[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadQuantizedDecimalsWithMaxCount(maxCount, Min, Max, BitCount);
+
+    protected override decimal[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekQuantizedDecimalsWithMaxCount(maxCount, Min, Max, BitCount, out decimal[] values));
+        return values;
+    }
+
+    protected override decimal[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadQuantizedDecimalsWithMaxCount(maxCount, Min, Max, BitCount, out decimal[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<decimal> destination) => context.PeekQuantizedDecimalsWithMaxCount(maxCount, destination, Min, Max, BitCount);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<decimal> destination) => context.ReadQuantizedDecimalsWithMaxCount(maxCount, destination, Min, Max, BitCount);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<decimal> destination) { Assert.True(context.TryPeekQuantizedDecimalsWithMaxCount(maxCount, destination, Min, Max, BitCount)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<decimal> destination) { Assert.True(context.TryReadQuantizedDecimalsWithMaxCount(maxCount, destination, Min, Max, BitCount)); }
+
     protected override TryReadOperationSet<decimal> TryOperations => new() {
         TryPeekValue = (ReadContext c, out decimal v) => c.TryPeekQuantizedDecimal(Min, Max, BitCount, out v),
         TryReadValue = (ReadContext c, out decimal v) => c.TryReadQuantizedDecimal(Min, Max, BitCount, out v),
@@ -87,5 +105,9 @@ public class QuantizedDecimalExtensionsTests : QuantizedExtensionTestSuite<decim
         TryReadSpanWithLength = (ReadContext c, Span<decimal> d) => c.TryReadQuantizedDecimals(d, Min, Max, BitCount),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<decimal> d) => c.TryPeekQuantizedDecimals(count, d, Min, Max, BitCount),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<decimal> d) => c.TryReadQuantizedDecimals(count, d, Min, Max, BitCount),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out decimal[] v) => c.TryPeekQuantizedDecimalsWithMaxCount(maxCount, Min, Max, BitCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out decimal[] v) => c.TryReadQuantizedDecimalsWithMaxCount(maxCount, Min, Max, BitCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<decimal> d) => c.TryPeekQuantizedDecimalsWithMaxCount(maxCount, d, Min, Max, BitCount),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<decimal> d) => c.TryReadQuantizedDecimalsWithMaxCount(maxCount, d, Min, Max, BitCount),
     };
 }

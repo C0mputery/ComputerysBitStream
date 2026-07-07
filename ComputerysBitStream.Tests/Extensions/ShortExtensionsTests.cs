@@ -67,6 +67,24 @@ public class ShortExtensionsTests : PrimitiveSerializationTestSuite<short> {
         return values;
     }
 
+    protected override short[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekShortsWithMaxCount(maxCount);
+    protected override short[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadShortsWithMaxCount(maxCount);
+
+    protected override short[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekShortsWithMaxCount(maxCount, out short[] values));
+        return values;
+    }
+
+    protected override short[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadShortsWithMaxCount(maxCount, out short[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<short> destination) => context.PeekShortsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<short> destination) => context.ReadShortsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<short> destination) { Assert.True(context.TryPeekShortsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<short> destination) { Assert.True(context.TryReadShortsWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<short> TryOperations => new() {
         TryPeekValue = (ReadContext c, out short v) => c.TryPeekShort(out v),
         TryReadValue = (ReadContext c, out short v) => c.TryReadShort(out v),
@@ -78,5 +96,9 @@ public class ShortExtensionsTests : PrimitiveSerializationTestSuite<short> {
         TryReadSpanWithLength = (ReadContext c, Span<short> d) => c.TryReadShorts(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<short> d) => c.TryPeekShorts(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<short> d) => c.TryReadShorts(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out short[] v) => c.TryPeekShortsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out short[] v) => c.TryReadShortsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<short> d) => c.TryPeekShortsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<short> d) => c.TryReadShortsWithMaxCount(maxCount, d),
     };
 }

@@ -37,6 +37,24 @@ public class ExternalPlainStructTests : StructTestSuite<ExternalPlainStruct> {
         return v;
     }
 
+    protected override ExternalPlainStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekExternalPlainStructsWithMaxCount(maxCount);
+    protected override ExternalPlainStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadExternalPlainStructsWithMaxCount(maxCount);
+
+    protected override ExternalPlainStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekExternalPlainStructsWithMaxCount(maxCount, out ExternalPlainStruct[] values));
+        return values;
+    }
+
+    protected override ExternalPlainStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadExternalPlainStructsWithMaxCount(maxCount, out ExternalPlainStruct[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<ExternalPlainStruct> destination) => context.PeekExternalPlainStructsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<ExternalPlainStruct> destination) => context.ReadExternalPlainStructsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<ExternalPlainStruct> destination) { Assert.True(context.TryPeekExternalPlainStructsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<ExternalPlainStruct> destination) { Assert.True(context.TryReadExternalPlainStructsWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, ExternalPlainStruct[] values) => context.WriteExternalPlainStructsWithoutLength(values);
     protected override ExternalPlainStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekExternalPlainStructs(count);
     protected override ExternalPlainStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadExternalPlainStructs(count);
@@ -76,6 +94,10 @@ public class ExternalPlainStructTests : StructTestSuite<ExternalPlainStruct> {
         TryReadSpanWithLength = (ReadContext c, Span<ExternalPlainStruct> d) => c.TryReadExternalPlainStructs(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<ExternalPlainStruct> d) => c.TryPeekExternalPlainStructs(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<ExternalPlainStruct> d) => c.TryReadExternalPlainStructs(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out ExternalPlainStruct[] v) => c.TryPeekExternalPlainStructsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out ExternalPlainStruct[] v) => c.TryReadExternalPlainStructsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<ExternalPlainStruct> d) => c.TryPeekExternalPlainStructsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<ExternalPlainStruct> d) => c.TryReadExternalPlainStructsWithMaxCount(maxCount, d),
     };
 }
 
@@ -116,6 +138,24 @@ public class AnotherExternalStructTests : StructTestSuite<AnotherExternalStruct>
         return v;
     }
 
+    protected override AnotherExternalStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekAnotherExternalStructsWithMaxCount(maxCount);
+    protected override AnotherExternalStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadAnotherExternalStructsWithMaxCount(maxCount);
+
+    protected override AnotherExternalStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekAnotherExternalStructsWithMaxCount(maxCount, out AnotherExternalStruct[] values));
+        return values;
+    }
+
+    protected override AnotherExternalStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadAnotherExternalStructsWithMaxCount(maxCount, out AnotherExternalStruct[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<AnotherExternalStruct> destination) => context.PeekAnotherExternalStructsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<AnotherExternalStruct> destination) => context.ReadAnotherExternalStructsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<AnotherExternalStruct> destination) { Assert.True(context.TryPeekAnotherExternalStructsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<AnotherExternalStruct> destination) { Assert.True(context.TryReadAnotherExternalStructsWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, AnotherExternalStruct[] values) => context.WriteAnotherExternalStructsWithoutLength(values);
     protected override AnotherExternalStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekAnotherExternalStructs(count);
     protected override AnotherExternalStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadAnotherExternalStructs(count);
@@ -155,6 +195,10 @@ public class AnotherExternalStructTests : StructTestSuite<AnotherExternalStruct>
         TryReadSpanWithLength = (ReadContext c, Span<AnotherExternalStruct> d) => c.TryReadAnotherExternalStructs(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<AnotherExternalStruct> d) => c.TryPeekAnotherExternalStructs(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<AnotherExternalStruct> d) => c.TryReadAnotherExternalStructs(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out AnotherExternalStruct[] v) => c.TryPeekAnotherExternalStructsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out AnotherExternalStruct[] v) => c.TryReadAnotherExternalStructsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<AnotherExternalStruct> d) => c.TryPeekAnotherExternalStructsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<AnotherExternalStruct> d) => c.TryReadAnotherExternalStructsWithMaxCount(maxCount, d),
     };
 }
 
@@ -195,6 +239,24 @@ public class CaseTestStructTests : StructTestSuite<CaseTestStruct> {
         return v;
     }
 
+    protected override CaseTestStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekCaseTestStructsWithMaxCount(maxCount);
+    protected override CaseTestStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadCaseTestStructsWithMaxCount(maxCount);
+
+    protected override CaseTestStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekCaseTestStructsWithMaxCount(maxCount, out CaseTestStruct[] values));
+        return values;
+    }
+
+    protected override CaseTestStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadCaseTestStructsWithMaxCount(maxCount, out CaseTestStruct[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<CaseTestStruct> destination) => context.PeekCaseTestStructsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<CaseTestStruct> destination) => context.ReadCaseTestStructsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<CaseTestStruct> destination) { Assert.True(context.TryPeekCaseTestStructsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<CaseTestStruct> destination) { Assert.True(context.TryReadCaseTestStructsWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, CaseTestStruct[] values) => context.WriteCaseTestStructsWithoutLength(values);
     protected override CaseTestStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekCaseTestStructs(count);
     protected override CaseTestStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadCaseTestStructs(count);
@@ -234,5 +296,9 @@ public class CaseTestStructTests : StructTestSuite<CaseTestStruct> {
         TryReadSpanWithLength = (ReadContext c, Span<CaseTestStruct> d) => c.TryReadCaseTestStructs(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<CaseTestStruct> d) => c.TryPeekCaseTestStructs(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<CaseTestStruct> d) => c.TryReadCaseTestStructs(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out CaseTestStruct[] v) => c.TryPeekCaseTestStructsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out CaseTestStruct[] v) => c.TryReadCaseTestStructsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<CaseTestStruct> d) => c.TryPeekCaseTestStructsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<CaseTestStruct> d) => c.TryReadCaseTestStructsWithMaxCount(maxCount, d),
     };
 }

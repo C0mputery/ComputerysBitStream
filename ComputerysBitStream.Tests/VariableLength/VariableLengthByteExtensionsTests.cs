@@ -68,6 +68,24 @@ public class VariableLengthByteExtensionsTests : VariableLengthExtensionTestSuit
         return values;
     }
 
+    protected override byte[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekVariableLengthBytesWithMaxCount(maxCount);
+    protected override byte[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadVariableLengthBytesWithMaxCount(maxCount);
+
+    protected override byte[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekVariableLengthBytesWithMaxCount(maxCount, out byte[] values));
+        return values;
+    }
+
+    protected override byte[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadVariableLengthBytesWithMaxCount(maxCount, out byte[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<byte> destination) => context.PeekVariableLengthBytesWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<byte> destination) => context.ReadVariableLengthBytesWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<byte> destination) { Assert.True(context.TryPeekVariableLengthBytesWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<byte> destination) { Assert.True(context.TryReadVariableLengthBytesWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<byte> TryOperations => new() {
         TryPeekValue = (ReadContext c, out byte v) => c.TryPeekVariableLengthByte(out v),
         TryReadValue = (ReadContext c, out byte v) => c.TryReadVariableLengthByte(out v),
@@ -79,5 +97,9 @@ public class VariableLengthByteExtensionsTests : VariableLengthExtensionTestSuit
         TryReadSpanWithLength = (ReadContext c, Span<byte> d) => c.TryReadVariableLengthBytes(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<byte> d) => c.TryPeekVariableLengthBytes(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<byte> d) => c.TryReadVariableLengthBytes(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out byte[] v) => c.TryPeekVariableLengthBytesWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out byte[] v) => c.TryReadVariableLengthBytesWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<byte> d) => c.TryPeekVariableLengthBytesWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<byte> d) => c.TryReadVariableLengthBytesWithMaxCount(maxCount, d),
     };
 }

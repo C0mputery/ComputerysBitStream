@@ -68,6 +68,24 @@ public class StringExtensionsTests : VariableLengthExtensionTestSuite<string> {
         return values;
     }
 
+    protected override string[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekStringsWithMaxCount(maxCount);
+    protected override string[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadStringsWithMaxCount(maxCount);
+
+    protected override string[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekStringsWithMaxCount(maxCount, out string[] values));
+        return values;
+    }
+
+    protected override string[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadStringsWithMaxCount(maxCount, out string[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<string> destination) => context.PeekStringsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<string> destination) => context.ReadStringsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<string> destination) { Assert.True(context.TryPeekStringsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<string> destination) { Assert.True(context.TryReadStringsWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<string> TryOperations => new() {
         TryPeekValue = (ReadContext c, out string v) => c.TryPeekString(out v),
         TryReadValue = (ReadContext c, out string v) => c.TryReadString(out v),
@@ -79,6 +97,10 @@ public class StringExtensionsTests : VariableLengthExtensionTestSuite<string> {
         TryReadSpanWithLength = (ReadContext c, Span<string> d) => c.TryReadStrings(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<string> d) => c.TryPeekStrings(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<string> d) => c.TryReadStrings(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out string[] v) => c.TryPeekStringsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out string[] v) => c.TryReadStringsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<string> d) => c.TryPeekStringsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<string> d) => c.TryReadStringsWithMaxCount(maxCount, d),
     };
 
     [Fact]

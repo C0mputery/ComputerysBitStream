@@ -5,8 +5,10 @@ namespace ComputerysBitStream {
     public sealed class BitStreamReadException : Exception {
         /// <summary>Type name from the failing read call.</summary>
         public string Type { get; }
+
         /// <summary>Bits remaining at the failure position.</summary>
         public long AvailableBits { get; }
+
         /// <summary>Read position in bits when the failure was detected.</summary>
         public long Position { get; }
 

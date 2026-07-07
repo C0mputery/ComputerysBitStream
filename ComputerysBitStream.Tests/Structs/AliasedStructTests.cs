@@ -37,6 +37,24 @@ public class AliasedStructTests : StructTestSuite<AliasedStruct> {
         return v;
     }
 
+    protected override AliasedStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekAliasedsWithMaxCount(maxCount);
+    protected override AliasedStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadAliasedsWithMaxCount(maxCount);
+
+    protected override AliasedStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekAliasedsWithMaxCount(maxCount, out AliasedStruct[] values));
+        return values;
+    }
+
+    protected override AliasedStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadAliasedsWithMaxCount(maxCount, out AliasedStruct[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedStruct> destination) => context.PeekAliasedsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedStruct> destination) => context.ReadAliasedsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedStruct> destination) { Assert.True(context.TryPeekAliasedsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedStruct> destination) { Assert.True(context.TryReadAliasedsWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, AliasedStruct[] values) => context.WriteAliasedsWithoutLength(values);
     protected override AliasedStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekAliaseds(count);
     protected override AliasedStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadAliaseds(count);
@@ -76,6 +94,10 @@ public class AliasedStructTests : StructTestSuite<AliasedStruct> {
         TryReadSpanWithLength = (ReadContext c, Span<AliasedStruct> d) => c.TryReadAliaseds(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<AliasedStruct> d) => c.TryPeekAliaseds(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<AliasedStruct> d) => c.TryReadAliaseds(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out AliasedStruct[] v) => c.TryPeekAliasedsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out AliasedStruct[] v) => c.TryReadAliasedsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<AliasedStruct> d) => c.TryPeekAliasedsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<AliasedStruct> d) => c.TryReadAliasedsWithMaxCount(maxCount, d),
     };
 }
 
@@ -116,6 +138,24 @@ public class AliasedExternalStructTests : StructTestSuite<AliasedExternalStruct>
         return v;
     }
 
+    protected override AliasedExternalStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekAliasedExtsWithMaxCount(maxCount);
+    protected override AliasedExternalStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadAliasedExtsWithMaxCount(maxCount);
+
+    protected override AliasedExternalStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekAliasedExtsWithMaxCount(maxCount, out AliasedExternalStruct[] values));
+        return values;
+    }
+
+    protected override AliasedExternalStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadAliasedExtsWithMaxCount(maxCount, out AliasedExternalStruct[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedExternalStruct> destination) => context.PeekAliasedExtsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedExternalStruct> destination) => context.ReadAliasedExtsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedExternalStruct> destination) { Assert.True(context.TryPeekAliasedExtsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedExternalStruct> destination) { Assert.True(context.TryReadAliasedExtsWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, AliasedExternalStruct[] values) => context.WriteAliasedExtsWithoutLength(values);
     protected override AliasedExternalStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekAliasedExts(count);
     protected override AliasedExternalStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadAliasedExts(count);
@@ -155,6 +195,10 @@ public class AliasedExternalStructTests : StructTestSuite<AliasedExternalStruct>
         TryReadSpanWithLength = (ReadContext c, Span<AliasedExternalStruct> d) => c.TryReadAliasedExts(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<AliasedExternalStruct> d) => c.TryPeekAliasedExts(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<AliasedExternalStruct> d) => c.TryReadAliasedExts(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out AliasedExternalStruct[] v) => c.TryPeekAliasedExtsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out AliasedExternalStruct[] v) => c.TryReadAliasedExtsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<AliasedExternalStruct> d) => c.TryPeekAliasedExtsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<AliasedExternalStruct> d) => c.TryReadAliasedExtsWithMaxCount(maxCount, d),
     };
 }
 
@@ -194,6 +238,24 @@ public class AliasedIncludeExternalStructTests : StructTestSuite<AliasedIncludeE
         Assert.True(context.TryReadAliasedIncs(out AliasedIncludeExternalStruct[] v));
         return v;
     }
+
+    protected override AliasedIncludeExternalStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekAliasedIncsWithMaxCount(maxCount);
+    protected override AliasedIncludeExternalStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadAliasedIncsWithMaxCount(maxCount);
+
+    protected override AliasedIncludeExternalStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekAliasedIncsWithMaxCount(maxCount, out AliasedIncludeExternalStruct[] values));
+        return values;
+    }
+
+    protected override AliasedIncludeExternalStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadAliasedIncsWithMaxCount(maxCount, out AliasedIncludeExternalStruct[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedIncludeExternalStruct> destination) => context.PeekAliasedIncsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedIncludeExternalStruct> destination) => context.ReadAliasedIncsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryPeekAliasedIncsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<AliasedIncludeExternalStruct> destination) { Assert.True(context.TryReadAliasedIncsWithMaxCount(maxCount, destination)); }
 
     protected override void WriteArrayWithoutLength(ref WriteContext context, AliasedIncludeExternalStruct[] values) => context.WriteAliasedIncsWithoutLength(values);
     protected override AliasedIncludeExternalStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekAliasedIncs(count);
@@ -257,5 +319,9 @@ public class AliasedIncludeExternalStructTests : StructTestSuite<AliasedIncludeE
         TryReadSpanWithLength = (ReadContext c, Span<AliasedIncludeExternalStruct> d) => c.TryReadAliasedIncs(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<AliasedIncludeExternalStruct> d) => c.TryPeekAliasedIncs(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<AliasedIncludeExternalStruct> d) => c.TryReadAliasedIncs(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out AliasedIncludeExternalStruct[] v) => c.TryPeekAliasedIncsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out AliasedIncludeExternalStruct[] v) => c.TryReadAliasedIncsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<AliasedIncludeExternalStruct> d) => c.TryPeekAliasedIncsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<AliasedIncludeExternalStruct> d) => c.TryReadAliasedIncsWithMaxCount(maxCount, d),
     };
 }

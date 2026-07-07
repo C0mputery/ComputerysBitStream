@@ -68,6 +68,24 @@ public class VariableLengthSByteExtensionsTests : VariableLengthExtensionTestSui
         return values;
     }
 
+    protected override sbyte[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekVariableLengthSBytesWithMaxCount(maxCount);
+    protected override sbyte[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadVariableLengthSBytesWithMaxCount(maxCount);
+
+    protected override sbyte[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekVariableLengthSBytesWithMaxCount(maxCount, out sbyte[] values));
+        return values;
+    }
+
+    protected override sbyte[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadVariableLengthSBytesWithMaxCount(maxCount, out sbyte[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<sbyte> destination) => context.PeekVariableLengthSBytesWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<sbyte> destination) => context.ReadVariableLengthSBytesWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<sbyte> destination) { Assert.True(context.TryPeekVariableLengthSBytesWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<sbyte> destination) { Assert.True(context.TryReadVariableLengthSBytesWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<sbyte> TryOperations => new() {
         TryPeekValue = (ReadContext c, out sbyte v) => c.TryPeekVariableLengthSByte(out v),
         TryReadValue = (ReadContext c, out sbyte v) => c.TryReadVariableLengthSByte(out v),
@@ -79,5 +97,9 @@ public class VariableLengthSByteExtensionsTests : VariableLengthExtensionTestSui
         TryReadSpanWithLength = (ReadContext c, Span<sbyte> d) => c.TryReadVariableLengthSBytes(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<sbyte> d) => c.TryPeekVariableLengthSBytes(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<sbyte> d) => c.TryReadVariableLengthSBytes(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out sbyte[] v) => c.TryPeekVariableLengthSBytesWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out sbyte[] v) => c.TryReadVariableLengthSBytesWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<sbyte> d) => c.TryPeekVariableLengthSBytesWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<sbyte> d) => c.TryReadVariableLengthSBytesWithMaxCount(maxCount, d),
     };
 }

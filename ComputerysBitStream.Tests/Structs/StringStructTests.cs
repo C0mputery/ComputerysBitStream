@@ -39,6 +39,24 @@ public class StringStructTests : StructTestSuite<StringStruct> {
         return v;
     }
 
+    protected override StringStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekStringStructsWithMaxCount(maxCount);
+    protected override StringStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadStringStructsWithMaxCount(maxCount);
+
+    protected override StringStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekStringStructsWithMaxCount(maxCount, out StringStruct[] values));
+        return values;
+    }
+
+    protected override StringStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadStringStructsWithMaxCount(maxCount, out StringStruct[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<StringStruct> destination) => context.PeekStringStructsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<StringStruct> destination) => context.ReadStringStructsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<StringStruct> destination) { Assert.True(context.TryPeekStringStructsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<StringStruct> destination) { Assert.True(context.TryReadStringStructsWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, StringStruct[] values) => context.WriteStringStructsWithoutLength(values);
     protected override StringStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekStringStructs(count);
     protected override StringStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadStringStructs(count);
@@ -88,5 +106,9 @@ public class StringStructTests : StructTestSuite<StringStruct> {
         TryReadSpanWithLength = (ReadContext c, Span<StringStruct> d) => c.TryReadStringStructs(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<StringStruct> d) => c.TryPeekStringStructs(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<StringStruct> d) => c.TryReadStringStructs(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out StringStruct[] v) => c.TryPeekStringStructsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out StringStruct[] v) => c.TryReadStringStructsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<StringStruct> d) => c.TryPeekStringStructsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<StringStruct> d) => c.TryReadStringStructsWithMaxCount(maxCount, d),
     };
 }

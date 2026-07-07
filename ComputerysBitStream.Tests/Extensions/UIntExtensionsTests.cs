@@ -67,6 +67,24 @@ public class UIntExtensionsTests : PrimitiveSerializationTestSuite<uint> {
         return values;
     }
 
+    protected override uint[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekUIntsWithMaxCount(maxCount);
+    protected override uint[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadUIntsWithMaxCount(maxCount);
+
+    protected override uint[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekUIntsWithMaxCount(maxCount, out uint[] values));
+        return values;
+    }
+
+    protected override uint[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadUIntsWithMaxCount(maxCount, out uint[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<uint> destination) => context.PeekUIntsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<uint> destination) => context.ReadUIntsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<uint> destination) { Assert.True(context.TryPeekUIntsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<uint> destination) { Assert.True(context.TryReadUIntsWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<uint> TryOperations => new() {
         TryPeekValue = (ReadContext c, out uint v) => c.TryPeekUInt(out v),
         TryReadValue = (ReadContext c, out uint v) => c.TryReadUInt(out v),
@@ -78,5 +96,9 @@ public class UIntExtensionsTests : PrimitiveSerializationTestSuite<uint> {
         TryReadSpanWithLength = (ReadContext c, Span<uint> d) => c.TryReadUInts(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<uint> d) => c.TryPeekUInts(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<uint> d) => c.TryReadUInts(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out uint[] v) => c.TryPeekUIntsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out uint[] v) => c.TryReadUIntsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<uint> d) => c.TryPeekUIntsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<uint> d) => c.TryReadUIntsWithMaxCount(maxCount, d),
     };
 }

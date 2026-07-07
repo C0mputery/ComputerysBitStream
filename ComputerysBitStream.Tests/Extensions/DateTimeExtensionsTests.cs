@@ -74,6 +74,24 @@ public class DateTimeExtensionsTests : PrimitiveSerializationTestSuite<DateTime>
         return values;
     }
 
+    protected override DateTime[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekDateTimesWithMaxCount(maxCount);
+    protected override DateTime[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadDateTimesWithMaxCount(maxCount);
+
+    protected override DateTime[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekDateTimesWithMaxCount(maxCount, out DateTime[] values));
+        return values;
+    }
+
+    protected override DateTime[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadDateTimesWithMaxCount(maxCount, out DateTime[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<DateTime> destination) => context.PeekDateTimesWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<DateTime> destination) => context.ReadDateTimesWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<DateTime> destination) { Assert.True(context.TryPeekDateTimesWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<DateTime> destination) { Assert.True(context.TryReadDateTimesWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<DateTime> TryOperations => new() {
         TryPeekValue = (ReadContext c, out DateTime v) => c.TryPeekDateTime(out v),
         TryReadValue = (ReadContext c, out DateTime v) => c.TryReadDateTime(out v),
@@ -85,5 +103,9 @@ public class DateTimeExtensionsTests : PrimitiveSerializationTestSuite<DateTime>
         TryReadSpanWithLength = (ReadContext c, Span<DateTime> d) => c.TryReadDateTimes(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<DateTime> d) => c.TryPeekDateTimes(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<DateTime> d) => c.TryReadDateTimes(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out DateTime[] v) => c.TryPeekDateTimesWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out DateTime[] v) => c.TryReadDateTimesWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<DateTime> d) => c.TryPeekDateTimesWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<DateTime> d) => c.TryReadDateTimesWithMaxCount(maxCount, d),
     };
 }

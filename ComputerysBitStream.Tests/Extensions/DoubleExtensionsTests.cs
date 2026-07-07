@@ -67,6 +67,24 @@ public class DoubleExtensionsTests : PrimitiveSerializationTestSuite<double> {
         return values;
     }
 
+    protected override double[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekDoublesWithMaxCount(maxCount);
+    protected override double[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadDoublesWithMaxCount(maxCount);
+
+    protected override double[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekDoublesWithMaxCount(maxCount, out double[] values));
+        return values;
+    }
+
+    protected override double[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadDoublesWithMaxCount(maxCount, out double[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<double> destination) => context.PeekDoublesWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<double> destination) => context.ReadDoublesWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<double> destination) { Assert.True(context.TryPeekDoublesWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<double> destination) { Assert.True(context.TryReadDoublesWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<double> TryOperations => new() {
         TryPeekValue = (ReadContext c, out double v) => c.TryPeekDouble(out v),
         TryReadValue = (ReadContext c, out double v) => c.TryReadDouble(out v),
@@ -78,5 +96,9 @@ public class DoubleExtensionsTests : PrimitiveSerializationTestSuite<double> {
         TryReadSpanWithLength = (ReadContext c, Span<double> d) => c.TryReadDoubles(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<double> d) => c.TryPeekDoubles(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<double> d) => c.TryReadDoubles(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out double[] v) => c.TryPeekDoublesWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out double[] v) => c.TryReadDoublesWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<double> d) => c.TryPeekDoublesWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<double> d) => c.TryReadDoublesWithMaxCount(maxCount, d),
     };
 }

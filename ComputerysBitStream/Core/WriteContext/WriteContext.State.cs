@@ -12,8 +12,10 @@ namespace ComputerysBitStream {
 
         /// <summary>Bit index within the current ulong (<c>Position % 64</c>).</summary>
         public readonly int BitOffset => BitHelper.GetBitOffset(Position);
+
         /// <summary><c>true</c> when <see cref="BitOffset"/> is zero.</summary>
         public readonly bool IsUlongAligned => BitOffset == 0;
+
         /// <summary><c>true</c> when <see cref="Position"/> is a multiple of 8.</summary>
         public readonly bool IsByteAligned => Position % BitHelper.ByteSize == 0;
 

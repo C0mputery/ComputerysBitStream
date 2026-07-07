@@ -5,10 +5,13 @@ namespace ComputerysBitStream {
     public sealed class InsufficientWriteCapacityException : Exception {
         /// <summary>Operation label from the failing write call.</summary>
         public string Operation { get; }
+
         /// <summary>Bits required for the operation.</summary>
         public int RequiredBits { get; }
+
         /// <summary>Bits remaining when the check ran.</summary>
         public long AvailableBits { get; }
+
         /// <summary>Write position in bits when the check ran.</summary>
         public long Position { get; }
 

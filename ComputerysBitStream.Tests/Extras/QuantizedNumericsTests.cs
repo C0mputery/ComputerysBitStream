@@ -83,6 +83,24 @@ public class QuantizedVector2ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
         return values;
     }
 
+    protected override Vector2[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekQuantizedVector2sWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+    protected override Vector2[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadQuantizedVector2sWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+
+    protected override Vector2[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekQuantizedVector2sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Vector2[] values));
+        return values;
+    }
+
+    protected override Vector2[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadQuantizedVector2sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Vector2[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector2> destination) => context.PeekQuantizedVector2sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector2> destination) => context.ReadQuantizedVector2sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector2> destination) { Assert.True(context.TryPeekQuantizedVector2sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector2> destination) { Assert.True(context.TryReadQuantizedVector2sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+
     protected override TryReadOperationSet<Vector2> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Vector2 v) => c.TryPeekQuantizedVector2(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Vector2 v) => c.TryReadQuantizedVector2(MinRange, MaxRange, BitCount, out v),
@@ -94,6 +112,10 @@ public class QuantizedVector2ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
         TryReadSpanWithLength = (ReadContext c, Span<Vector2> d) => c.TryReadQuantizedVector2s(d, MinRange, MaxRange, BitCount),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Vector2> d) => c.TryPeekQuantizedVector2s(count, d, MinRange, MaxRange, BitCount),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Vector2> d) => c.TryReadQuantizedVector2s(count, d, MinRange, MaxRange, BitCount),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Vector2[] v) => c.TryPeekQuantizedVector2sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Vector2[] v) => c.TryReadQuantizedVector2sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector2> d) => c.TryPeekQuantizedVector2sWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector2> d) => c.TryReadQuantizedVector2sWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
     };
 }
 
@@ -177,6 +199,24 @@ public class QuantizedVector3ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
         return values;
     }
 
+    protected override Vector3[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekQuantizedVector3sWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+    protected override Vector3[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadQuantizedVector3sWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+
+    protected override Vector3[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekQuantizedVector3sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Vector3[] values));
+        return values;
+    }
+
+    protected override Vector3[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadQuantizedVector3sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Vector3[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector3> destination) => context.PeekQuantizedVector3sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector3> destination) => context.ReadQuantizedVector3sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector3> destination) { Assert.True(context.TryPeekQuantizedVector3sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector3> destination) { Assert.True(context.TryReadQuantizedVector3sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+
     protected override TryReadOperationSet<Vector3> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Vector3 v) => c.TryPeekQuantizedVector3(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Vector3 v) => c.TryReadQuantizedVector3(MinRange, MaxRange, BitCount, out v),
@@ -188,6 +228,10 @@ public class QuantizedVector3ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
         TryReadSpanWithLength = (ReadContext c, Span<Vector3> d) => c.TryReadQuantizedVector3s(d, MinRange, MaxRange, BitCount),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Vector3> d) => c.TryPeekQuantizedVector3s(count, d, MinRange, MaxRange, BitCount),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Vector3> d) => c.TryReadQuantizedVector3s(count, d, MinRange, MaxRange, BitCount),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Vector3[] v) => c.TryPeekQuantizedVector3sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Vector3[] v) => c.TryReadQuantizedVector3sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector3> d) => c.TryPeekQuantizedVector3sWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector3> d) => c.TryReadQuantizedVector3sWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
     };
 }
 
@@ -272,6 +316,24 @@ public class QuantizedVector4ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
         return values;
     }
 
+    protected override Vector4[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekQuantizedVector4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+    protected override Vector4[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadQuantizedVector4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+
+    protected override Vector4[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekQuantizedVector4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Vector4[] values));
+        return values;
+    }
+
+    protected override Vector4[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadQuantizedVector4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Vector4[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector4> destination) => context.PeekQuantizedVector4sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector4> destination) => context.ReadQuantizedVector4sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector4> destination) { Assert.True(context.TryPeekQuantizedVector4sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Vector4> destination) { Assert.True(context.TryReadQuantizedVector4sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+
     protected override TryReadOperationSet<Vector4> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Vector4 v) => c.TryPeekQuantizedVector4(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Vector4 v) => c.TryReadQuantizedVector4(MinRange, MaxRange, BitCount, out v),
@@ -283,6 +345,10 @@ public class QuantizedVector4ExtensionsTests : ExtrasQuantizedNumericsTestSuite<
         TryReadSpanWithLength = (ReadContext c, Span<Vector4> d) => c.TryReadQuantizedVector4s(d, MinRange, MaxRange, BitCount),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Vector4> d) => c.TryPeekQuantizedVector4s(count, d, MinRange, MaxRange, BitCount),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Vector4> d) => c.TryReadQuantizedVector4s(count, d, MinRange, MaxRange, BitCount),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Vector4[] v) => c.TryPeekQuantizedVector4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Vector4[] v) => c.TryReadQuantizedVector4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector4> d) => c.TryPeekQuantizedVector4sWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Vector4> d) => c.TryReadQuantizedVector4sWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
     };
 }
 
@@ -367,6 +433,24 @@ public class QuantizedQuaternionExtensionsTests : ExtrasQuantizedNumericsTestSui
         return values;
     }
 
+    protected override Quaternion[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekQuantizedQuaternionsWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+    protected override Quaternion[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadQuantizedQuaternionsWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+
+    protected override Quaternion[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekQuantizedQuaternionsWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Quaternion[] values));
+        return values;
+    }
+
+    protected override Quaternion[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadQuantizedQuaternionsWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Quaternion[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Quaternion> destination) => context.PeekQuantizedQuaternionsWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Quaternion> destination) => context.ReadQuantizedQuaternionsWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Quaternion> destination) { Assert.True(context.TryPeekQuantizedQuaternionsWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Quaternion> destination) { Assert.True(context.TryReadQuantizedQuaternionsWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+
     protected override TryReadOperationSet<Quaternion> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Quaternion v) => c.TryPeekQuantizedQuaternion(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Quaternion v) => c.TryReadQuantizedQuaternion(MinRange, MaxRange, BitCount, out v),
@@ -378,6 +462,10 @@ public class QuantizedQuaternionExtensionsTests : ExtrasQuantizedNumericsTestSui
         TryReadSpanWithLength = (ReadContext c, Span<Quaternion> d) => c.TryReadQuantizedQuaternions(d, MinRange, MaxRange, BitCount),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Quaternion> d) => c.TryPeekQuantizedQuaternions(count, d, MinRange, MaxRange, BitCount),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Quaternion> d) => c.TryReadQuantizedQuaternions(count, d, MinRange, MaxRange, BitCount),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Quaternion[] v) => c.TryPeekQuantizedQuaternionsWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Quaternion[] v) => c.TryReadQuantizedQuaternionsWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Quaternion> d) => c.TryPeekQuantizedQuaternionsWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Quaternion> d) => c.TryReadQuantizedQuaternionsWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
     };
 }
 
@@ -462,6 +550,24 @@ public class QuantizedPlaneExtensionsTests : ExtrasQuantizedNumericsTestSuite<Pl
         return values;
     }
 
+    protected override Plane[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekQuantizedPlanesWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+    protected override Plane[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadQuantizedPlanesWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+
+    protected override Plane[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekQuantizedPlanesWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Plane[] values));
+        return values;
+    }
+
+    protected override Plane[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadQuantizedPlanesWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Plane[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Plane> destination) => context.PeekQuantizedPlanesWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Plane> destination) => context.ReadQuantizedPlanesWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Plane> destination) { Assert.True(context.TryPeekQuantizedPlanesWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Plane> destination) { Assert.True(context.TryReadQuantizedPlanesWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+
     protected override TryReadOperationSet<Plane> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Plane v) => c.TryPeekQuantizedPlane(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Plane v) => c.TryReadQuantizedPlane(MinRange, MaxRange, BitCount, out v),
@@ -473,6 +579,10 @@ public class QuantizedPlaneExtensionsTests : ExtrasQuantizedNumericsTestSuite<Pl
         TryReadSpanWithLength = (ReadContext c, Span<Plane> d) => c.TryReadQuantizedPlanes(d, MinRange, MaxRange, BitCount),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Plane> d) => c.TryPeekQuantizedPlanes(count, d, MinRange, MaxRange, BitCount),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Plane> d) => c.TryReadQuantizedPlanes(count, d, MinRange, MaxRange, BitCount),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Plane[] v) => c.TryPeekQuantizedPlanesWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Plane[] v) => c.TryReadQuantizedPlanesWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Plane> d) => c.TryPeekQuantizedPlanesWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Plane> d) => c.TryReadQuantizedPlanesWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
     };
 }
 
@@ -570,6 +680,24 @@ public class QuantizedMatrix4x4ExtensionsTests : ExtrasQuantizedNumericsTestSuit
         return values;
     }
 
+    protected override Matrix4x4[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekQuantizedMatrix4x4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+    protected override Matrix4x4[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadQuantizedMatrix4x4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount);
+
+    protected override Matrix4x4[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekQuantizedMatrix4x4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Matrix4x4[] values));
+        return values;
+    }
+
+    protected override Matrix4x4[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadQuantizedMatrix4x4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out Matrix4x4[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Matrix4x4> destination) => context.PeekQuantizedMatrix4x4sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Matrix4x4> destination) => context.ReadQuantizedMatrix4x4sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<Matrix4x4> destination) { Assert.True(context.TryPeekQuantizedMatrix4x4sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<Matrix4x4> destination) { Assert.True(context.TryReadQuantizedMatrix4x4sWithMaxCount(maxCount, destination, MinRange, MaxRange, BitCount)); }
+
     protected override TryReadOperationSet<Matrix4x4> TryOperations => new() {
         TryPeekValue = (ReadContext c, out Matrix4x4 v) => c.TryPeekQuantizedMatrix4x4(MinRange, MaxRange, BitCount, out v),
         TryReadValue = (ReadContext c, out Matrix4x4 v) => c.TryReadQuantizedMatrix4x4(MinRange, MaxRange, BitCount, out v),
@@ -581,5 +709,9 @@ public class QuantizedMatrix4x4ExtensionsTests : ExtrasQuantizedNumericsTestSuit
         TryReadSpanWithLength = (ReadContext c, Span<Matrix4x4> d) => c.TryReadQuantizedMatrix4x4s(d, MinRange, MaxRange, BitCount),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<Matrix4x4> d) => c.TryPeekQuantizedMatrix4x4s(count, d, MinRange, MaxRange, BitCount),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<Matrix4x4> d) => c.TryReadQuantizedMatrix4x4s(count, d, MinRange, MaxRange, BitCount),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out Matrix4x4[] v) => c.TryPeekQuantizedMatrix4x4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out Matrix4x4[] v) => c.TryReadQuantizedMatrix4x4sWithMaxCount(maxCount, MinRange, MaxRange, BitCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<Matrix4x4> d) => c.TryPeekQuantizedMatrix4x4sWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<Matrix4x4> d) => c.TryReadQuantizedMatrix4x4sWithMaxCount(maxCount, d, MinRange, MaxRange, BitCount),
     };
 }

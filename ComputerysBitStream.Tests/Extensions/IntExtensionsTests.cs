@@ -67,6 +67,24 @@ public class IntExtensionsTests : PrimitiveSerializationTestSuite<int> {
         return values;
     }
 
+    protected override int[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekIntsWithMaxCount(maxCount);
+    protected override int[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadIntsWithMaxCount(maxCount);
+
+    protected override int[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekIntsWithMaxCount(maxCount, out int[] values));
+        return values;
+    }
+
+    protected override int[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadIntsWithMaxCount(maxCount, out int[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<int> destination) => context.PeekIntsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<int> destination) => context.ReadIntsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<int> destination) { Assert.True(context.TryPeekIntsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<int> destination) { Assert.True(context.TryReadIntsWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<int> TryOperations => new() {
         TryPeekValue = (ReadContext c, out int v) => c.TryPeekInt(out v),
         TryReadValue = (ReadContext c, out int v) => c.TryReadInt(out v),
@@ -78,5 +96,9 @@ public class IntExtensionsTests : PrimitiveSerializationTestSuite<int> {
         TryReadSpanWithLength = (ReadContext c, Span<int> d) => c.TryReadInts(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<int> d) => c.TryPeekInts(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<int> d) => c.TryReadInts(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out int[] v) => c.TryPeekIntsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out int[] v) => c.TryReadIntsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<int> d) => c.TryPeekIntsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<int> d) => c.TryReadIntsWithMaxCount(maxCount, d),
     };
 }

@@ -67,6 +67,24 @@ public class BoolExtensionsTests : PrimitiveSerializationTestSuite<bool> {
         return values;
     }
 
+    protected override bool[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekBoolsWithMaxCount(maxCount);
+    protected override bool[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadBoolsWithMaxCount(maxCount);
+
+    protected override bool[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekBoolsWithMaxCount(maxCount, out bool[] values));
+        return values;
+    }
+
+    protected override bool[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadBoolsWithMaxCount(maxCount, out bool[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<bool> destination) => context.PeekBoolsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<bool> destination) => context.ReadBoolsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<bool> destination) { Assert.True(context.TryPeekBoolsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<bool> destination) { Assert.True(context.TryReadBoolsWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<bool> TryOperations => new() {
         TryPeekValue = (ReadContext c, out bool v) => c.TryPeekBool(out v),
         TryReadValue = (ReadContext c, out bool v) => c.TryReadBool(out v),
@@ -78,5 +96,9 @@ public class BoolExtensionsTests : PrimitiveSerializationTestSuite<bool> {
         TryReadSpanWithLength = (ReadContext c, Span<bool> d) => c.TryReadBools(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<bool> d) => c.TryPeekBools(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<bool> d) => c.TryReadBools(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out bool[] v) => c.TryPeekBoolsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out bool[] v) => c.TryReadBoolsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<bool> d) => c.TryPeekBoolsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<bool> d) => c.TryReadBoolsWithMaxCount(maxCount, d),
     };
 }

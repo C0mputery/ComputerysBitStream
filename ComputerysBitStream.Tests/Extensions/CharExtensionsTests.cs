@@ -67,6 +67,24 @@ public class CharExtensionsTests : PrimitiveSerializationTestSuite<char> {
         return values;
     }
 
+    protected override char[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekCharsWithMaxCount(maxCount);
+    protected override char[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadCharsWithMaxCount(maxCount);
+
+    protected override char[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekCharsWithMaxCount(maxCount, out char[] values));
+        return values;
+    }
+
+    protected override char[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadCharsWithMaxCount(maxCount, out char[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<char> destination) => context.PeekCharsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<char> destination) => context.ReadCharsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<char> destination) { Assert.True(context.TryPeekCharsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<char> destination) { Assert.True(context.TryReadCharsWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<char> TryOperations => new() {
         TryPeekValue = (ReadContext c, out char v) => c.TryPeekChar(out v),
         TryReadValue = (ReadContext c, out char v) => c.TryReadChar(out v),
@@ -78,5 +96,9 @@ public class CharExtensionsTests : PrimitiveSerializationTestSuite<char> {
         TryReadSpanWithLength = (ReadContext c, Span<char> d) => c.TryReadChars(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<char> d) => c.TryPeekChars(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<char> d) => c.TryReadChars(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out char[] v) => c.TryPeekCharsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out char[] v) => c.TryReadCharsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<char> d) => c.TryPeekCharsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<char> d) => c.TryReadCharsWithMaxCount(maxCount, d),
     };
 }

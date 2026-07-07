@@ -38,6 +38,24 @@ public class ContainerStructTests : StructTestSuite<ContainerStruct> {
         return v;
     }
 
+    protected override ContainerStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekContainerStructsWithMaxCount(maxCount);
+    protected override ContainerStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadContainerStructsWithMaxCount(maxCount);
+
+    protected override ContainerStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekContainerStructsWithMaxCount(maxCount, out ContainerStruct[] values));
+        return values;
+    }
+
+    protected override ContainerStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadContainerStructsWithMaxCount(maxCount, out ContainerStruct[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<ContainerStruct> destination) => context.PeekContainerStructsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<ContainerStruct> destination) => context.ReadContainerStructsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<ContainerStruct> destination) { Assert.True(context.TryPeekContainerStructsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<ContainerStruct> destination) { Assert.True(context.TryReadContainerStructsWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, ContainerStruct[] values) => context.WriteContainerStructsWithoutLength(values);
     protected override ContainerStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekContainerStructs(count);
     protected override ContainerStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadContainerStructs(count);
@@ -83,5 +101,9 @@ public class ContainerStructTests : StructTestSuite<ContainerStruct> {
         TryReadSpanWithLength = (ReadContext c, Span<ContainerStruct> d) => c.TryReadContainerStructs(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<ContainerStruct> d) => c.TryPeekContainerStructs(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<ContainerStruct> d) => c.TryReadContainerStructs(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out ContainerStruct[] v) => c.TryPeekContainerStructsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out ContainerStruct[] v) => c.TryReadContainerStructsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<ContainerStruct> d) => c.TryPeekContainerStructsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<ContainerStruct> d) => c.TryReadContainerStructsWithMaxCount(maxCount, d),
     };
 }

@@ -131,6 +131,24 @@ public class VariableLengthStructPrimitiveTests : VariableLengthExtensionTestSui
         return values;
     }
 
+    protected override VariableLengthStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekVariableLengthStructsWithMaxCount(maxCount);
+    protected override VariableLengthStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadVariableLengthStructsWithMaxCount(maxCount);
+
+    protected override VariableLengthStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekVariableLengthStructsWithMaxCount(maxCount, out VariableLengthStruct[] values));
+        return values;
+    }
+
+    protected override VariableLengthStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadVariableLengthStructsWithMaxCount(maxCount, out VariableLengthStruct[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<VariableLengthStruct> destination) => context.PeekVariableLengthStructsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<VariableLengthStruct> destination) => context.ReadVariableLengthStructsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<VariableLengthStruct> destination) { Assert.True(context.TryPeekVariableLengthStructsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<VariableLengthStruct> destination) { Assert.True(context.TryReadVariableLengthStructsWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<VariableLengthStruct> TryOperations => new() {
         TryPeekValue = (ReadContext c, out VariableLengthStruct v) => c.TryPeekVariableLengthStruct(out v),
         TryReadValue = (ReadContext c, out VariableLengthStruct v) => c.TryReadVariableLengthStruct(out v),
@@ -142,5 +160,9 @@ public class VariableLengthStructPrimitiveTests : VariableLengthExtensionTestSui
         TryReadSpanWithLength = (ReadContext c, Span<VariableLengthStruct> d) => c.TryReadVariableLengthStructs(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<VariableLengthStruct> d) => c.TryPeekVariableLengthStructs(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<VariableLengthStruct> d) => c.TryReadVariableLengthStructs(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out VariableLengthStruct[] v) => c.TryPeekVariableLengthStructsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out VariableLengthStruct[] v) => c.TryReadVariableLengthStructsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<VariableLengthStruct> d) => c.TryPeekVariableLengthStructsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<VariableLengthStruct> d) => c.TryReadVariableLengthStructsWithMaxCount(maxCount, d),
     };
 }

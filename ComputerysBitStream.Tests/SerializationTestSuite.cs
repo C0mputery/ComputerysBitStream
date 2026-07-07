@@ -43,6 +43,11 @@ public abstract class SerializationTestSuite<T> {
     protected abstract void TryPeekSpanWithoutLength(ReadContext context, int count, Span<T> destination);
     protected abstract void TryReadSpanWithoutLength(ReadContext context, int count, Span<T> destination);
 
+    protected abstract void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<T> destination);
+    protected abstract void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<T> destination);
+    protected abstract void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<T> destination);
+    protected abstract void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<T> destination);
+
     protected abstract void WriteArray(ref WriteContext context, T[] values);
     protected abstract T[] PeekArrayWithLength(ReadContext context);
     protected abstract T[] ReadArrayWithLength(ReadContext context);
@@ -54,6 +59,11 @@ public abstract class SerializationTestSuite<T> {
     protected abstract T[] ReadArrayWithoutLength(ReadContext context, int count);
     protected abstract T[] TryPeekArrayWithoutLength(ReadContext context, int count);
     protected abstract T[] TryReadArrayWithoutLength(ReadContext context, int count);
+
+    protected abstract T[] PeekArrayWithMaxCount(ReadContext context, int maxCount);
+    protected abstract T[] ReadArrayWithMaxCount(ReadContext context, int maxCount);
+    protected abstract T[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount);
+    protected abstract T[] TryReadArrayWithMaxCount(ReadContext context, int maxCount);
 
     [Fact]
     public void ShouldReportCorrectFixedSize() {
@@ -122,6 +132,20 @@ public abstract class SerializationTestSuite<T> {
 
     [Theory]
     [MemberData(nameof(InitialOffsetData))]
+    public void WriteAndReadSpan_WithMaxCount_ShouldReturnIdenticalSpan(int initialOffset) {
+        int maxCount = Values.Length + 10;
+        RoundTripTestHarness<T>.AssertSpanWithMaxCountRoundTrip(initialOffset, Values, maxCount, WriteSpan, PeekSpanWithMaxCount, ReadSpanWithMaxCount, AssertValuesEqualPair);
+    }
+
+    [Theory]
+    [MemberData(nameof(InitialOffsetData))]
+    public void WriteAndReadSpan_WithMaxCount_Try_ShouldReturnIdenticalSpan(int initialOffset) {
+        int maxCount = Values.Length + 10;
+        RoundTripTestHarness<T>.AssertSpanWithMaxCountRoundTrip(initialOffset, Values, maxCount, WriteSpan, TryPeekSpanWithMaxCount, TryReadSpanWithMaxCount, AssertValuesEqualPair);
+    }
+
+    [Theory]
+    [MemberData(nameof(InitialOffsetData))]
     public void WriteAndReadArray_ShouldReturnIdenticalArray(int initialOffset) {
         RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, Values, WriteArray, PeekArrayWithLength, ReadArrayWithLength, AssertValuesEqualPair);
     }
@@ -130,6 +154,20 @@ public abstract class SerializationTestSuite<T> {
     [MemberData(nameof(InitialOffsetData))]
     public void WriteAndReadArray_Try_ShouldReturnIdenticalArray(int initialOffset) {
         RoundTripTestHarness<T>.AssertArrayRoundTrip(initialOffset, Values, WriteArray, TryPeekArrayWithLength, TryReadArrayWithLength, AssertValuesEqualPair);
+    }
+
+    [Theory]
+    [MemberData(nameof(InitialOffsetData))]
+    public void WriteAndReadArray_WithMaxCount_ShouldReturnIdenticalArray(int initialOffset) {
+        int maxCount = Values.Length + 10;
+        RoundTripTestHarness<T>.AssertArrayWithMaxCountRoundTrip(initialOffset, Values, maxCount, WriteArray, PeekArrayWithMaxCount, ReadArrayWithMaxCount, AssertValuesEqualPair);
+    }
+
+    [Theory]
+    [MemberData(nameof(InitialOffsetData))]
+    public void WriteAndReadArray_WithMaxCount_Try_ShouldReturnIdenticalArray(int initialOffset) {
+        int maxCount = Values.Length + 10;
+        RoundTripTestHarness<T>.AssertArrayWithMaxCountRoundTrip(initialOffset, Values, maxCount, WriteArray, TryPeekArrayWithMaxCount, TryReadArrayWithMaxCount, AssertValuesEqualPair);
     }
 
     private long MeasureSingleWriteBits() {
@@ -198,6 +236,15 @@ public abstract class SerializationTestSuite<T> {
         return new ReadContext(buffer, 0, bitsWritten - 1);
     }
 
+    private ReadContext CreateReadContextForArrayWithLength() {
+        long bitsWritten = MeasureArrayWithLengthWriteBits();
+        Assert.True(bitsWritten > 0);
+        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
+        WriteContext writeContext = new(buffer);
+        WriteArray(ref writeContext, Values);
+        return new ReadContext(buffer, 0, bitsWritten);
+    }
+
     private ReadContext CreateTruncatedReadContextForArrayWithLength() {
         long bitsWritten = MeasureArrayWithLengthWriteBits();
         Assert.True(bitsWritten > 0);
@@ -232,6 +279,35 @@ public abstract class SerializationTestSuite<T> {
         WriteContext writeContext = new(buffer);
         WriteSpanWithoutLength(ref writeContext, Values);
         return new ReadContext(buffer, 0, bitsWritten - 1);
+    }
+
+    private static void AssertReadArrayWithMaxCountThrows(ReadContext context, int maxCount, params Func<ReadContext, int, T[]>[] operations) {
+        long originalPosition = context.Position;
+
+        foreach (Func<ReadContext, int, T[]> operation in operations) {
+            try {
+                operation(context, maxCount);
+                Assert.Fail("Expected BitStreamReadException.");
+            }
+            catch (BitStreamReadException) { }
+        }
+
+        Assert.Equal(originalPosition, context.Position);
+    }
+
+    private static void AssertReadSpanWithMaxCountThrows(ReadContext context, T[] initialValues, int maxCount, params SpanReadWithMaxCountOperation[] operations) {
+        long originalPosition = context.Position;
+        Span<T> destination = initialValues.ToArray();
+
+        foreach (SpanReadWithMaxCountOperation operation in operations) {
+            try {
+                operation(context, maxCount, destination);
+                Assert.Fail("Expected BitStreamReadException.");
+            }
+            catch (BitStreamReadException) { }
+        }
+
+        Assert.Equal(originalPosition, context.Position);
     }
 
     private static void AssertReadArrayOutOfBoundsThrows(ReadContext context, params Func<ReadContext, T[]>[] operations) {
@@ -388,6 +464,62 @@ public abstract class SerializationTestSuite<T> {
     }
 
     [Fact]
+    public void TryReadArray_WithMaxCountExceeded_ShouldReturnFalseAndNotAdvance() {
+        ReadContext context = CreateReadContextForArrayWithLength();
+        int maxCount = Values.Length - 1;
+        Assert.True(maxCount >= 0);
+        TryReadOutOfBoundsAssertions<T>.AssertArrayWithMaxCountFailsWithoutAdvancing(context, maxCount, TryOperations);
+    }
+
+    [Fact]
+    public void ReadArray_WithMaxCountExceeded_ShouldThrowAndNotAdvance() {
+        ReadContext context = CreateReadContextForArrayWithLength();
+        int maxCount = Values.Length - 1;
+        Assert.True(maxCount >= 0);
+        AssertReadArrayWithMaxCountThrows(context, maxCount, PeekArrayWithMaxCount, ReadArrayWithMaxCount);
+    }
+
+    [Fact]
+    public void TryReadArray_WithNegativeMaxCount_ShouldReturnFalseAndNotAdvance() {
+        ReadContext context = CreateReadContextForArrayWithLength();
+        TryReadOutOfBoundsAssertions<T>.AssertArrayWithMaxCountFailsWithoutAdvancing(context, -1, TryOperations);
+    }
+
+    [Fact]
+    public void ReadArray_WithNegativeMaxCount_ShouldThrowAndNotAdvance() {
+        ReadContext context = CreateReadContextForArrayWithLength();
+        AssertReadArrayWithMaxCountThrows(context, -1, PeekArrayWithMaxCount, ReadArrayWithMaxCount);
+    }
+
+    [Fact]
+    public void TryReadSpan_WithMaxCountExceeded_ShouldReturnFalseAndNotAdvance() {
+        ReadContext context = CreateReadContextForArrayWithLength();
+        int maxCount = Values.Length - 1;
+        Assert.True(maxCount >= 0);
+        TryReadOutOfBoundsAssertions<T>.AssertSpanWithMaxCountFailsWithoutAdvancing(context, Values, maxCount, TryOperations);
+    }
+
+    [Fact]
+    public void ReadSpan_WithMaxCountExceeded_ShouldThrowAndNotAdvance() {
+        ReadContext context = CreateReadContextForArrayWithLength();
+        int maxCount = Values.Length - 1;
+        Assert.True(maxCount >= 0);
+        AssertReadSpanWithMaxCountThrows(context, Values, maxCount, PeekSpanWithMaxCount, ReadSpanWithMaxCount);
+    }
+
+    [Fact]
+    public void TryReadSpan_WithNegativeMaxCount_ShouldReturnFalseAndNotAdvance() {
+        ReadContext context = CreateReadContextForArrayWithLength();
+        TryReadOutOfBoundsAssertions<T>.AssertSpanWithMaxCountFailsWithoutAdvancing(context, Values, -1, TryOperations);
+    }
+
+    [Fact]
+    public void ReadSpan_WithNegativeMaxCount_ShouldThrowAndNotAdvance() {
+        ReadContext context = CreateReadContextForArrayWithLength();
+        AssertReadSpanWithMaxCountThrows(context, Values, -1, PeekSpanWithMaxCount, ReadSpanWithMaxCount);
+    }
+
+    [Fact]
     public void TryReadFixedLengthSpan_WhenOutOfBounds_ShouldReturnFalseAndNotAdvance() {
         if (!SupportsOutOfBoundsTests) { return; }
         ReadContext context = CreateTruncatedReadContextForSpanWithoutLength();
@@ -397,4 +529,6 @@ public abstract class SerializationTestSuite<T> {
     private delegate void SpanReadOperation(ReadContext context, Span<T> destination);
 
     private delegate void FixedLengthSpanReadOperation(ReadContext context, int count, Span<T> destination);
+
+    private delegate void SpanReadWithMaxCountOperation(ReadContext context, int maxCount, Span<T> destination);
 }

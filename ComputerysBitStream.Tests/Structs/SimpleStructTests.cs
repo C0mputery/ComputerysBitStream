@@ -37,6 +37,24 @@ public class SimpleStructTests : StructTestSuite<SimpleStruct> {
         return v;
     }
 
+    protected override SimpleStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekSimpleStructsWithMaxCount(maxCount);
+    protected override SimpleStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadSimpleStructsWithMaxCount(maxCount);
+
+    protected override SimpleStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekSimpleStructsWithMaxCount(maxCount, out SimpleStruct[] values));
+        return values;
+    }
+
+    protected override SimpleStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadSimpleStructsWithMaxCount(maxCount, out SimpleStruct[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<SimpleStruct> destination) => context.PeekSimpleStructsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<SimpleStruct> destination) => context.ReadSimpleStructsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<SimpleStruct> destination) { Assert.True(context.TryPeekSimpleStructsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<SimpleStruct> destination) { Assert.True(context.TryReadSimpleStructsWithMaxCount(maxCount, destination)); }
+
     protected override void WriteArrayWithoutLength(ref WriteContext context, SimpleStruct[] values) => context.WriteSimpleStructsWithoutLength(values);
     protected override SimpleStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekSimpleStructs(count);
     protected override SimpleStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadSimpleStructs(count);
@@ -76,5 +94,9 @@ public class SimpleStructTests : StructTestSuite<SimpleStruct> {
         TryReadSpanWithLength = (ReadContext c, Span<SimpleStruct> d) => c.TryReadSimpleStructs(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<SimpleStruct> d) => c.TryPeekSimpleStructs(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<SimpleStruct> d) => c.TryReadSimpleStructs(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out SimpleStruct[] v) => c.TryPeekSimpleStructsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out SimpleStruct[] v) => c.TryReadSimpleStructsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<SimpleStruct> d) => c.TryPeekSimpleStructsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<SimpleStruct> d) => c.TryReadSimpleStructsWithMaxCount(maxCount, d),
     };
 }

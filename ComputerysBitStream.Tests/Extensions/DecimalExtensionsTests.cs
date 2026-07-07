@@ -67,6 +67,24 @@ public class DecimalExtensionsTests : PrimitiveSerializationTestSuite<decimal> {
         return values;
     }
 
+    protected override decimal[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekDecimalsWithMaxCount(maxCount);
+    protected override decimal[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadDecimalsWithMaxCount(maxCount);
+
+    protected override decimal[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekDecimalsWithMaxCount(maxCount, out decimal[] values));
+        return values;
+    }
+
+    protected override decimal[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadDecimalsWithMaxCount(maxCount, out decimal[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<decimal> destination) => context.PeekDecimalsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<decimal> destination) => context.ReadDecimalsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<decimal> destination) { Assert.True(context.TryPeekDecimalsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<decimal> destination) { Assert.True(context.TryReadDecimalsWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<decimal> TryOperations => new() {
         TryPeekValue = (ReadContext c, out decimal v) => c.TryPeekDecimal(out v),
         TryReadValue = (ReadContext c, out decimal v) => c.TryReadDecimal(out v),
@@ -78,5 +96,9 @@ public class DecimalExtensionsTests : PrimitiveSerializationTestSuite<decimal> {
         TryReadSpanWithLength = (ReadContext c, Span<decimal> d) => c.TryReadDecimals(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<decimal> d) => c.TryPeekDecimals(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<decimal> d) => c.TryReadDecimals(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out decimal[] v) => c.TryPeekDecimalsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out decimal[] v) => c.TryReadDecimalsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<decimal> d) => c.TryPeekDecimalsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<decimal> d) => c.TryReadDecimalsWithMaxCount(maxCount, d),
     };
 }

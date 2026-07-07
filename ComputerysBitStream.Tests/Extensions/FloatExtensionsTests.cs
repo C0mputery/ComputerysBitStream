@@ -67,6 +67,24 @@ public class FloatExtensionsTests : PrimitiveSerializationTestSuite<float> {
         return values;
     }
 
+    protected override float[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekFloatsWithMaxCount(maxCount);
+    protected override float[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadFloatsWithMaxCount(maxCount);
+
+    protected override float[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekFloatsWithMaxCount(maxCount, out float[] values));
+        return values;
+    }
+
+    protected override float[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadFloatsWithMaxCount(maxCount, out float[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<float> destination) => context.PeekFloatsWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<float> destination) => context.ReadFloatsWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<float> destination) { Assert.True(context.TryPeekFloatsWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<float> destination) { Assert.True(context.TryReadFloatsWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<float> TryOperations => new() {
         TryPeekValue = (ReadContext c, out float v) => c.TryPeekFloat(out v),
         TryReadValue = (ReadContext c, out float v) => c.TryReadFloat(out v),
@@ -78,5 +96,9 @@ public class FloatExtensionsTests : PrimitiveSerializationTestSuite<float> {
         TryReadSpanWithLength = (ReadContext c, Span<float> d) => c.TryReadFloats(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<float> d) => c.TryPeekFloats(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<float> d) => c.TryReadFloats(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out float[] v) => c.TryPeekFloatsWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out float[] v) => c.TryReadFloatsWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<float> d) => c.TryPeekFloatsWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<float> d) => c.TryReadFloatsWithMaxCount(maxCount, d),
     };
 }

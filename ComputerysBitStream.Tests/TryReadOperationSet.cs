@@ -31,6 +31,10 @@ public sealed class TryReadOperationSet<T> {
     public required TryReadSpanDelegate<T> TryReadSpanWithLength { get; init; }
     public required TryPeekFixedSpanDelegate<T> TryPeekSpanWithoutLength { get; init; }
     public required TryReadFixedSpanDelegate<T> TryReadSpanWithoutLength { get; init; }
+    public required TryPeekFixedArrayDelegate<T> TryPeekArrayWithMaxCount { get; init; }
+    public required TryReadFixedArrayDelegate<T> TryReadArrayWithMaxCount { get; init; }
+    public required TryPeekFixedSpanDelegate<T> TryPeekSpanWithMaxCount { get; init; }
+    public required TryReadFixedSpanDelegate<T> TryReadSpanWithMaxCount { get; init; }
 }
 
 public static class TryReadOutOfBoundsAssertions<T> {
@@ -83,6 +87,27 @@ public static class TryReadOutOfBoundsAssertions<T> {
         Assert.Equal(originalPosition, context.Position);
 
         Assert.False(operations.TryReadSpanWithoutLength(context, count, destination));
+        Assert.Equal(originalPosition, context.Position);
+    }
+
+    public static void AssertArrayWithMaxCountFailsWithoutAdvancing(ReadContext context, int maxCount, TryReadOperationSet<T> operations) {
+        long originalPosition = context.Position;
+
+        Assert.False(operations.TryPeekArrayWithMaxCount(context, maxCount, out _));
+        Assert.Equal(originalPosition, context.Position);
+
+        Assert.False(operations.TryReadArrayWithMaxCount(context, maxCount, out _));
+        Assert.Equal(originalPosition, context.Position);
+    }
+
+    public static void AssertSpanWithMaxCountFailsWithoutAdvancing(ReadContext context, T[] initialValues, int maxCount, TryReadOperationSet<T> operations) {
+        long originalPosition = context.Position;
+        Span<T> destination = initialValues.ToArray();
+
+        Assert.False(operations.TryPeekSpanWithMaxCount(context, maxCount, destination));
+        Assert.Equal(originalPosition, context.Position);
+
+        Assert.False(operations.TryReadSpanWithMaxCount(context, maxCount, destination));
         Assert.Equal(originalPosition, context.Position);
     }
 }

@@ -30,8 +30,10 @@ namespace ComputerysBitStream.Attributes {
     public enum PrimitiveSerializationMode : int {
         /// <summary>Every value uses a fixed number of bits. Requires <see cref="BitStreamFixedSizePrimitiveAttribute"/>.</summary>
         FixedSize,
+
         /// <summary>Values map into a bit range between caller-supplied <c>min</c> and <c>max</c>. Requires <see cref="BitStreamQuantizedPrimitiveAttribute"/>.</summary>
         Quantized,
+
         /// <summary>Bit length depends on the value. Requires <see cref="BitStreamPrimitiveRole.Size"/> and <see cref="BitStreamPrimitiveRole.TryRead"/> methods.</summary>
         VariableLength
     }
@@ -71,22 +73,31 @@ namespace ComputerysBitStream.Attributes {
     public enum BitStreamPrimitiveRole : int {
         /// <summary>Write one value. See <see cref="BitStreamPrimitiveAuthorDocumentation.RoleWrite"/>.</summary>
         Write,
+
         /// <summary>Write a span without a length prefix. See <see cref="BitStreamPrimitiveAuthorDocumentation.RoleWriteSpan"/>.</summary>
         WriteSpan,
+
         /// <summary>Read one value without advancing position. See <see cref="BitStreamPrimitiveAuthorDocumentation.RolePeek"/>.</summary>
         Peek,
+
         /// <summary>Read one value and advance position. See <see cref="BitStreamPrimitiveAuthorDocumentation.RoleRead"/>.</summary>
         Read,
+
         /// <summary>Attempt to read one variable-length value. See <see cref="BitStreamPrimitiveAuthorDocumentation.RoleTryRead"/>.</summary>
         TryRead,
+
         /// <summary>Peek an array when the caller supplies the count. See <see cref="BitStreamPrimitiveAuthorDocumentation.RolePeekArray"/>.</summary>
         PeekArray,
+
         /// <summary>Read an array when the caller supplies the count. See <see cref="BitStreamPrimitiveAuthorDocumentation.RoleReadArray"/>.</summary>
         ReadArray,
+
         /// <summary>Peek into a span when the caller supplies the count. See <see cref="BitStreamPrimitiveAuthorDocumentation.RolePeekSpan"/>.</summary>
         PeekSpan,
+
         /// <summary>Read into a span when the caller supplies the count. See <see cref="BitStreamPrimitiveAuthorDocumentation.RoleReadSpan"/>.</summary>
         ReadSpan,
+
         /// <summary>Return the encoded bit length of one value. See <see cref="BitStreamPrimitiveAuthorDocumentation.RoleSize"/>.</summary>
         Size,
     }

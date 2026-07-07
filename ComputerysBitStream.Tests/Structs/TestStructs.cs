@@ -103,8 +103,7 @@ public interface IVariableLengthStructSettings : IDefaultSettings { }
 
 [BitStreamStruct(typeof(IVariableLengthStructSettings))]
 public partial struct VariableLengthStruct {
-    [BitStreamStructVariableLength]
-    public int A { get; set; }
+    [BitStreamStructVariableLength] public int A { get; set; }
 
     public bool B { get; set; }
 }
@@ -116,8 +115,7 @@ public interface IMixedIntStructSettings : IDefaultSettings { }
 public partial struct MixedIntStruct {
     public int FixedValue { get; set; }
 
-    [BitStreamStructVariableLength]
-    public int VariableValue { get; set; }
+    [BitStreamStructVariableLength] public int VariableValue { get; set; }
 }
 
 [BitStreamSettings]
@@ -125,8 +123,7 @@ public interface IMemberSerializerOverrideSettings : IDefaultSettings { }
 
 [BitStreamStruct(typeof(IMemberSerializerOverrideSettings))]
 public partial struct MemberSerializerOverrideStruct {
-    [BitStreamStructVariableLength]
-    public int VariableLengthValue { get; set; }
+    [BitStreamStructVariableLength] public int VariableLengthValue { get; set; }
 
     [BitStreamStructVariableLength]
     [BitStreamSerializer(typeof(PrimitiveIntExtensions))]

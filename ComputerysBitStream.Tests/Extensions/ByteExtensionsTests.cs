@@ -67,6 +67,24 @@ public class ByteExtensionsTests : PrimitiveSerializationTestSuite<byte> {
         return values;
     }
 
+    protected override byte[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekBytesWithMaxCount(maxCount);
+    protected override byte[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadBytesWithMaxCount(maxCount);
+
+    protected override byte[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryPeekBytesWithMaxCount(maxCount, out byte[] values));
+        return values;
+    }
+
+    protected override byte[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
+        Assert.True(context.TryReadBytesWithMaxCount(maxCount, out byte[] values));
+        return values;
+    }
+
+    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<byte> destination) => context.PeekBytesWithMaxCount(maxCount, destination);
+    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<byte> destination) => context.ReadBytesWithMaxCount(maxCount, destination);
+    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<byte> destination) { Assert.True(context.TryPeekBytesWithMaxCount(maxCount, destination)); }
+    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<byte> destination) { Assert.True(context.TryReadBytesWithMaxCount(maxCount, destination)); }
+
     protected override TryReadOperationSet<byte> TryOperations => new() {
         TryPeekValue = (ReadContext c, out byte v) => c.TryPeekByte(out v),
         TryReadValue = (ReadContext c, out byte v) => c.TryReadByte(out v),
@@ -78,5 +96,9 @@ public class ByteExtensionsTests : PrimitiveSerializationTestSuite<byte> {
         TryReadSpanWithLength = (ReadContext c, Span<byte> d) => c.TryReadBytes(d),
         TryPeekSpanWithoutLength = (ReadContext c, int count, Span<byte> d) => c.TryPeekBytes(count, d),
         TryReadSpanWithoutLength = (ReadContext c, int count, Span<byte> d) => c.TryReadBytes(count, d),
+        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out byte[] v) => c.TryPeekBytesWithMaxCount(maxCount, out v),
+        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out byte[] v) => c.TryReadBytesWithMaxCount(maxCount, out v),
+        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<byte> d) => c.TryPeekBytesWithMaxCount(maxCount, d),
+        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<byte> d) => c.TryReadBytesWithMaxCount(maxCount, d),
     };
 }
