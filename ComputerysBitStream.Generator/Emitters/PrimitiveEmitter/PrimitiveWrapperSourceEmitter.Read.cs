@@ -390,10 +390,10 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         string empty = $"Array.Empty<{_targetType}>()";
 
         return $$"""
-                 {{GeneratedDocumentationSyntax.TryPeekValuesWithLength}}
+                 {{GeneratedDocumentationSyntax.TryPeekValuesWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                 public static bool TryPeek{{_pluralAlias}}(this ref ReadContext context, uint maxCount{{_extraParams}}, out {{_targetType}}[] values) {
-                     if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) {
+                 public static bool TryPeek{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount{{_extraParams}}, out {{_targetType}}[] values) {
+                     if ({{QuantizedFailPrefix}}maxCount < 0 || context.IsInsufficientSpace({{_intSize}})) {
                          values = {{empty}};
                          return false;
                      }
@@ -412,9 +412,9 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitPeekValuesWithMaxCount() {
         string typeName = $"{_alias} array";
         return $$"""
-                 {{GeneratedDocumentationSyntax.PeekValuesWithLength}}
+                 {{GeneratedDocumentationSyntax.PeekValuesWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                 public static {{_targetType}}[] Peek{{_pluralAlias}}(this ref ReadContext context, uint maxCount{{_extraParams}}) {
+                 public static {{_targetType}}[] Peek{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryPeekArrayWithMaxCountCall(), "return values;"), 1)}}
                  }
                  """;
@@ -424,10 +424,10 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         string empty = $"Array.Empty<{_targetType}>()";
 
         return $$"""
-                 {{GeneratedDocumentationSyntax.TryReadValuesWithLength}}
+                 {{GeneratedDocumentationSyntax.TryReadValuesWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                 public static bool TryRead{{_pluralAlias}}(this ref ReadContext context, uint maxCount{{_extraParams}}, out {{_targetType}}[] values) {
-                     if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) {
+                 public static bool TryRead{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount{{_extraParams}}, out {{_targetType}}[] values) {
+                     if ({{QuantizedFailPrefix}}maxCount < 0 || context.IsInsufficientSpace({{_intSize}})) {
                          values = {{empty}};
                          return false;
                      }
@@ -446,9 +446,9 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitReadValuesWithMaxCount() {
         string typeName = $"{_alias} array";
         return $$"""
-                 {{GeneratedDocumentationSyntax.ReadValuesWithLength}}
+                 {{GeneratedDocumentationSyntax.ReadValuesWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                 public static {{_targetType}}[] Read{{_pluralAlias}}(this ref ReadContext context, uint maxCount{{_extraParams}}) {
+                 public static {{_targetType}}[] Read{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryReadArrayWithMaxCountCall(), "return values;"), 1)}}
                  }
                  """;
@@ -456,10 +456,10 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
     private string EmitTryPeekValuesIntoSpanWithMaxCount() {
         return $$"""
-                 {{GeneratedDocumentationSyntax.TryPeekValuesIntoSpanWithLength}}
+                 {{GeneratedDocumentationSyntax.TryPeekValuesIntoSpanWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                 public static bool TryPeek{{_pluralAlias}}(this ref ReadContext context, uint maxCount, Span<{{_targetType}}> destination{{_extraParams}}) {
-                     if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) { return false; }
+                 public static bool TryPeek{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount, Span<{{_targetType}}> destination{{_extraParams}}) {
+                     if ({{QuantizedFailPrefix}}maxCount < 0 || context.IsInsufficientSpace({{_intSize}})) { return false; }
 
                      int count = {{_intExtensionClass}}.{{_intPeekMethodName}}(ref context);
                      if (count < 0 || count > maxCount || count > destination.Length) { return false; }
@@ -472,9 +472,9 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitPeekValuesIntoSpanWithMaxCount() {
         string typeName = $"{_alias} span";
         return $$"""
-                 {{GeneratedDocumentationSyntax.PeekValuesIntoSpanWithLength}}
+                 {{GeneratedDocumentationSyntax.PeekValuesIntoSpanWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                 public static void Peek{{_pluralAlias}}(this ref ReadContext context, uint maxCount, Span<{{_targetType}}> destination{{_extraParams}}) {
+                 public static void Peek{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount, Span<{{_targetType}}> destination{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryPeekSpanWithMaxCountCall(), string.Empty), 1)}}
                  }
                  """;
@@ -482,10 +482,10 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
     private string EmitTryReadValuesIntoSpanWithMaxCount() {
         return $$"""
-                 {{GeneratedDocumentationSyntax.TryReadValuesIntoSpanWithLength}}
+                 {{GeneratedDocumentationSyntax.TryReadValuesIntoSpanWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                 public static bool TryRead{{_pluralAlias}}(this ref ReadContext context, uint maxCount, Span<{{_targetType}}> destination{{_extraParams}}) {
-                     if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) { return false; }
+                 public static bool TryRead{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount, Span<{{_targetType}}> destination{{_extraParams}}) {
+                     if ({{QuantizedFailPrefix}}maxCount < 0 || context.IsInsufficientSpace({{_intSize}})) { return false; }
 
                      int count = {{_intExtensionClass}}.{{_intPeekMethodName}}(ref context);
                      if (count < 0 || count > maxCount || count > destination.Length) { return false; }
@@ -498,9 +498,9 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string EmitReadValuesIntoSpanWithMaxCount() {
         string typeName = $"{_alias} span";
         return $$"""
-                 {{GeneratedDocumentationSyntax.ReadValuesIntoSpanWithLength}}
+                 {{GeneratedDocumentationSyntax.ReadValuesIntoSpanWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                 public static void Read{{_pluralAlias}}(this ref ReadContext context, uint maxCount, Span<{{_targetType}}> destination{{_extraParams}}) {
+                 public static void Read{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount, Span<{{_targetType}}> destination{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(EmitThrowIfTryReadFailedBody(typeName, TryReadSpanWithMaxCountCall(), string.Empty), 1)}}
                  }
                  """;

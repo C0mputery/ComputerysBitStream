@@ -56,6 +56,24 @@ namespace ComputerysBitStream {
         /// <remarks>Leaves <see cref="ReadContext.Position"/> unchanged on both success and failure.</remarks>
         public static void TryPeekValuesWithLength() { }
 
+        /// <summary>Reads a length-prefixed array, failing when the encoded count exceeds <c>maxCount</c>.</summary>
+        /// <remarks>
+        /// <para>Throws <see cref="BitStreamReadException"/> when the length prefix or any element cannot be read, when <c>maxCount</c> is negative, or when the encoded count exceeds <c>maxCount</c>.</para>
+        /// <para>Length-prefixed overloads are emitted only when effective settings include a fixed-size <c>int</c> serializer. Otherwise the generator reports <c>CBS032</c> and omits them.</para>
+        /// </remarks>
+        public static void ReadValuesWithMaxCount() { }
+
+        /// <summary>Peeks a length-prefixed array without advancing position past the peeked elements, failing when the encoded count exceeds <c>maxCount</c>.</summary>
+        /// <remarks>Throws <see cref="BitStreamReadException"/> when the length prefix or any element cannot be read, when <c>maxCount</c> is negative, or when the encoded count exceeds <c>maxCount</c>.</remarks>
+        public static void PeekValuesWithMaxCount() { }
+
+        /// <summary>Attempts to read a length-prefixed array. Returns <c>false</c> when the count or any element is incomplete, when <c>maxCount</c> is negative, or when the encoded count exceeds <c>maxCount</c>.</summary>
+        public static void TryReadValuesWithMaxCount() { }
+
+        /// <summary>Attempts to peek a length-prefixed array. Returns <c>false</c> when the count or any element is incomplete, when <c>maxCount</c> is negative, or when the encoded count exceeds <c>maxCount</c>.</summary>
+        /// <remarks>Leaves <see cref="ReadContext.Position"/> unchanged on both success and failure.</remarks>
+        public static void TryPeekValuesWithMaxCount() { }
+
         /// <summary>Reads a caller-supplied number of elements. The count is not stored in the stream.</summary>
         /// <remarks>Throws <see cref="BitStreamReadException"/> when any element cannot be read.</remarks>
         public static void ReadValuesWithCount() { }
@@ -85,6 +103,22 @@ namespace ComputerysBitStream {
         /// <summary>Attempts to peek a length-prefixed sequence into a span.</summary>
         /// <remarks>Returns <c>false</c> when the count or any element is incomplete, or when the encoded count exceeds <c>destination.Length</c>. Leaves <see cref="ReadContext.Position"/> unchanged on both success and failure.</remarks>
         public static void TryPeekValuesIntoSpanWithLength() { }
+
+        /// <summary>Reads a length-prefixed sequence into a span, failing when the encoded count exceeds <c>maxCount</c>. The span must be at least as long as the encoded count.</summary>
+        /// <remarks>Throws <see cref="BitStreamReadException"/> when the length prefix or any element cannot be read, when <c>maxCount</c> is negative, when the encoded count exceeds <c>maxCount</c>, or when the encoded count exceeds <c>destination.Length</c>.</remarks>
+        public static void ReadValuesIntoSpanWithMaxCount() { }
+
+        /// <summary>Peeks a length-prefixed sequence into a span, failing when the encoded count exceeds <c>maxCount</c>. The span must be at least as long as the encoded count.</summary>
+        /// <remarks>Throws <see cref="BitStreamReadException"/> when the length prefix or any element cannot be read, when <c>maxCount</c> is negative, when the encoded count exceeds <c>maxCount</c>, or when the encoded count exceeds <c>destination.Length</c>.</remarks>
+        public static void PeekValuesIntoSpanWithMaxCount() { }
+
+        /// <summary>Attempts to read a length-prefixed sequence into a span.</summary>
+        /// <remarks>Returns <c>false</c> when the count or any element is incomplete, when <c>maxCount</c> is negative, when the encoded count exceeds <c>maxCount</c>, or when the encoded count exceeds <c>destination.Length</c>. Advances <see cref="ReadContext.Position"/> only on success.</remarks>
+        public static void TryReadValuesIntoSpanWithMaxCount() { }
+
+        /// <summary>Attempts to peek a length-prefixed sequence into a span.</summary>
+        /// <remarks>Returns <c>false</c> when the count or any element is incomplete, when <c>maxCount</c> is negative, when the encoded count exceeds <c>maxCount</c>, or when the encoded count exceeds <c>destination.Length</c>. Leaves <see cref="ReadContext.Position"/> unchanged on both success and failure.</remarks>
+        public static void TryPeekValuesIntoSpanWithMaxCount() { }
 
         /// <summary>Reads a caller-supplied number of elements into a span. <c>destination.Length</c> must be at least <c>count</c>.</summary>
         /// <remarks>Throws <see cref="BitStreamReadException"/> when any element cannot be read, or when <c>count</c> exceeds <c>destination.Length</c>.</remarks>

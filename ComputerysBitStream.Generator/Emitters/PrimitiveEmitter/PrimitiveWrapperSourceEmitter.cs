@@ -154,11 +154,11 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
     private string TryReadSpanWithCountCall() => $"context.TryRead{_pluralAlias}(count, destination{_extraArgs})";
 
-    private string TryPeekArrayWithMaxCountCall() => $"context.TryPeek{_pluralAlias}(maxCount{_extraArgs}, out {TargetTypeArray} values)";
+    private string TryPeekArrayWithMaxCountCall() => $"context.TryPeek{_pluralAlias}WithMaxCount(maxCount{_extraArgs}, out {TargetTypeArray} values)";
 
-    private string TryReadArrayWithMaxCountCall() => $"context.TryRead{_pluralAlias}(maxCount{_extraArgs}, out {TargetTypeArray} values)";
+    private string TryReadArrayWithMaxCountCall() => $"context.TryRead{_pluralAlias}WithMaxCount(maxCount{_extraArgs}, out {TargetTypeArray} values)";
 
-    private string TryPeekSpanWithMaxCountCall() => $"context.TryPeek{_pluralAlias}(maxCount, destination{_extraArgs})";
+    private string TryPeekSpanWithMaxCountCall() => $"context.TryPeek{_pluralAlias}WithMaxCount(maxCount, destination{_extraArgs})";
 
-    private string TryReadSpanWithMaxCountCall() => $"context.TryRead{_pluralAlias}(maxCount, destination{_extraArgs})";
+    private string TryReadSpanWithMaxCountCall() => $"context.TryRead{_pluralAlias}WithMaxCount(maxCount, destination{_extraArgs})";
 }

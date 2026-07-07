@@ -12,6 +12,10 @@ internal static class GeneratedDocumentationSyntax {
     internal const string PeekValuesWithLength = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.PeekValuesWithLength\"/>";
     internal const string TryReadValuesWithLength = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.TryReadValuesWithLength\"/>";
     internal const string TryPeekValuesWithLength = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.TryPeekValuesWithLength\"/>";
+    internal const string ReadValuesWithMaxCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.ReadValuesWithMaxCount\"/>";
+    internal const string PeekValuesWithMaxCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.PeekValuesWithMaxCount\"/>";
+    internal const string TryReadValuesWithMaxCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.TryReadValuesWithMaxCount\"/>";
+    internal const string TryPeekValuesWithMaxCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.TryPeekValuesWithMaxCount\"/>";
     internal const string ReadValuesWithCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.ReadValuesWithCount\"/>";
     internal const string PeekValuesWithCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.PeekValuesWithCount\"/>";
     internal const string TryReadValuesWithCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.TryReadValuesWithCount\"/>";
@@ -20,6 +24,10 @@ internal static class GeneratedDocumentationSyntax {
     internal const string PeekValuesIntoSpanWithLength = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.PeekValuesIntoSpanWithLength\"/>";
     internal const string TryReadValuesIntoSpanWithLength = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.TryReadValuesIntoSpanWithLength\"/>";
     internal const string TryPeekValuesIntoSpanWithLength = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.TryPeekValuesIntoSpanWithLength\"/>";
+    internal const string ReadValuesIntoSpanWithMaxCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.ReadValuesIntoSpanWithMaxCount\"/>";
+    internal const string PeekValuesIntoSpanWithMaxCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.PeekValuesIntoSpanWithMaxCount\"/>";
+    internal const string TryReadValuesIntoSpanWithMaxCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.TryReadValuesIntoSpanWithMaxCount\"/>";
+    internal const string TryPeekValuesIntoSpanWithMaxCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.TryPeekValuesIntoSpanWithMaxCount\"/>";
     internal const string ReadValuesIntoSpanWithCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.ReadValuesIntoSpanWithCount\"/>";
     internal const string PeekValuesIntoSpanWithCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.PeekValuesIntoSpanWithCount\"/>";
     internal const string TryReadValuesIntoSpanWithCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.TryReadValuesIntoSpanWithCount\"/>";
