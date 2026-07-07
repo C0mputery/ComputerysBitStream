@@ -141,7 +141,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                 }
 
                 if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.Primitive, out AttributeData? primitiveAttribute)) {
-                    Collected<PrimitiveDefinition> collectedPrimitive = PrimitiveCollector.CollectPrimitiveData(primitiveAttribute, serializerSymbol, compilation, includeSettings: false);
+                    Collected<PrimitiveDefinition> collectedPrimitive = PrimitiveCollector.CollectPrimitiveCore(primitiveAttribute, serializerSymbol, compilation);
                     diagnostics.AddRange(collectedPrimitive.Diagnostics);
                     if (collectedPrimitive.IsValid) {
                         string primitiveKey = collectedPrimitive.Value.ExtensionClassFullyQualifiedName;
@@ -157,7 +157,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
 
                 if (serializerSymbol.IsDefinedIn(compilation)) {
                     if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.Struct, out AttributeData? structAttribute)) {
-                        Collected<StructDefinition> collectedStruct = StructCollector.CollectStructData(structAttribute, serializerSymbol, compilation, includeSettings: false);
+                        Collected<StructDefinition> collectedStruct = StructCollector.CollectIncludedStruct(structAttribute, serializerSymbol, compilation);
                         diagnostics.AddRange(collectedStruct.Diagnostics);
                         if (collectedStruct.IsValid) {
                             string structKey = collectedStruct.Value.TypeFullyQualifiedName;
@@ -172,7 +172,7 @@ internal readonly ref struct SettingsCollectionSession(Compilation compilation) 
                     }
 
                     if (serializerSymbol.TryGetAttribute(BitStreamTypeNames.ProxyStruct, out AttributeData? proxyAttribute)) {
-                        Collected<StructDefinition> collectedProxyStruct = StructCollector.CollectProxyStructData(proxyAttribute, serializerSymbol, compilation, includeSettings: false);
+                        Collected<StructDefinition> collectedProxyStruct = StructCollector.CollectIncludedProxyStruct(proxyAttribute, serializerSymbol, compilation);
                         diagnostics.AddRange(collectedProxyStruct.Diagnostics);
                         if (collectedProxyStruct.IsValid) {
                             string structKey = collectedProxyStruct.Value.TypeFullyQualifiedName;

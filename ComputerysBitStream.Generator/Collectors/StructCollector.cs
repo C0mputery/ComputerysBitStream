@@ -34,7 +34,7 @@ internal static class StructCollector {
         AttributeData attributeData = context.Attributes[0];
         TypeDeclarationSyntax typeDeclaration = (TypeDeclarationSyntax)context.TargetNode;
         INamedTypeSymbol structSymbol = (INamedTypeSymbol)context.TargetSymbol;
-        Collected<StructDefinition> collected = CollectStructData(attributeData, structSymbol, context.SemanticModel.Compilation);
+        Collected<StructDefinition> collected = CollectStandaloneStruct(attributeData, structSymbol, context.SemanticModel.Compilation);
 
         if (typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword)) {
             return collected;
@@ -46,7 +46,16 @@ internal static class StructCollector {
         return new Collected<StructDefinition>(collected.Value, diagnostics.ToImmutable());
     }
 
-    public static Collected<StructDefinition> CollectStructData(AttributeData attributeData, INamedTypeSymbol structSymbol, Compilation compilation, bool includeSettings = true) {
+    public static Collected<StructDefinition> CollectStandaloneStruct(AttributeData attributeData, INamedTypeSymbol structSymbol, Compilation compilation) {
+        Collected<StructDefinition> collected = CollectStructCore(attributeData, structSymbol, compilation);
+        return AttachStructSettings(collected, attributeData, compilation);
+    }
+
+    public static Collected<StructDefinition> CollectIncludedStruct(AttributeData attributeData, INamedTypeSymbol structSymbol, Compilation compilation) {
+        return CollectStructCore(attributeData, structSymbol, compilation);
+    }
+
+    private static Collected<StructDefinition> CollectStructCore(AttributeData attributeData, INamedTypeSymbol structSymbol, Compilation compilation) {
         ImmutableArray<DiagnosticValueType>.Builder diagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
         Location? attributeLocation = attributeData.GetLocation();
 
@@ -56,7 +65,6 @@ internal static class StructCollector {
 
         ImmutableDictionary<string, TypedConstant> arguments = attributeData.GetConstructorArgumentsByName();
         string alias = arguments.TryGetValue("alias", out string? aliasValue) ? aliasValue : string.Empty;
-        SettingsReference? settings = includeSettings ? CollectSettingsReference(arguments, attributeLocation, compilation, diagnostics) : null;
 
         HashSet<string> excludedMembers = [];
         HashSet<string> includedMembers = [];
@@ -75,7 +83,7 @@ internal static class StructCollector {
             IsProxyClass: false,
             DeclarationTypeFullyQualifiedName: fullyQualifiedName,
             DeclarationTypeEmitName: structSymbol.GetEmitTypeName(),
-            Settings: settings,
+            Settings: null,
             Location: attributeLocation
         );
 
@@ -94,7 +102,7 @@ internal static class StructCollector {
         AttributeData attributeData = context.Attributes[0];
         ClassDeclarationSyntax classDeclaration = (ClassDeclarationSyntax)context.TargetNode;
         INamedTypeSymbol proxyClassSymbol = (INamedTypeSymbol)context.TargetSymbol;
-        Collected<StructDefinition> collected = CollectProxyStructData(attributeData, proxyClassSymbol, context.SemanticModel.Compilation);
+        Collected<StructDefinition> collected = CollectStandaloneProxyStruct(attributeData, proxyClassSymbol, context.SemanticModel.Compilation);
 
         if (classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword)) {
             return collected;
@@ -106,7 +114,16 @@ internal static class StructCollector {
         return new Collected<StructDefinition>(collected.Value, diagnostics.ToImmutable());
     }
 
-    public static Collected<StructDefinition> CollectProxyStructData(AttributeData attributeData, INamedTypeSymbol proxyClassSymbol, Compilation compilation, bool includeSettings = true) {
+    public static Collected<StructDefinition> CollectStandaloneProxyStruct(AttributeData attributeData, INamedTypeSymbol proxyClassSymbol, Compilation compilation) {
+        Collected<StructDefinition> collected = CollectProxyStructCore(attributeData, proxyClassSymbol, compilation);
+        return AttachStructSettings(collected, attributeData, compilation);
+    }
+
+    public static Collected<StructDefinition> CollectIncludedProxyStruct(AttributeData attributeData, INamedTypeSymbol proxyClassSymbol, Compilation compilation) {
+        return CollectProxyStructCore(attributeData, proxyClassSymbol, compilation);
+    }
+
+    private static Collected<StructDefinition> CollectProxyStructCore(AttributeData attributeData, INamedTypeSymbol proxyClassSymbol, Compilation compilation) {
         ImmutableArray<DiagnosticValueType>.Builder diagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
         Location? attributeLocation = attributeData.GetLocation();
         string proxyClassFullyQualifiedName = proxyClassSymbol.GetFullyQualifiedName();
@@ -133,7 +150,6 @@ internal static class StructCollector {
 
         string alias = arguments.TryGetValue("alias", out string? aliasValue) ? aliasValue : string.Empty;
         alias = string.IsNullOrEmpty(alias) ? DisplayNameUtility.GetDisplayName(structSymbol) : alias;
-        SettingsReference? settings = includeSettings ? CollectSettingsReference(arguments, attributeLocation, compilation, diagnostics) : null;
 
         HashSet<string> excludedMembers = [];
         HashSet<string> includedMembers = [];
@@ -162,8 +178,20 @@ internal static class StructCollector {
             diagnostics,
             structSymbol.GetFullyQualifiedName(),
             alias,
-            settings
+            settings: null
         );
+    }
+
+    private static Collected<StructDefinition> AttachStructSettings(Collected<StructDefinition> collected, AttributeData attributeData, Compilation compilation) {
+        ImmutableArray<DiagnosticValueType>.Builder diagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
+        diagnostics.AddRange(collected.Diagnostics);
+
+        Location? attributeLocation = attributeData.GetLocation();
+        ImmutableDictionary<string, TypedConstant> arguments = attributeData.GetConstructorArgumentsByName();
+        SettingsReference? settings = CollectSettingsReference(arguments, attributeLocation, compilation, diagnostics);
+
+        StructDefinition definition = collected.Value with { Settings = settings };
+        return new Collected<StructDefinition>(definition, diagnostics.ToImmutable());
     }
 
     private static Collected<StructDefinition> CreateProxyStructData(

@@ -21,10 +21,15 @@ internal static class PrimitiveCollector {
 
     private static Collected<PrimitiveDefinition> PrimitiveAttributeDataTransform(GeneratorAttributeSyntaxContext context, CancellationToken cancel) {
         AttributeData attributeData = context.Attributes[0];
-        return CollectPrimitiveData(attributeData, (INamedTypeSymbol)context.TargetSymbol, context.SemanticModel.Compilation);
+        return CollectStandalonePrimitive(attributeData, (INamedTypeSymbol)context.TargetSymbol, context.SemanticModel.Compilation);
     }
 
-    public static Collected<PrimitiveDefinition> CollectPrimitiveData(AttributeData attributeData, INamedTypeSymbol targetTypeSymbol, Compilation compilation, bool includeSettings = true) {
+    public static Collected<PrimitiveDefinition> CollectStandalonePrimitive(AttributeData attributeData, INamedTypeSymbol targetTypeSymbol, Compilation compilation) {
+        Collected<PrimitiveDefinition> collected = CollectPrimitiveCore(attributeData, targetTypeSymbol, compilation);
+        return AttachPrimitiveSettings(collected, attributeData, compilation);
+    }
+
+    public static Collected<PrimitiveDefinition> CollectPrimitiveCore(AttributeData attributeData, INamedTypeSymbol targetTypeSymbol, Compilation compilation) {
         ImmutableArray<DiagnosticValueType>.Builder diagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
         Location? attributeLocation = attributeData.GetLocation();
 
@@ -125,15 +130,6 @@ internal static class PrimitiveCollector {
             }
         }
 
-        SettingsReference? settings = null;
-        if (includeSettings) {
-            ImmutableArray<ITypeSymbol> settingsInterfaces = arguments.TryGetValue("settings", out TypedConstant settingsArgument) ? TypedConstantUtility.ExtractTypeSymbols(settingsArgument) : ImmutableArray<ITypeSymbol>.Empty;
-
-            Collected<SettingsReference?> collectedSettings = SettingsCollectionSession.CollectSettingsReference(compilation, settingsInterfaces, attributeLocation);
-            diagnostics.AddRange(collectedSettings.Diagnostics);
-            settings = collectedSettings.Value;
-        }
-
         PrimitiveDefinition definition = new(
             ExtensionClassFullyQualifiedName: targetTypeSymbol.GetFullyQualifiedName(),
             TargetTypeFullyQualifiedName: targetType.GetFullyQualifiedName(),
@@ -146,10 +142,25 @@ internal static class PrimitiveCollector {
             MinBits: minBits,
             MaxBits: maxBits,
             Methods: methodsByRole.ToImmutableDictionary(),
-            Settings: settings,
+            Settings: null,
             Location: attributeLocation
         );
 
+        return new Collected<PrimitiveDefinition>(definition, diagnostics.ToImmutable());
+    }
+
+    private static Collected<PrimitiveDefinition> AttachPrimitiveSettings(Collected<PrimitiveDefinition> collected, AttributeData attributeData, Compilation compilation) {
+        ImmutableArray<DiagnosticValueType>.Builder diagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
+        diagnostics.AddRange(collected.Diagnostics);
+
+        Location? attributeLocation = attributeData.GetLocation();
+        ImmutableDictionary<string, TypedConstant> arguments = attributeData.GetConstructorArgumentsByName();
+        ImmutableArray<ITypeSymbol> settingsInterfaces = arguments.TryGetValue("settings", out TypedConstant settingsArgument) ? TypedConstantUtility.ExtractTypeSymbols(settingsArgument) : ImmutableArray<ITypeSymbol>.Empty;
+
+        Collected<SettingsReference?> collectedSettings = SettingsCollectionSession.CollectSettingsReference(compilation, settingsInterfaces, attributeLocation);
+        diagnostics.AddRange(collectedSettings.Diagnostics);
+
+        PrimitiveDefinition definition = collected.Value with { Settings = collectedSettings.Value };
         return new Collected<PrimitiveDefinition>(definition, diagnostics.ToImmutable());
     }
 
