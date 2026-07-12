@@ -37,6 +37,18 @@ namespace ComputerysBitStream.Attributes {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class BitStreamStructVariableLengthAttribute : Attribute { }
 
+    /// <summary>Sets the maximum number of array entries that may be read for each array dimension or jagged level.</summary>
+    /// <remarks>
+    /// <para>This attribute is required on every serialized array member. Limits are ordered from the outermost array dimension or jagged level to the innermost.</para>
+    /// <para>For example, <c>[BitStreamStructCollectionMaxEntries(64, 16, 8)]</c> limits a three-level collection shape to 64, 16, and 8 entries respectively.</para>
+    /// </remarks>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class BitStreamStructCollectionMaxEntriesAttribute : Attribute {
+        /// <param name="maxRead">Maximum entries read for the outermost dimension or level.</param>
+        /// <param name="nestedMaxReads">Maximum entries read for subsequent dimensions or levels, ordered outermost to innermost.</param>
+        public BitStreamStructCollectionMaxEntriesAttribute(int maxRead, params int[] nestedMaxReads) { }
+    }
+
     /// <summary>Serializes the member with the quantized serializer registered in effective settings for its CLR type.</summary>
     /// <remarks>
     /// <para>Reports <c>CBS038</c> when no quantized serializer is registered. Reports <c>CBS044</c> when settings include a quantized serializer for the member type but this attribute is missing. Cannot be combined with <see cref="BitStreamStructVariableLengthAttribute"/> (<c>CBS045</c>).</para>

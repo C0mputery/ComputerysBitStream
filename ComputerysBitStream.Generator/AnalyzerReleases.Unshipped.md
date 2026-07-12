@@ -51,3 +51,10 @@ CBS043 | BitStream | Error | Diagnostics
 CBS044 | BitStream | Error | Diagnostics
 CBS045 | BitStream | Error | Diagnostics
 CBS046 | BitStream | Error | Diagnostics
+CBS047 | BitStream | Error | Diagnostics
+CBS048 | BitStream | Error | Diagnostics
+CBS049 | BitStream | Error | Diagnostics
+CBS050 | BitStream | Error | Diagnostics
+CBS051 | BitStream | Error | Diagnostics
+CBS052 | BitStream | Error | Diagnostics
+CBS053 | BitStream | Error | Diagnostics

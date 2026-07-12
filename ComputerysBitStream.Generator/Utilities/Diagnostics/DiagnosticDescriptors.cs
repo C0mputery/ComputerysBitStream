@@ -435,4 +435,67 @@ internal static class DiagnosticDescriptors {
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
     );
+
+    public static readonly DiagnosticDescriptor CollectionMaxEntriesRequired = new(
+        id: "CBS047",
+        title: "Array member requires a read limit",
+        messageFormat: "Array member '{0}' must have [BitStreamStructCollectionMaxEntries] with one limit for each array dimension or jagged level",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
+    public static readonly DiagnosticDescriptor InvalidCollectionMaxEntries = new(
+        id: "CBS048",
+        title: "Invalid array read limit count",
+        messageFormat: "Array member '{0}' requires {1} max-read value(s) for its array shape, but the attribute supplied {2}",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
+    public static readonly DiagnosticDescriptor CollectionMaxEntriesNegative = new(
+        id: "CBS052",
+        title: "Array read limits must be non-negative",
+        messageFormat: "Array member '{0}' has a negative max-read limit in [BitStreamStructCollectionMaxEntries]",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
+    public static readonly DiagnosticDescriptor CollectionMaxEntriesProductOverflow = new(
+        id: "CBS053",
+        title: "Array read limits exceed supported maximum",
+        messageFormat: "Array member '{0}' max-read limits multiply to more than {1} leaf entries, which is not supported",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
+    public static readonly DiagnosticDescriptor CollectionElementNotSerializable = new(
+        id: "CBS049",
+        title: "Array element type not serializable",
+        messageFormat: "Array member '{0}' has leaf element type '{1}', which is not serializable using settings '{2}'",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
+    public static readonly DiagnosticDescriptor CollectionMissingLengthPrefixSupport = new(
+        id: "CBS050",
+        title: "Array element serializer lacks length-prefixed support",
+        messageFormat: "Array member '{0}' uses serializer '{1}', which must support span writes and array or span reads with a fixed-size int length prefix",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
+    public static readonly DiagnosticDescriptor CollectionAttributeOnNonArray = new(
+        id: "CBS051",
+        title: "Collection limit attribute requires an array",
+        messageFormat: "Member '{0}' has [BitStreamStructCollectionMaxEntries] but its type is not an array",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
 }

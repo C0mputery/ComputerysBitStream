@@ -22,6 +22,7 @@ internal static class BitStreamTypeNames {
     public static readonly string StructMetadata = typeof(BitStreamStructMetadataAttribute).FullName!;
     public static readonly string StructQuantized = typeof(BitStreamStructQuantizedAttribute).FullName!;
     public static readonly string StructVariableLength = typeof(BitStreamStructVariableLengthAttribute).FullName!;
+    public static readonly string StructCollectionMaxEntries = typeof(BitStreamStructCollectionMaxEntriesAttribute).FullName!;
 
     public static readonly string Int32 = typeof(int).FullName!;
 

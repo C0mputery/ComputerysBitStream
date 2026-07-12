@@ -18,6 +18,13 @@ namespace ComputerysBitStream {
         /// </remarks>
         public static void WriteValuesWithLength() { }
 
+        /// <summary>Writes a length-prefixed sequence, failing when the number of values exceeds <c>maxCount</c>.</summary>
+        /// <remarks>
+        /// <para>Throws <see cref="System.ArgumentOutOfRangeException"/> when <c>maxCount</c> is negative and <see cref="System.ArgumentException"/> when the sequence exceeds it.</para>
+        /// <para>Throws <see cref="InsufficientWriteCapacityException"/> when the buffer cannot hold the count plus all elements.</para>
+        /// </remarks>
+        public static void WriteValuesWithMaxCount() { }
+
         /// <summary>Writes each element with no length prefix.</summary>
         /// <remarks>The matching read method takes an explicit <c>count</c> argument. Throws <see cref="InsufficientWriteCapacityException"/> when the buffer is too short.</remarks>
         public static void WriteValuesWithoutLength() { }
