@@ -52,7 +52,12 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
         if (memberArray.Length == 0) { return "0"; }
 
         List<string> parts = [];
-        foreach (ResolvedStructMember member in memberArray) { parts.Add(member.SizeExpression); }
+        for (int i = 0; i < memberArray.Length; i++) {
+            ResolvedStructMember member = memberArray[i];
+            parts.Add(member.Kind == ResolvedStructMemberKind.Collection
+                ? $"GetCollection{i}Level0Size(value.{member.MemberName})"
+                : member.SizeExpression);
+        }
         return string.Join(" + ", parts);
     }
 }

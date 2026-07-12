@@ -122,7 +122,7 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
     }
 
     private string BuildVariablePositionScopedBody(bool restorePosition) {
-        string failureStatement = $"context.Position = originalPosition; {GeneratedSourceSyntax.EmitThrowReadFailed(_alias)}";
+        string failureStatement = GeneratedSourceSyntax.EmitThrowReadFailed(_alias);
         string tryReads = string.Join("\n", BuildMemberTryReadLines(failureStatement));
         string construct = BuildObjectInitializer(useTempVariables: true);
 
@@ -158,7 +158,7 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
 
     private static void AddMemberTryReadLines(List<string> lines, ResolvedStructMember member, int memberIndex, string failureReturn) {
         string tempName = $"temp{memberIndex}";
-        string tempDecl = $"{GeneratedSourceSyntax.GetShortTypeName(member.TypeFullyQualifiedName)} {tempName}";
+        string tempDecl = $"{member.TypeEmitName} {tempName}";
 
         switch (member.TryRead.Kind) {
             case MemberTryReadKind.TryReadOut:
@@ -167,6 +167,9 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
             case MemberTryReadKind.PreflightThenRead:
                 lines.Add($"if (context.IsInsufficientSpace({member.TryRead.FixedBits})) {{ context.Position = originalPosition; {failureReturn} }}");
                 lines.Add($"{tempDecl} = {member.ReadExpression};");
+                break;
+            case MemberTryReadKind.Collection:
+                lines.Add($"if (!TryReadCollection{memberIndex}Level0(ref context, out {tempDecl})) {{ context.Position = originalPosition; {failureReturn} }}");
                 break;
         }
     }

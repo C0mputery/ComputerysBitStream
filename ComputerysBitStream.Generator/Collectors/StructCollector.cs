@@ -509,16 +509,112 @@ internal static class StructCollector {
             isVariableLength = false;
         }
 
+        StructCollectionDefinition? collection = null;
+        bool hasCollectionAttribute = memberSymbol.TryGetAttribute(BitStreamTypeNames.StructCollectionMaxEntries, out AttributeData? collectionAttribute);
+        if (memberType is IArrayTypeSymbol arrayType) {
+            if (!hasCollectionAttribute || collectionAttribute is null) {
+                diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.CollectionMaxEntriesRequired, memberSymbol.Locations.FirstOrDefault(), memberName));
+            }
+            else if (TryParseCollection(arrayType, collectionAttribute, memberName, diagnostics, out StructCollectionDefinition parsedCollection)) {
+                collection = parsedCollection;
+            }
+        }
+        else if (hasCollectionAttribute) {
+            diagnostics.Add(new DiagnosticValueType(DiagnosticDescriptors.CollectionAttributeOnNonArray, collectionAttribute?.GetLocation() ?? memberSymbol.Locations.FirstOrDefault(), memberName));
+        }
+
         return new StructMemberDefinition(
             MemberName: memberName,
             TypeFullyQualifiedFormat: memberType.GetFullyQualifiedName(),
+            TypeEmitFormat: memberType.GetEmitTypeName(),
             IsProperty: isProperty,
             IsInitOnly: isInitOnly,
             SerializerExtensionClassFullyQualifiedName: serializerExtensionClass,
             IsVariableLength: isVariableLength,
             Quantized: quantized,
+            Collection: collection,
             Location: memberSymbol.Locations.FirstOrDefault()
         );
+    }
+
+    private static bool TryParseCollection(
+        IArrayTypeSymbol arrayType,
+        AttributeData attribute,
+        string memberName,
+        ImmutableArray<DiagnosticValueType>.Builder diagnostics,
+        out StructCollectionDefinition collection
+    ) {
+        collection = default;
+        ImmutableArray<int>.Builder ranks = ImmutableArray.CreateBuilder<int>();
+        ImmutableArray<string>.Builder arrayTypes = ImmutableArray.CreateBuilder<string>();
+        ImmutableArray<string>.Builder arrayEmitTypes = ImmutableArray.CreateBuilder<string>();
+        ITypeSymbol leafType = arrayType;
+        while (leafType is IArrayTypeSymbol currentArray) {
+            arrayTypes.Add(currentArray.GetFullyQualifiedName());
+            arrayEmitTypes.Add(currentArray.GetEmitTypeName());
+            ranks.Add(currentArray.Rank);
+            leafType = currentArray.ElementType;
+        }
+
+        ImmutableDictionary<string, TypedConstant> arguments = attribute.GetConstructorArgumentsByName();
+        ImmutableArray<int>.Builder limits = ImmutableArray.CreateBuilder<int>();
+        if (arguments.TryGetValue("maxRead", out TypedConstant maxReadArgument) && maxReadArgument.TryGetValue(out int maxRead)) {
+            limits.Add(maxRead);
+        }
+
+        if (arguments.TryGetValue("nestedMaxReads", out TypedConstant nestedArgument)) {
+            foreach (TypedConstant value in nestedArgument.Values) {
+                if (value.TryGetValue(out int nestedLimit)) { limits.Add(nestedLimit); }
+            }
+        }
+
+        int expectedLimitCount = 0;
+        foreach (int rank in ranks) { expectedLimitCount += rank; }
+
+        if (limits.Count != expectedLimitCount) {
+            diagnostics.Add(new DiagnosticValueType(
+                DiagnosticDescriptors.InvalidCollectionMaxEntries,
+                attribute.GetLocation(),
+                memberName,
+                expectedLimitCount,
+                limits.Count
+            ));
+            return false;
+        }
+
+        long maximumLeafCount = 1;
+        foreach (int limit in limits) {
+            if (limit < 0) {
+                diagnostics.Add(new DiagnosticValueType(
+                    DiagnosticDescriptors.CollectionMaxEntriesNegative,
+                    attribute.GetLocation(),
+                    memberName
+                ));
+                return false;
+            }
+
+            if (limit != 0 && maximumLeafCount > int.MaxValue / limit) {
+                diagnostics.Add(new DiagnosticValueType(
+                    DiagnosticDescriptors.CollectionMaxEntriesProductOverflow,
+                    attribute.GetLocation(),
+                    memberName,
+                    int.MaxValue
+                ));
+                return false;
+            }
+
+            maximumLeafCount *= limit;
+        }
+
+        collection = new StructCollectionDefinition(
+            LeafTypeFullyQualifiedFormat: leafType.GetFullyQualifiedName(),
+            LeafTypeEmitFormat: leafType.GetEmitTypeName(),
+            ArrayTypeFullyQualifiedFormats: arrayTypes.ToImmutable(),
+            ArrayTypeEmitFormats: arrayEmitTypes.ToImmutable(),
+            Ranks: ranks.ToImmutable(),
+            MaxEntries: limits.ToImmutable()
+        );
+        return true;
     }
 
     private static bool TryParseQuantized(AttributeData attributeData, ISymbol memberSymbol, ImmutableArray<DiagnosticValueType>.Builder diagnostics, out QuantizedDefinition quantizedDefinition) {

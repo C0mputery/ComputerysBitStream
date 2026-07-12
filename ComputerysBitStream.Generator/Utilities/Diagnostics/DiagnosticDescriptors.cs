@@ -490,6 +490,15 @@ internal static class DiagnosticDescriptors {
         isEnabledByDefault: true
     );
 
+    public static readonly DiagnosticDescriptor CollectionMissingSizeSupport = new(
+        id: "CBS054",
+        title: "Array element serializer lacks Size support",
+        messageFormat: "Array member '{0}' uses variable-length serializer '{1}', which must define a Size method",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
     public static readonly DiagnosticDescriptor CollectionAttributeOnNonArray = new(
         id: "CBS051",
         title: "Collection limit attribute requires an array",

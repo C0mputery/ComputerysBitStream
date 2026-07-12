@@ -144,3 +144,60 @@ public partial struct QuantizedStruct {
     [BitStreamStructQuantized(nameof(Min), nameof(Max), 8)]
     public float Value { get; set; }
 }
+
+[BitStreamStruct]
+public partial struct IntArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(16)]
+    public int[] Values { get; set; }
+}
+
+[BitStreamStruct]
+public partial struct RectangularArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(8, 8)]
+    public int[,] Values { get; set; }
+}
+
+[BitStreamStruct]
+public partial struct JaggedArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(8, 8)]
+    public int[][] Values { get; set; }
+}
+
+[BitStreamStruct]
+public partial struct MixedArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(4, 4, 4)]
+    public int[][,] Values { get; set; }
+}
+
+[BitStreamStruct]
+public partial struct StringArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(8)]
+    public string[] Values { get; set; }
+}
+
+[BitStreamStruct]
+public partial struct QuantizedArrayMemberStruct {
+    public const float Min = 0f;
+    public const float Max = 100f;
+
+    [BitStreamStructCollectionMaxEntries(8)]
+    [BitStreamStructQuantized(nameof(Min), nameof(Max), 8)]
+    public float[] Values { get; set; }
+}
+
+[BitStreamSettings]
+[BitStreamSerializer(typeof(NestedStruct))]
+[BitStreamSerializer(typeof(ExternalPlainStructProxy))]
+public interface IArrayMemberSettings : IDefaultSettings { }
+
+[BitStreamStruct(typeof(IArrayMemberSettings))]
+public partial struct NestedArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(8)]
+    public NestedStruct[] Values { get; set; }
+}
+
+[BitStreamStruct(typeof(IArrayMemberSettings))]
+public partial struct ExternalArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(8)]
+    public ExternalPlainStruct[] Values { get; set; }
+}

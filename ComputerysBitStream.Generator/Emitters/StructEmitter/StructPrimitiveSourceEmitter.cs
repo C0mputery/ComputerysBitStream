@@ -53,6 +53,7 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
         EmitWriteMethods();
         EmitReadMethods();
         EmitVariableLengthMethods();
+        EmitCollectionMethods();
 
         _writer.Indent--;
         _writer.WriteLine("}");

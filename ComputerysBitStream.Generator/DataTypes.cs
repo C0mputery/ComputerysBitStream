@@ -55,14 +55,25 @@ internal record struct QuantizedDefinition(
     ValueTypeLocation? Location
 );
 
+internal record struct StructCollectionDefinition(
+    string LeafTypeFullyQualifiedFormat,
+    string LeafTypeEmitFormat,
+    EquatableImmutableArray<string> ArrayTypeFullyQualifiedFormats,
+    EquatableImmutableArray<string> ArrayTypeEmitFormats,
+    EquatableImmutableArray<int> Ranks,
+    EquatableImmutableArray<int> MaxEntries
+);
+
 internal record struct StructMemberDefinition(
     string MemberName,
     string TypeFullyQualifiedFormat,
+    string TypeEmitFormat,
     bool IsProperty,
     bool IsInitOnly,
     string? SerializerExtensionClassFullyQualifiedName,
     bool IsVariableLength,
     QuantizedDefinition? Quantized,
+    StructCollectionDefinition? Collection,
     ValueTypeLocation? Location
 );
 
@@ -91,12 +102,14 @@ internal enum ResolvedStructMemberKind {
     Primitive,
     NestedStruct,
     ExternalStruct,
-    Quantized
+    Quantized,
+    Collection
 }
 
 internal enum MemberTryReadKind {
     TryReadOut,
-    PreflightThenRead
+    PreflightThenRead,
+    Collection
 }
 
 internal readonly record struct MemberTryReadSpec(
@@ -108,13 +121,33 @@ internal readonly record struct MemberTryReadSpec(
 internal record struct ResolvedStructMember(
     string MemberName,
     string TypeFullyQualifiedName,
+    string TypeEmitName,
     bool IsInitOnly,
     ResolvedStructMemberKind Kind,
     string WriteCall,
     string ReadExpression,
     MemberTryReadSpec TryRead,
     string SizeExpression,
-    QuantizedDefinition? Quantized
+    QuantizedDefinition? Quantized,
+    ResolvedStructCollection? Collection = null
+);
+
+internal record struct ResolvedStructCollection(
+    StructCollectionDefinition Source,
+    string LeafTypeEmitName,
+    string LeafWriteContextClass,
+    string LeafReadContextClass,
+    string LeafWriteWithMaxCountMethod,
+    string LeafWriteWithoutLengthMethod,
+    string LeafTryReadMethod,
+    string LeafTryReadWithCountMethod,
+    string LeafExtraArguments,
+    string IntExtensionClass,
+    string IntWriteMethod,
+    string IntPeekMethod,
+    int IntSize,
+    string? LeafSizeExpression,
+    int? LeafFixedSize
 );
 
 internal record struct ResolvedStructDefinition(

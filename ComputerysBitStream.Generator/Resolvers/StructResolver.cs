@@ -5,7 +5,6 @@ using ComputerysBitStream.Attributes;
 using ComputerysBitStream.Generator.Diagnostics;
 using ComputerysBitStream.Generator.Emission;
 using ComputerysBitStream.Generator.EquatableCollections;
-using ComputerysBitStream.Generator.Roslyn;
 
 namespace ComputerysBitStream.Generator;
 
@@ -113,6 +112,10 @@ internal sealed class StructResolver {
         string memberType = member.TypeFullyQualifiedFormat;
         string memberAccess = $"value.{member.MemberName}";
 
+        if (member.Collection is StructCollectionDefinition collection) {
+            return TryResolveCollectionMember(member, collection, effectiveSettings, settingsLabel, generatedNamespace, requiredUsings, out resolvedMember, out isVariableLength, out fixedBits);
+        }
+
         if (!string.IsNullOrEmpty(member.SerializerExtensionClassFullyQualifiedName)
             && effectiveSettings.Primitives.TryGetValue(member.SerializerExtensionClassFullyQualifiedName!, out PrimitiveDefinition serializerPrimitive)) {
             return TryCreatePrimitiveMember(member, serializerPrimitive, memberAccess, generatedNamespace, requiredUsings, out resolvedMember, out isVariableLength, out fixedBits);
@@ -136,6 +139,7 @@ internal sealed class StructResolver {
             resolvedMember = new ResolvedStructMember(
                 MemberName: member.MemberName,
                 TypeFullyQualifiedName: memberType,
+                TypeEmitName: member.TypeEmitFormat,
                 IsInitOnly: member.IsInitOnly,
                 Kind: ResolvedStructMemberKind.Quantized,
                 WriteCall: $"{extensionClass}.{writeMethod}(ref context, {memberAccess}, {min}, {max}, {bitCount})",
@@ -173,6 +177,7 @@ internal sealed class StructResolver {
             resolvedMember = new ResolvedStructMember(
                 MemberName: member.MemberName,
                 TypeFullyQualifiedName: memberType,
+                TypeEmitName: member.TypeEmitFormat,
                 IsInitOnly: member.IsInitOnly,
                 Kind: ResolvedStructMemberKind.NestedStruct,
                 WriteCall: $"{nestedExtensionClass}.{nestedWrite}(ref context, {memberAccess})",
@@ -210,6 +215,7 @@ internal sealed class StructResolver {
             resolvedMember = new ResolvedStructMember(
                 MemberName: member.MemberName,
                 TypeFullyQualifiedName: memberType,
+                TypeEmitName: member.TypeEmitFormat,
                 IsInitOnly: member.IsInitOnly,
                 Kind: ResolvedStructMemberKind.ExternalStruct,
                 WriteCall: $"{externalExtensionClass}.{externalWrite}(ref context, {memberAccess})",
@@ -249,6 +255,181 @@ internal sealed class StructResolver {
         return false;
     }
 
+    private bool TryResolveCollectionMember(
+        in StructMemberDefinition member,
+        in StructCollectionDefinition collection,
+        SettingsDefinition effectiveSettings,
+        string settingsLabel,
+        string generatedNamespace,
+        List<string> requiredUsings,
+        out ResolvedStructMember resolvedMember,
+        out bool isVariableLength,
+        out int fixedBits
+    ) {
+        resolvedMember = default;
+        isVariableLength = true;
+        fixedBits = 0;
+
+        if (!TryResolveCollectionLeaf(member, collection.LeafTypeFullyQualifiedFormat, effectiveSettings, settingsLabel, out PrimitiveDefinition leafPrimitive, out string extraArguments)) {
+            return false;
+        }
+
+        GeneratedSourceSyntax.CollectAdditionalUsings(requiredUsings, leafPrimitive.TargetTypeNamespace, generatedNamespace);
+
+        bool hasWriteSpan = Emitters.PrimitiveWrapperSourceEmitter.HasValidMethod(leafPrimitive, BitStreamPrimitiveRole.WriteSpan);
+        bool hasArrayRead = Emitters.PrimitiveWrapperSourceEmitter.HasValidMethod(leafPrimitive, BitStreamPrimitiveRole.ReadArray)
+                            || Emitters.PrimitiveWrapperSourceEmitter.HasValidMethod(leafPrimitive, BitStreamPrimitiveRole.ReadSpan);
+        PrimitiveDefinition? intHandler = ResolveCollectionLengthPrefixHandler(leafPrimitive);
+        if (!hasWriteSpan || !hasArrayRead || intHandler is not PrimitiveDefinition prefixHandler) {
+            _reportDiagnostic(new DiagnosticValueType(
+                DiagnosticDescriptors.CollectionMissingLengthPrefixSupport,
+                member.Location,
+                member.MemberName,
+                leafPrimitive.Alias
+            ));
+            return false;
+        }
+
+        string leafWriteClass = QualifyContextExtensionClass(leafPrimitive, "WriteContextExtensions", generatedNamespace, requiredUsings);
+        string leafReadClass = QualifyContextExtensionClass(leafPrimitive, "ReadContextExtensions", generatedNamespace, requiredUsings);
+        string intExtensionClass = QualifyPrimitiveExtension(prefixHandler, generatedNamespace, requiredUsings);
+        string? leafSizeExpression = null;
+        int? leafFixedSize = leafPrimitive.FixedSize;
+        if (leafPrimitive.Mode == PrimitiveSerializationMode.VariableLength) {
+            string sizeMethod = GetPrimitiveMethodName(leafPrimitive, BitStreamPrimitiveRole.Size);
+            if (string.IsNullOrEmpty(sizeMethod)) {
+                _reportDiagnostic(new DiagnosticValueType(
+                    DiagnosticDescriptors.CollectionMissingSizeSupport,
+                    member.Location,
+                    member.MemberName,
+                    leafPrimitive.Alias
+                ));
+                return false;
+            }
+
+            leafSizeExpression = $"{QualifyPrimitiveExtension(leafPrimitive, generatedNamespace, requiredUsings)}.{sizeMethod}({{0}})";
+        }
+        else if (leafPrimitive.Mode == PrimitiveSerializationMode.Quantized && member.Quantized is QuantizedDefinition quantized) {
+            leafFixedSize = quantized.BitCount;
+        }
+
+        ResolvedStructCollection resolvedCollection = new(
+            Source: collection,
+            LeafTypeEmitName: collection.LeafTypeEmitFormat,
+            LeafWriteContextClass: leafWriteClass,
+            LeafReadContextClass: leafReadClass,
+            LeafWriteWithMaxCountMethod: $"Write{leafPrimitive.Alias}sWithMaxCount",
+            LeafWriteWithoutLengthMethod: $"Write{leafPrimitive.Alias}sWithoutLength",
+            LeafTryReadMethod: $"TryRead{leafPrimitive.Alias}sWithMaxCount",
+            LeafTryReadWithCountMethod: $"TryRead{leafPrimitive.Alias}s",
+            LeafExtraArguments: extraArguments,
+            IntExtensionClass: intExtensionClass,
+            IntWriteMethod: GetPrimitiveMethodName(prefixHandler, BitStreamPrimitiveRole.Write),
+            IntPeekMethod: GetPrimitiveMethodName(prefixHandler, BitStreamPrimitiveRole.Peek),
+            IntSize: prefixHandler.FixedSize ?? 0,
+            LeafSizeExpression: leafSizeExpression,
+            LeafFixedSize: leafFixedSize
+        );
+
+        resolvedMember = new ResolvedStructMember(
+            MemberName: member.MemberName,
+            TypeFullyQualifiedName: member.TypeFullyQualifiedFormat,
+            TypeEmitName: member.TypeEmitFormat,
+            IsInitOnly: member.IsInitOnly,
+            Kind: ResolvedStructMemberKind.Collection,
+            WriteCall: string.Empty,
+            ReadExpression: string.Empty,
+            TryRead: new MemberTryReadSpec(MemberTryReadKind.Collection, null, 0),
+            SizeExpression: string.Empty,
+            Quantized: member.Quantized,
+            Collection: resolvedCollection
+        );
+        return true;
+    }
+
+    private bool TryResolveCollectionLeaf(
+        in StructMemberDefinition member,
+        string leafType,
+        SettingsDefinition effectiveSettings,
+        string settingsLabel,
+        out PrimitiveDefinition primitive,
+        out string extraArguments
+    ) {
+        extraArguments = string.Empty;
+
+        if (!string.IsNullOrEmpty(member.SerializerExtensionClassFullyQualifiedName)
+            && effectiveSettings.Primitives.TryGetValue(member.SerializerExtensionClassFullyQualifiedName!, out primitive)) {
+            return true;
+        }
+
+        if (member.Quantized is QuantizedDefinition quantized) {
+            if (!TryFindPrimitiveByTargetType(effectiveSettings, leafType, PrimitiveSerializationMode.Quantized, out primitive)) {
+                _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.QuantizedPrimitiveNotInSettings, member.Location ?? quantized.Location, member.MemberName, leafType));
+                return false;
+            }
+
+            extraArguments = $", {quantized.MinExpression}, {quantized.MaxExpression}, {quantized.BitCount}";
+            return true;
+        }
+
+        if (effectiveSettings.Structs.TryGetValue(leafType, out StructDefinition nestedStruct)) {
+            ResolvedStructDefinition? nestedResolved = Resolve(nestedStruct);
+            if (nestedResolved is not ResolvedStructDefinition nested) {
+                _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.CollectionElementNotSerializable, member.Location, member.MemberName, leafType, settingsLabel));
+                primitive = default;
+                return false;
+            }
+
+            primitive = StructPrimitiveDefinitionFactory.Create(nested);
+            return true;
+        }
+
+        if (effectiveSettings.ExternalStructs.TryGetValue(leafType, out ExternalStructDefinition externalStruct)) {
+            PrimitiveSerializationMode mode = externalStruct.IsVariableLength ? PrimitiveSerializationMode.VariableLength : PrimitiveSerializationMode.FixedSize;
+            primitive = new PrimitiveDefinition(
+                ExtensionClassFullyQualifiedName: GetStructPrimitiveExtensionClassFqn(externalStruct.Alias, externalStruct.ExtensionNamespace),
+                TargetTypeFullyQualifiedName: leafType,
+                TargetTypeNamespace: GeneratedSourceSyntax.GetNamespaceFromFullyQualifiedName(leafType),
+                TargetTypeEmitName: StructPrimitiveDefinitionFactory.GetEmitTypeName(leafType),
+                Alias: externalStruct.Alias,
+                Namespace: externalStruct.ExtensionNamespace,
+                Mode: mode,
+                FixedSize: externalStruct.IsVariableLength ? null : externalStruct.Size,
+                MinBits: null,
+                MaxBits: null,
+                Methods: StructPrimitiveDefinitionFactory.CreateMethodDefinitions(externalStruct.Alias, mode),
+                Settings: null,
+                Location: member.Location
+            );
+            return true;
+        }
+
+        PrimitiveSerializationMode primitiveMode = member.IsVariableLength ? PrimitiveSerializationMode.VariableLength : PrimitiveSerializationMode.FixedSize;
+        if (TryFindPrimitiveByTargetType(effectiveSettings, leafType, primitiveMode, out primitive)) { return true; }
+        if (!member.IsVariableLength && TryFindPrimitiveByTargetType(effectiveSettings, leafType, PrimitiveSerializationMode.VariableLength, out primitive)) { return true; }
+
+        _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.CollectionElementNotSerializable, member.Location, member.MemberName, leafType, settingsLabel));
+        return false;
+    }
+
+    private PrimitiveDefinition? ResolveCollectionLengthPrefixHandler(in PrimitiveDefinition primitive) {
+        if (primitive.Settings is SettingsReference reference) {
+            foreach (string interfaceName in reference.LocalSettingsInterfaceFullyQualifiedNames) {
+                if (_localSettingsByInterface.TryGetValue(interfaceName, out SettingsDefinition? localSettings)) {
+                    PrimitiveDefinition? localHandler = LengthPrefixHandlerUtility.Find(localSettings);
+                    if (localHandler is not null) { return localHandler; }
+                }
+            }
+
+            if (reference.ExternalSettings is SettingsDefinition externalSettings) {
+                PrimitiveDefinition? externalHandler = LengthPrefixHandlerUtility.Find(externalSettings);
+                if (externalHandler is not null) { return externalHandler; }
+            }
+        }
+
+        return LengthPrefixHandlerUtility.Find(_globalSettings);
+    }
+
     private bool TryCreatePrimitiveMember(
         in StructMemberDefinition member, in PrimitiveDefinition primitive,
         string memberAccess, string generatedNamespace, List<string> requiredUsings,
@@ -273,6 +454,7 @@ internal sealed class StructResolver {
         resolvedMember = new ResolvedStructMember(
             MemberName: member.MemberName,
             TypeFullyQualifiedName: member.TypeFullyQualifiedFormat,
+            TypeEmitName: member.TypeEmitFormat,
             IsInitOnly: member.IsInitOnly,
             Kind: ResolvedStructMemberKind.Primitive,
             WriteCall: $"{extensionClass}.{writeMethod}(ref context, {memberAccess})",
@@ -296,6 +478,12 @@ internal sealed class StructResolver {
 
     private static string QualifyPrimitiveExtension(in PrimitiveDefinition primitive, string generatedNamespace, List<string> requiredUsings) {
         return GeneratedSourceSyntax.QualifyTypeReference(generatedNamespace, primitive.ExtensionClassFullyQualifiedName, requiredUsings);
+    }
+
+    private static string QualifyContextExtensionClass(in PrimitiveDefinition primitive, string suffix, string generatedNamespace, List<string> requiredUsings) {
+        string className = primitive.Alias + suffix;
+        string fullyQualifiedName = primitive.Namespace is null ? className : $"{primitive.Namespace}.{className}";
+        return GeneratedSourceSyntax.QualifyTypeReference(generatedNamespace, fullyQualifiedName, requiredUsings);
     }
 
     private static string QualifyExtensionClass(string generatedNamespace, string extensionClassFqn, List<string> requiredUsings) {

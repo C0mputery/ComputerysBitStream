@@ -42,8 +42,12 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
 
     private string BuildWriteBody() {
         List<string> lines = [];
-        foreach (ResolvedStructMember member in _members) {
-            lines.Add($"{member.WriteCall};");
+        System.Collections.Immutable.ImmutableArray<ResolvedStructMember> members = _members;
+        for (int i = 0; i < members.Length; i++) {
+            ResolvedStructMember member = members[i];
+            lines.Add(member.Kind == ResolvedStructMemberKind.Collection
+                ? $"WriteCollection{i}Level0(ref context, value.{member.MemberName});"
+                : $"{member.WriteCall};");
         }
         return string.Join("\n", lines);
     }
