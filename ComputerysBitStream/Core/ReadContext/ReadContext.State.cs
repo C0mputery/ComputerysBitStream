@@ -58,7 +58,7 @@ namespace ComputerysBitStream {
         /// <param name="capacity">New active bit capacity.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetCapacity(long capacity) {
-            ThrowIfInvalidCapacity(capacity, Buffer.Length * BitHelper.ULongSize);
+            ThrowIfInvalidCapacity(capacity, (long)Buffer.Length * BitHelper.ULongSize);
             ThrowIfInvalidPosition(Position, capacity);
             SetCapacityPrimitive(capacity);
         }

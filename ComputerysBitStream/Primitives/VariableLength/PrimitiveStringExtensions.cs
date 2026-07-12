@@ -132,7 +132,7 @@ namespace ComputerysBitStream.Primitives.VariableLength {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetStringSize(string? value) {
             int byteCount = string.IsNullOrEmpty(value) ? 0 : Utf8.GetByteCount(value);
-            return VariableLengthEncodingHelper.GetUInt32SizeInBits((uint)byteCount) + byteCount * BitHelper.ByteSize;
+            return checked(VariableLengthEncodingHelper.GetUInt32SizeInBits((uint)byteCount) + byteCount * BitHelper.ByteSize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

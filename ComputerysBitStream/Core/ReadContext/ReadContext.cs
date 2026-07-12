@@ -28,7 +28,7 @@ namespace ComputerysBitStream {
         public ReadContext(ReadOnlySpan<ulong> buffer) {
             Buffer = buffer;
             Position = 0;
-            Capacity = buffer.Length * BitHelper.ULongSize;
+            Capacity = (long)buffer.Length * BitHelper.ULongSize;
         }
 
         /// <summary>Starts at <paramref name="position"/> with capacity equal to the full buffer.</summary>
@@ -36,7 +36,7 @@ namespace ComputerysBitStream {
         /// <param name="position">Initial position in bits. Must be between 0 and the buffer capacity.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadContext(ReadOnlySpan<ulong> buffer, long position) {
-            long capacity = buffer.Length * BitHelper.ULongSize;
+            long capacity = (long)buffer.Length * BitHelper.ULongSize;
             ThrowIfInvalidPosition(position, capacity);
             Buffer = buffer;
             Position = position;
@@ -49,7 +49,7 @@ namespace ComputerysBitStream {
         /// <param name="capacity">Active bit capacity. Must not exceed <c>buffer.Length * 64</c>.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadContext(ReadOnlySpan<ulong> buffer, long position, long capacity) {
-            ThrowIfInvalidCapacity(capacity, buffer.Length * BitHelper.ULongSize);
+            ThrowIfInvalidCapacity(capacity, (long)buffer.Length * BitHelper.ULongSize);
             ThrowIfInvalidPosition(position, capacity);
             Buffer = buffer;
             Position = position;

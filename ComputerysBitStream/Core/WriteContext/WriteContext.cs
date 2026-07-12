@@ -32,7 +32,7 @@ namespace ComputerysBitStream {
         public WriteContext(Span<ulong> buffer) {
             Buffer = buffer;
             Position = 0;
-            Capacity = buffer.Length * BitHelper.ULongSize;
+            Capacity = (long)buffer.Length * BitHelper.ULongSize;
 #if BITSTREAM_SUPPORT_THREAD_SAFE
             ThreadSafe = false;
 #endif
@@ -43,7 +43,7 @@ namespace ComputerysBitStream {
         /// <param name="position">Initial position in bits.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public WriteContext(Span<ulong> buffer, long position) {
-            long capacity = buffer.Length * BitHelper.ULongSize;
+            long capacity = (long)buffer.Length * BitHelper.ULongSize;
             ThrowIfInvalidPosition(position, capacity);
             Buffer = buffer;
             Position = position;
@@ -59,7 +59,7 @@ namespace ComputerysBitStream {
         /// <param name="capacity">Maximum writable bits. Must not exceed <c>buffer.Length * 64</c>.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public WriteContext(Span<ulong> buffer, long position, long capacity) {
-            ThrowIfInvalidCapacity(capacity, buffer.Length * BitHelper.ULongSize);
+            ThrowIfInvalidCapacity(capacity, (long)buffer.Length * BitHelper.ULongSize);
             ThrowIfInvalidPosition(position, capacity);
             Buffer = buffer;
             Position = position;
@@ -77,7 +77,7 @@ namespace ComputerysBitStream {
         /// <param name="threadSafe">Whether write operations synchronize across threads.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public WriteContext(Span<ulong> buffer, long position, long capacity, bool threadSafe) {
-            ThrowIfInvalidCapacity(capacity, buffer.Length * BitHelper.ULongSize);
+            ThrowIfInvalidCapacity(capacity, (long)buffer.Length * BitHelper.ULongSize);
             ThrowIfInvalidPosition(position, capacity);
             Buffer = buffer;
             Position = position;

@@ -58,6 +58,6 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
                 ? $"GetCollection{i}Level0Size(value.{member.MemberName})"
                 : member.SizeExpression);
         }
-        return string.Join(" + ", parts);
+        return $"checked({string.Join(" + ", parts)})";
     }
 }
