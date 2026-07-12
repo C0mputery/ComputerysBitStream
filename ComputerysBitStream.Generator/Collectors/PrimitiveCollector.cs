@@ -276,9 +276,15 @@ internal static class PrimitiveCollector {
     }
 
     private readonly record struct PrimitiveSignatureContext(
-        ITypeSymbol TargetType, INamedTypeSymbol? WriteContext, INamedTypeSymbol? ReadContext,
-        ITypeSymbol? ReadOnlySpanOfTarget, ITypeSymbol? SpanOfTarget, ITypeSymbol ArrayOfTarget,
-        ITypeSymbol IntType, ITypeSymbol VoidType, ITypeSymbol BoolType
+        ITypeSymbol TargetType,
+        INamedTypeSymbol? WriteContext,
+        INamedTypeSymbol? ReadContext,
+        ITypeSymbol? ReadOnlySpanOfTarget,
+        ITypeSymbol? SpanOfTarget,
+        ITypeSymbol ArrayOfTarget,
+        ITypeSymbol IntType,
+        ITypeSymbol VoidType,
+        ITypeSymbol BoolType
     ) {
         public static PrimitiveSignatureContext Create(Compilation compilation, ITypeSymbol targetType) {
             INamedTypeSymbol? readOnlySpanType = compilation.GetTypeByMetadataName(BitStreamTypeNames.ReadOnlySpan);

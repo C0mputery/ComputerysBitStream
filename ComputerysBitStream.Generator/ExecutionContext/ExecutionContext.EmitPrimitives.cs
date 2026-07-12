@@ -5,13 +5,12 @@ using ComputerysBitStream.Attributes;
 using ComputerysBitStream.Generator.Diagnostics;
 using ComputerysBitStream.Generator.Emitters;
 using ComputerysBitStream.Generator.Emission;
-using ComputerysBitStream.Generator.Roslyn;
 
 namespace ComputerysBitStream.Generator;
 
 internal readonly ref partial struct ExecutionContext {
     private void EmitPrimitiveDefinitions(ImmutableArray<PrimitiveDefinition> primitives) {
-        PrimitiveDefinition? globalIntHandler = FindLengthPrefixHandler(_globalSettings);
+        PrimitiveDefinition? globalIntHandler = LengthPrefixHandlerUtility.Find(_globalSettings);
 
         HashSet<string> usedEmissionKeys = [];
         foreach (PrimitiveDefinition primitive in primitives) {
@@ -40,40 +39,16 @@ internal readonly ref partial struct ExecutionContext {
         foreach (string interfaceName in reference.LocalSettingsInterfaceFullyQualifiedNames) {
             if (!_localSettingsByInterface.TryGetValue(interfaceName, out SettingsDefinition? localSettings)) { continue; }
 
-            PrimitiveDefinition? handler = FindLengthPrefixHandler(localSettings);
+            PrimitiveDefinition? handler = LengthPrefixHandlerUtility.Find(localSettings);
             if (handler is not null) { return handler; }
         }
 
         if (reference.ExternalSettings is not null) {
-            PrimitiveDefinition? handler = FindLengthPrefixHandler(reference.ExternalSettings);
+            PrimitiveDefinition? handler = LengthPrefixHandlerUtility.Find(reference.ExternalSettings);
             if (handler is not null) { return handler; }
         }
 
         return globalIntHandler;
-    }
-
-    private static PrimitiveDefinition? FindLengthPrefixHandler(SettingsDefinition settings) {
-        PrimitiveDefinition? best = null;
-        foreach (KeyValuePair<string, PrimitiveDefinition> pair in settings.Primitives) {
-            PrimitiveDefinition candidate = pair.Value;
-            if (candidate.Mode != PrimitiveSerializationMode.FixedSize) { continue; } // TODO: make this support Variable length types as well.
-            if (!string.Equals(candidate.TargetTypeFullyQualifiedName, BitStreamTypeNames.Int32, StringComparison.Ordinal)) { continue; }
-            if (candidate.FixedSize is not int fixedSize || fixedSize <= 0) { continue; }
-            if (!PrimitiveWrapperSourceEmitter.HasValidMethod(candidate, BitStreamPrimitiveRole.Write)) { continue; }
-            if (!PrimitiveWrapperSourceEmitter.HasValidMethod(candidate, BitStreamPrimitiveRole.Peek)) { continue; }
-
-            if (best is not PrimitiveDefinition current || IsPreferredLengthPrefixHandler(candidate, current)) { best = candidate; }
-        }
-
-        return best;
-    }
-
-    private static bool IsPreferredLengthPrefixHandler(in PrimitiveDefinition candidate, in PrimitiveDefinition current) {
-        bool candidateIsDefaultAlias = string.Equals(candidate.Alias, DisplayNameUtility.DefaultInt32Alias, StringComparison.Ordinal);
-        bool currentIsDefaultAlias = string.Equals(current.Alias, DisplayNameUtility.DefaultInt32Alias, StringComparison.Ordinal);
-        if (candidateIsDefaultAlias != currentIsDefaultAlias) { return candidateIsDefaultAlias; }
-
-        return string.CompareOrdinal(candidate.ExtensionClassFullyQualifiedName, current.ExtensionClassFullyQualifiedName) < 0;
     }
 
     private static bool NeedsLengthPrefixHandlerDiagnostic(in PrimitiveDefinition primitive, PrimitiveDefinition? intHandler) {
