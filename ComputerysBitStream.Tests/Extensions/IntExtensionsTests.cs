@@ -5,6 +5,35 @@ public class IntExtensionsTests : PrimitiveSerializationTestSuite<int> {
     protected override int Value => 42;
     protected override int[] Values => [42, -42, 42, 42, -42];
 
+    [Fact]
+    public void WriteWithMaxCount_WritesValuesWithinLimit() {
+        int[] expected = Values;
+        ulong[] buffer = new ulong[16];
+        WriteContext write = new(buffer);
+        write.WriteIntsWithMaxCount(expected, expected.Length);
+
+        ReadContext read = new(buffer);
+        Assert.Equal(expected, read.ReadInts());
+    }
+
+    [Fact]
+    public void WriteWithMaxCount_RejectsValuesAboveLimitWithoutAdvancing() {
+        ulong[] buffer = new ulong[16];
+        WriteContext write = new(buffer);
+        long originalPosition = write.Position;
+
+        ArgumentException? exception = null;
+        try {
+            write.WriteIntsWithMaxCount(Values, Values.Length - 1);
+        }
+        catch (ArgumentException caught) {
+            exception = caught;
+        }
+
+        Assert.NotNull(exception);
+        Assert.Equal(originalPosition, write.Position);
+    }
+
     protected override void WritePrimitive(ref WriteContext context, int value) => context.WriteIntPrimitive(value);
     protected override int PeekPrimitive(ReadContext context) => context.PeekIntPrimitive();
     protected override int ReadPrimitive(ReadContext context) => context.ReadIntPrimitive();

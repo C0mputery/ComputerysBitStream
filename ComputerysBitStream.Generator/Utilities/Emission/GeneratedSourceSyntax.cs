@@ -72,6 +72,14 @@ internal static class GeneratedSourceSyntax {
     }
 
     internal static string EmitThrowIfTryReadFailed(string typeName, string tryExpression, string successBody) {
+        if (string.IsNullOrEmpty(successBody)) {
+            return $$"""
+                     if (!{{tryExpression}}) {
+                         {{EmitThrowReadFailed(typeName)}}
+                     }
+                     """;
+        }
+
         return $$"""
                  if (!{{tryExpression}}) {
                      {{EmitThrowReadFailed(typeName)}}

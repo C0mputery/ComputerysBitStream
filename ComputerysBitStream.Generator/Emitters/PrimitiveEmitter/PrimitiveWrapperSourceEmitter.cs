@@ -108,13 +108,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string BitCountValidationThrow => $"if (bitCount < {MinBits} || bitCount > {MaxBits}) {{ throw new ArgumentOutOfRangeException(nameof(bitCount), bitCount, \"Bit count must be between {MinBits} and {MaxBits}.\"); }}";
     private string QuantizedFailPrefix => IsQuantized ? $"bitCount < {MinBits} || bitCount > {MaxBits} || " : "";
 
-    private string QuantizedBitCountValidationPrefix() {
-        return IsQuantized
-            ? $$"""
-                {{BitCountValidationThrow}}
-                """
-            : "";
-    }
+    private string QuantizedBitCountValidationPrefix() => IsQuantized ? BitCountValidationThrow : "";
 
     private string EmitThrowIfTryReadFailedBody(string typeName, string tryExpression, string successBody) {
         if (!IsQuantized) { return GeneratedSourceSyntax.EmitThrowIfTryReadFailed(typeName, tryExpression, successBody); }

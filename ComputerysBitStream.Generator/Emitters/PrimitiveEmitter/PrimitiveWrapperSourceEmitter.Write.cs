@@ -16,7 +16,10 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         List<string> methods = [];
         if (hasWrite) { methods.Add(EmitWriteValue()); }
         if (hasWriteSpan) {
-            if (_hasIntWrite) { methods.Add(EmitWriteValuesWithLength()); }
+            if (_hasIntWrite) {
+                methods.Add(EmitWriteValuesWithLength());
+                methods.Add(EmitWriteValuesWithMaxCount());
+            }
             methods.Add(EmitWriteValuesWithoutLength());
         }
         _writer.WriteBlocks(methods);
@@ -62,6 +65,23 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  """;
     }
 
+    private string EmitWriteValuesWithMaxCount() {
+        string guard = SpanWriteGuard(includeLengthPrefix: true, operation: $"{_alias} array");
+
+        return $$"""
+                 {{GeneratedDocumentationSyntax.WriteValuesWithMaxCount}}
+                 [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                 public static void Write{{_pluralAlias}}WithMaxCount(this ref WriteContext context, ReadOnlySpan<{{_targetType}}> values, int maxCount{{_extraParams}}) {
+                     if (maxCount < 0) { throw new ArgumentOutOfRangeException(nameof(maxCount)); }
+                     if (values.Length > maxCount) { throw new ArgumentException("The number of values exceeds maxCount.", nameof(values)); }
+                     {{SourceWriter.MaintainRelativeIndent(guard, 1)}}
+
+                     {{_intExtensionClass}}.{{_intWriteMethodName}}(ref context, values.Length);
+                     {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.WriteSpan)}}(ref context, values{{_extraArgs}});
+                 }
+                 """;
+    }
+
     private string EmitWriteValuesWithoutLength() {
         string guard = SpanWriteGuard(includeLengthPrefix: false, operation: $"{_alias} span");
 
@@ -88,10 +108,18 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                 : $"long bitsNeeded = {PerElementBits("values.Length")};"
         };
 
-        return $$"""
-                 {{QuantizedBitCountValidationPrefix()}}{{bitsNeededDeclaration}}
-                 long availableBits = context.GetRemainingCapacity();
-                 if (availableBits < bitsNeeded) { throw new InsufficientWriteCapacityException("{{operation}}", bitsNeeded > int.MaxValue ? int.MaxValue : (int)bitsNeeded, availableBits, context.Position); }
-                 """;
+        string bitCountValidation = QuantizedBitCountValidationPrefix();
+        return string.IsNullOrEmpty(bitCountValidation)
+            ? $$"""
+                {{bitsNeededDeclaration}}
+                long availableBits = context.GetRemainingCapacity();
+                if (availableBits < bitsNeeded) { throw new InsufficientWriteCapacityException("{{operation}}", bitsNeeded > int.MaxValue ? int.MaxValue : (int)bitsNeeded, availableBits, context.Position); }
+                """
+            : $$"""
+                {{bitCountValidation}}
+                {{bitsNeededDeclaration}}
+                long availableBits = context.GetRemainingCapacity();
+                if (availableBits < bitsNeeded) { throw new InsufficientWriteCapacityException("{{operation}}", bitsNeeded > int.MaxValue ? int.MaxValue : (int)bitsNeeded, availableBits, context.Position); }
+                """;
     }
 }
