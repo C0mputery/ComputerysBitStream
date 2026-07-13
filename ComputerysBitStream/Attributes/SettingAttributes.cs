@@ -6,13 +6,13 @@ using System;
 namespace ComputerysBitStream.Attributes {
     /// <summary>Registers a serializer type with a settings interface or overrides the serializer for one struct member.</summary>
     /// <remarks>
-    /// <para>On a <see cref="BitStreamSettingsAttribute"/> interface, register primitive extension classes (<c>typeof(PrimitiveIntExtensions)</c>), <see cref="BitStreamStructAttribute"/> types (<c>typeof(MyStruct)</c>), or <see cref="BitStreamProxyStructAttribute"/> proxy classes.</para>
+    /// <para>On a <see cref="BitStreamSettingsAttribute"/> interface, register primitive extension classes (<c>typeof(PrimitiveIntExtensions)</c>), <see cref="BitStreamStructAttribute"/> types (<c>typeof(MyStruct)</c>), <see cref="BitStreamProxyStructAttribute"/> proxy classes, or types that already carry generated <see cref="BitStreamStructMetadataAttribute"/> from another assembly.</para>
     /// <para>On a field or property, picks the primitive extension class for that member only. Applies to primitive-typed members; nested structs still need settings registration.</para>
     /// <para>Multiple attributes on one member report <c>CBS026</c>.</para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = true)]
     public sealed class BitStreamSerializerAttribute : Attribute {
-        /// <param name="type">Extension class, struct type, or proxy class to register or apply.</param>
+        /// <param name="type">Extension class, struct type, proxy class, or generated external struct metadata type to register or apply.</param>
         public BitStreamSerializerAttribute(Type type) { }
     }
 

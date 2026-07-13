@@ -8,7 +8,7 @@ namespace ComputerysBitStream.Attributes {
     /// <remarks>
     /// <para>See <see cref="BitStreamPrimitiveAuthorDocumentation.AuthoringOverview"/> for the full workflow and <see cref="BitStreamPrimitiveAuthorDocumentation.BuiltInReferenceImplementations"/> for examples in this assembly.</para>
     /// <para>The class must be <c>public static</c> (<c>CBS009</c>, <c>CBS020</c>). Pair the mode with <see cref="BitStreamFixedSizePrimitiveAttribute"/> or <see cref="BitStreamQuantizedPrimitiveAttribute"/> as required (<c>CBS015</c>).</para>
-    /// <para>Register the extension class on a <see cref="BitStreamSettingsAttribute"/> interface via <see cref="BitStreamSerializerAttribute"/>. Duplicate aliases report <c>CBS039</c>.</para>
+    /// <para>Register the extension class on a <see cref="BitStreamSettingsAttribute"/> interface via <see cref="BitStreamSerializerAttribute"/>. Duplicate definitions report <c>CBS023</c>; a struct that reuses a primitive alias reports <c>CBS039</c>.</para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class BitStreamPrimitiveAttribute : Attribute {

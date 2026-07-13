@@ -214,16 +214,6 @@ internal static class DiagnosticDescriptors {
         isEnabledByDefault: true
     );
 
-    public static readonly DiagnosticDescriptor CircularSettingsReference = new(
-        id: "CBS030",
-        title: "Circular settings reference",
-        messageFormat: "Settings interface '{0}' includes itself through inherited or nested settings interfaces and cannot be expanded",
-        category: "BitStream",
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true,
-        description: "A settings interface cannot reference itself directly or through another settings interface in its inheritance chain."
-    );
-
     public static readonly DiagnosticDescriptor DuplicatePrimitiveDefinition = new(
         id: "CBS023",
         title: "Duplicate primitive definition",
@@ -287,12 +277,31 @@ internal static class DiagnosticDescriptors {
         isEnabledByDefault: true
     );
 
+    public static readonly DiagnosticDescriptor CircularSettingsReference = new(
+        id: "CBS030",
+        title: "Circular settings reference",
+        messageFormat: "Settings interface '{0}' includes itself through inherited or nested settings interfaces and cannot be expanded",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "A settings interface cannot reference itself directly or through another settings interface in its inheritance chain."
+    );
+
     public static readonly DiagnosticDescriptor PrimitiveMethodCalledOutsidePrimitive = new(
         id: "CBS031",
         title: "BitStream primitive method called outside primitive context",
         messageFormat: "BitStream primitive method '{0}' is only valid inside a type marked with [BitStreamPrimitive] or [BitStreamPrimitiveContext]",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true
+    );
+
+    public static readonly DiagnosticDescriptor MissingLengthPrefixHandler = new(
+        id: "CBS032",
+        title: "Missing int length-prefix handler for primitive",
+        messageFormat: "Primitive '{0}' for '{1}' declares length-prefixed span/array methods but no fixed-size int length-prefix handler was found in settings. Length-prefixed methods were not generated.",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true
     );
 
@@ -311,15 +320,6 @@ internal static class DiagnosticDescriptors {
         messageFormat: "Method '{0}' marked with [BitStreamPrimitiveMethod(TryRead)] is only valid on VariableLength primitives",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true
-    );
-
-    public static readonly DiagnosticDescriptor MissingLengthPrefixHandler = new(
-        id: "CBS032",
-        title: "Missing int length-prefix handler for primitive",
-        messageFormat: "Primitive '{0}' for '{1}' declares length-prefixed span/array methods but no fixed-size int length-prefix handler was found in settings. Length-prefixed methods were not generated.",
-        category: "BitStream",
-        defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true
     );
 
@@ -364,8 +364,8 @@ internal static class DiagnosticDescriptors {
 
     public static readonly DiagnosticDescriptor DuplicateAlias = new(
         id: "CBS039",
-        title: "Duplicate alias across primitives or structs",
-        messageFormat: "Alias '{0}' is already used by another primitive or struct",
+        title: "Duplicate struct alias",
+        messageFormat: "Struct alias '{0}' is already used by a primitive or another struct",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -454,24 +454,6 @@ internal static class DiagnosticDescriptors {
         isEnabledByDefault: true
     );
 
-    public static readonly DiagnosticDescriptor CollectionMaxEntriesNegative = new(
-        id: "CBS052",
-        title: "Array read limits must be non-negative",
-        messageFormat: "Array member '{0}' has a negative max-read limit in [BitStreamStructCollectionMaxEntries]",
-        category: "BitStream",
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true
-    );
-
-    public static readonly DiagnosticDescriptor CollectionMaxEntriesProductOverflow = new(
-        id: "CBS053",
-        title: "Array read limits exceed supported maximum",
-        messageFormat: "Array member '{0}' max-read limits multiply to more than {1} leaf entries, which is not supported",
-        category: "BitStream",
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true
-    );
-
     public static readonly DiagnosticDescriptor CollectionElementNotSerializable = new(
         id: "CBS049",
         title: "Array element type not serializable",
@@ -490,19 +472,37 @@ internal static class DiagnosticDescriptors {
         isEnabledByDefault: true
     );
 
-    public static readonly DiagnosticDescriptor CollectionMissingSizeSupport = new(
-        id: "CBS054",
-        title: "Array element serializer lacks Size support",
-        messageFormat: "Array member '{0}' uses variable-length serializer '{1}', which must define a Size method",
+    public static readonly DiagnosticDescriptor CollectionAttributeOnNonArray = new(
+        id: "CBS051",
+        title: "Array read-limit attribute requires an array",
+        messageFormat: "Member '{0}' has [BitStreamStructCollectionMaxEntries] but its type is not an array",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
     );
 
-    public static readonly DiagnosticDescriptor CollectionAttributeOnNonArray = new(
-        id: "CBS051",
-        title: "Collection limit attribute requires an array",
-        messageFormat: "Member '{0}' has [BitStreamStructCollectionMaxEntries] but its type is not an array",
+    public static readonly DiagnosticDescriptor CollectionMaxEntriesNegative = new(
+        id: "CBS052",
+        title: "Array read limits must be non-negative",
+        messageFormat: "Array member '{0}' has a negative max-read limit in [BitStreamStructCollectionMaxEntries]",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
+    public static readonly DiagnosticDescriptor CollectionMaxEntriesProductOverflow = new(
+        id: "CBS053",
+        title: "Array read limits exceed supported maximum",
+        messageFormat: "Array member '{0}' max-read limits multiply to more than {1} leaf entries, which is not supported",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
+    public static readonly DiagnosticDescriptor CollectionMissingSizeSupport = new(
+        id: "CBS054",
+        title: "Array element serializer lacks Size support",
+        messageFormat: "Array member '{0}' uses variable-length serializer '{1}', which must define a Size method",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
