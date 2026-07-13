@@ -170,6 +170,18 @@ public partial struct MixedArrayMemberStruct {
 }
 
 [BitStreamStruct]
+public partial struct ThreeDimensionalArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(4, 4, 4)]
+    public int[,,] Values { get; set; }
+}
+
+[BitStreamStruct]
+public partial struct DeepJaggedArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(4, 4, 4)]
+    public int[][][] Values { get; set; }
+}
+
+[BitStreamStruct]
 public partial struct StringArrayMemberStruct {
     [BitStreamStructCollectionMaxEntries(8)]
     public string[] Values { get; set; }
@@ -194,6 +206,30 @@ public interface IArrayMemberSettings : IDefaultSettings { }
 public partial struct NestedArrayMemberStruct {
     [BitStreamStructCollectionMaxEntries(8)]
     public NestedStruct[] Values { get; set; }
+}
+
+[BitStreamStruct(typeof(IArrayMemberSettings))]
+public partial struct NestedRectangularArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(4, 4)]
+    public NestedStruct[,] Values { get; set; }
+}
+
+[BitStreamStruct(typeof(IArrayMemberSettings))]
+public partial struct NestedJaggedArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(4, 4)]
+    public NestedStruct[][] Values { get; set; }
+}
+
+[BitStreamStruct(typeof(IArrayMemberSettings))]
+public partial struct NestedMixedArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(2, 2, 2)]
+    public NestedStruct[][,] Values { get; set; }
+}
+
+[BitStreamStruct(typeof(IArrayMemberSettings))]
+public partial struct NestedThreeDimensionalArrayMemberStruct {
+    [BitStreamStructCollectionMaxEntries(2, 2, 2)]
+    public NestedStruct[,,] Values { get; set; }
 }
 
 [BitStreamStruct(typeof(IArrayMemberSettings))]

@@ -72,6 +72,59 @@ public class ArrayMemberStructTests {
     }
 
     [Fact]
+    public void ThreeDimensionalRectangularArray_RoundTrips() {
+        ThreeDimensionalArrayMemberStruct expected = new() {
+            Values = new[,,] {
+                {
+                    { 1, 2 },
+                    { 3, 4 }
+                },
+                {
+                    { 5, 6 },
+                    { 7, 8 }
+                }
+            }
+        };
+        ulong[] buffer = new ulong[64];
+        WriteContext write = new(buffer);
+        write.WriteThreeDimensionalArrayMemberStruct(expected);
+
+        ReadContext read = new(buffer);
+        Assert.True(read.TryReadThreeDimensionalArrayMemberStruct(out ThreeDimensionalArrayMemberStruct actual));
+        Assert.Equal(expected.Values.GetLength(0), actual.Values.GetLength(0));
+        Assert.Equal(expected.Values.GetLength(1), actual.Values.GetLength(1));
+        Assert.Equal(expected.Values.GetLength(2), actual.Values.GetLength(2));
+        Assert.Equal(expected.Values.Cast<int>(), actual.Values.Cast<int>());
+    }
+
+    [Fact]
+    public void DeepJaggedArray_RoundTripsNullChildrenAsEmpty() {
+        DeepJaggedArrayMemberStruct expected = new() {
+            Values = [
+                [
+                    [1, 2],
+                    null!
+                ],
+                null!,
+                [
+                    [3]
+                ]
+            ]
+        };
+        ulong[] buffer = new ulong[64];
+        WriteContext write = new(buffer);
+        write.WriteDeepJaggedArrayMemberStruct(expected);
+
+        ReadContext read = new(buffer);
+        Assert.True(read.TryReadDeepJaggedArrayMemberStruct(out DeepJaggedArrayMemberStruct actual));
+        Assert.Equal(3, actual.Values.Length);
+        Assert.Equal([1, 2], actual.Values[0][0]);
+        Assert.Empty(actual.Values[0][1]);
+        Assert.Empty(actual.Values[1]);
+        Assert.Equal([3], actual.Values[2][0]);
+    }
+
+    [Fact]
     public void NullRootArray_RoundTripsAsEmpty() {
         IntArrayMemberStruct expected = new() { Values = null! };
         ulong[] buffer = new ulong[16];
@@ -124,6 +177,103 @@ public class ArrayMemberStructTests {
         Assert.Equal(nested.Values.Select(static value => value.Value), actualNested.Values.Select(static value => value.Value));
         Assert.Equal(external.Values.Select(static value => value.X), actualExternal.Values.Select(static value => value.X));
         Assert.Equal(external.Values.Select(static value => value.Y), actualExternal.Values.Select(static value => value.Y));
+    }
+
+    [Fact]
+    public void NestedStructRectangularArray_RoundTrips() {
+        NestedRectangularArrayMemberStruct expected = new() {
+            Values = new[,] {
+                { new NestedStruct { Value = 11 }, new NestedStruct { Value = 22 } },
+                { new NestedStruct { Value = 33 }, new NestedStruct { Value = 44 } }
+            }
+        };
+        ulong[] buffer = new ulong[64];
+        WriteContext write = new(buffer);
+        write.WriteNestedRectangularArrayMemberStruct(expected);
+
+        ReadContext read = new(buffer);
+        Assert.True(read.TryReadNestedRectangularArrayMemberStruct(out NestedRectangularArrayMemberStruct actual));
+        Assert.Equal(expected.Values.GetLength(0), actual.Values.GetLength(0));
+        Assert.Equal(expected.Values.GetLength(1), actual.Values.GetLength(1));
+        Assert.Equal(
+            expected.Values.Cast<NestedStruct>().Select(static value => value.Value),
+            actual.Values.Cast<NestedStruct>().Select(static value => value.Value));
+    }
+
+    [Fact]
+    public void NestedStructJaggedArray_RoundTripsNullChildrenAsEmpty() {
+        NestedJaggedArrayMemberStruct expected = new() {
+            Values = [
+                [new NestedStruct { Value = 1 }, new NestedStruct { Value = 2 }],
+                null!,
+                [new NestedStruct { Value = 3 }]
+            ]
+        };
+        ulong[] buffer = new ulong[64];
+        WriteContext write = new(buffer);
+        write.WriteNestedJaggedArrayMemberStruct(expected);
+
+        ReadContext read = new(buffer);
+        Assert.True(read.TryReadNestedJaggedArrayMemberStruct(out NestedJaggedArrayMemberStruct actual));
+        Assert.Equal([1, 2], actual.Values[0].Select(static value => value.Value));
+        Assert.Empty(actual.Values[1]);
+        Assert.Equal([3], actual.Values[2].Select(static value => value.Value));
+    }
+
+    [Fact]
+    public void NestedStructMixedArray_RoundTrips() {
+        NestedMixedArrayMemberStruct expected = new() {
+            Values = [
+                new[,] {
+                    { new NestedStruct { Value = 1 }, new NestedStruct { Value = 2 } }
+                },
+                new[,] {
+                    { new NestedStruct { Value = 3 } },
+                    { new NestedStruct { Value = 4 } }
+                }
+            ]
+        };
+        ulong[] buffer = new ulong[64];
+        WriteContext write = new(buffer);
+        write.WriteNestedMixedArrayMemberStruct(expected);
+
+        ReadContext read = new(buffer);
+        Assert.True(read.TryReadNestedMixedArrayMemberStruct(out NestedMixedArrayMemberStruct actual));
+        Assert.Equal(expected.Values.Length, actual.Values.Length);
+        Assert.Equal(
+            expected.Values[0].Cast<NestedStruct>().Select(static value => value.Value),
+            actual.Values[0].Cast<NestedStruct>().Select(static value => value.Value));
+        Assert.Equal(
+            expected.Values[1].Cast<NestedStruct>().Select(static value => value.Value),
+            actual.Values[1].Cast<NestedStruct>().Select(static value => value.Value));
+    }
+
+    [Fact]
+    public void NestedStructThreeDimensionalArray_RoundTrips() {
+        NestedThreeDimensionalArrayMemberStruct expected = new() {
+            Values = new[,,] {
+                {
+                    { new NestedStruct { Value = 1 }, new NestedStruct { Value = 2 } },
+                    { new NestedStruct { Value = 3 }, new NestedStruct { Value = 4 } }
+                },
+                {
+                    { new NestedStruct { Value = 5 }, new NestedStruct { Value = 6 } },
+                    { new NestedStruct { Value = 7 }, new NestedStruct { Value = 8 } }
+                }
+            }
+        };
+        ulong[] buffer = new ulong[128];
+        WriteContext write = new(buffer);
+        write.WriteNestedThreeDimensionalArrayMemberStruct(expected);
+
+        ReadContext read = new(buffer);
+        Assert.True(read.TryReadNestedThreeDimensionalArrayMemberStruct(out NestedThreeDimensionalArrayMemberStruct actual));
+        Assert.Equal(expected.Values.GetLength(0), actual.Values.GetLength(0));
+        Assert.Equal(expected.Values.GetLength(1), actual.Values.GetLength(1));
+        Assert.Equal(expected.Values.GetLength(2), actual.Values.GetLength(2));
+        Assert.Equal(
+            expected.Values.Cast<NestedStruct>().Select(static value => value.Value),
+            actual.Values.Cast<NestedStruct>().Select(static value => value.Value));
     }
 
     [Fact]
