@@ -219,8 +219,8 @@ Pass compile-time flags through the MSBuild property `BitStreamDefineConstants`:
 Example: `-p:BitStreamDefineConstants=BITSTREAM_HOST_BIG_ENDIAN`
 
 # TODO/WIP:
-DocFX
-Allow you to select what integer primitive you want to use for length prefixes.
+- DocFX
+- Allow you to select what integer primitive you want to use for length prefixes.
 
 # License
 APACHE 2.0<br>
