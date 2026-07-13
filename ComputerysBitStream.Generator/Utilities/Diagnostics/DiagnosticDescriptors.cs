@@ -457,7 +457,7 @@ internal static class DiagnosticDescriptors {
     public static readonly DiagnosticDescriptor CollectionElementNotSerializable = new(
         id: "CBS049",
         title: "Array element type not serializable",
-        messageFormat: "Array member '{0}' has leaf element type '{1}', which is not serializable using settings '{2}'",
+        messageFormat: "Array member '{0}' has element type '{1}', which is not serializable using settings '{2}'",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -493,7 +493,7 @@ internal static class DiagnosticDescriptors {
     public static readonly DiagnosticDescriptor CollectionMaxEntriesProductOverflow = new(
         id: "CBS053",
         title: "Array read limits exceed supported maximum",
-        messageFormat: "Array member '{0}' max-read limits multiply to more than {1} leaf entries, which is not supported",
+        messageFormat: "Array member '{0}' max-read limits multiply to more than {1} elements, which is not supported",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true

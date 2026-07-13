@@ -270,65 +270,65 @@ internal sealed class StructResolver {
         isVariableLength = true;
         fixedBits = 0;
 
-        if (!TryResolveCollectionLeaf(member, collection.LeafTypeFullyQualifiedFormat, effectiveSettings, settingsLabel, out PrimitiveDefinition leafPrimitive, out string extraArguments)) {
+        if (!TryResolveCollectionElement(member, collection.ElementTypeFullyQualifiedFormat, effectiveSettings, settingsLabel, out PrimitiveDefinition elementPrimitive, out string extraArguments)) {
             return false;
         }
 
-        GeneratedSourceSyntax.CollectAdditionalUsings(requiredUsings, leafPrimitive.TargetTypeNamespace, generatedNamespace);
+        GeneratedSourceSyntax.CollectAdditionalUsings(requiredUsings, elementPrimitive.TargetTypeNamespace, generatedNamespace);
 
-        bool hasWriteSpan = Emitters.PrimitiveWrapperSourceEmitter.HasValidMethod(leafPrimitive, BitStreamPrimitiveRole.WriteSpan);
-        bool hasArrayRead = Emitters.PrimitiveWrapperSourceEmitter.HasValidMethod(leafPrimitive, BitStreamPrimitiveRole.ReadArray)
-                            || Emitters.PrimitiveWrapperSourceEmitter.HasValidMethod(leafPrimitive, BitStreamPrimitiveRole.ReadSpan);
-        PrimitiveDefinition? intHandler = ResolveCollectionLengthPrefixHandler(leafPrimitive);
+        bool hasWriteSpan = Emitters.PrimitiveWrapperSourceEmitter.HasValidMethod(elementPrimitive, BitStreamPrimitiveRole.WriteSpan);
+        bool hasArrayRead = Emitters.PrimitiveWrapperSourceEmitter.HasValidMethod(elementPrimitive, BitStreamPrimitiveRole.ReadArray)
+                            || Emitters.PrimitiveWrapperSourceEmitter.HasValidMethod(elementPrimitive, BitStreamPrimitiveRole.ReadSpan);
+        PrimitiveDefinition? intHandler = ResolveCollectionLengthPrefixHandler(elementPrimitive);
         if (!hasWriteSpan || !hasArrayRead || intHandler is not PrimitiveDefinition prefixHandler) {
             _reportDiagnostic(new DiagnosticValueType(
                 DiagnosticDescriptors.CollectionMissingLengthPrefixSupport,
                 member.Location,
                 member.MemberName,
-                leafPrimitive.Alias
+                elementPrimitive.Alias
             ));
             return false;
         }
 
-        string leafWriteClass = QualifyContextExtensionClass(leafPrimitive, "WriteContextExtensions", generatedNamespace, requiredUsings);
-        string leafReadClass = QualifyContextExtensionClass(leafPrimitive, "ReadContextExtensions", generatedNamespace, requiredUsings);
+        string elementWriteClass = QualifyContextExtensionClass(elementPrimitive, "WriteContextExtensions", generatedNamespace, requiredUsings);
+        string elementReadClass = QualifyContextExtensionClass(elementPrimitive, "ReadContextExtensions", generatedNamespace, requiredUsings);
         string intExtensionClass = QualifyPrimitiveExtension(prefixHandler, generatedNamespace, requiredUsings);
-        string? leafSizeExpression = null;
-        int? leafFixedSize = leafPrimitive.FixedSize;
-        if (leafPrimitive.Mode == PrimitiveSerializationMode.VariableLength) {
-            string sizeMethod = GetPrimitiveMethodName(leafPrimitive, BitStreamPrimitiveRole.Size);
+        string? elementSizeExpression = null;
+        int? elementFixedSize = elementPrimitive.FixedSize;
+        if (elementPrimitive.Mode == PrimitiveSerializationMode.VariableLength) {
+            string sizeMethod = GetPrimitiveMethodName(elementPrimitive, BitStreamPrimitiveRole.Size);
             if (string.IsNullOrEmpty(sizeMethod)) {
                 _reportDiagnostic(new DiagnosticValueType(
                     DiagnosticDescriptors.CollectionMissingSizeSupport,
                     member.Location,
                     member.MemberName,
-                    leafPrimitive.Alias
+                    elementPrimitive.Alias
                 ));
                 return false;
             }
 
-            leafSizeExpression = $"{QualifyPrimitiveExtension(leafPrimitive, generatedNamespace, requiredUsings)}.{sizeMethod}({{0}})";
+            elementSizeExpression = $"{QualifyPrimitiveExtension(elementPrimitive, generatedNamespace, requiredUsings)}.{sizeMethod}({{0}})";
         }
-        else if (leafPrimitive.Mode == PrimitiveSerializationMode.Quantized && member.Quantized is QuantizedDefinition quantized) {
-            leafFixedSize = quantized.BitCount;
+        else if (elementPrimitive.Mode == PrimitiveSerializationMode.Quantized && member.Quantized is QuantizedDefinition quantized) {
+            elementFixedSize = quantized.BitCount;
         }
 
         ResolvedStructCollection resolvedCollection = new(
             Source: collection,
-            LeafTypeEmitName: collection.LeafTypeEmitFormat,
-            LeafWriteContextClass: leafWriteClass,
-            LeafReadContextClass: leafReadClass,
-            LeafWriteWithMaxCountMethod: $"Write{leafPrimitive.Alias}sWithMaxCount",
-            LeafWriteWithoutLengthMethod: $"Write{leafPrimitive.Alias}sWithoutLength",
-            LeafTryReadMethod: $"TryRead{leafPrimitive.Alias}sWithMaxCount",
-            LeafTryReadWithCountMethod: $"TryRead{leafPrimitive.Alias}s",
-            LeafExtraArguments: extraArguments,
+            ElementTypeEmitName: collection.ElementTypeEmitFormat,
+            ElementWriteContextClass: elementWriteClass,
+            ElementReadContextClass: elementReadClass,
+            ElementWriteWithMaxCountMethod: $"Write{elementPrimitive.Alias}sWithMaxCount",
+            ElementWriteWithoutLengthMethod: $"Write{elementPrimitive.Alias}sWithoutLength",
+            ElementTryReadMethod: $"TryRead{elementPrimitive.Alias}sWithMaxCount",
+            ElementTryReadWithCountMethod: $"TryRead{elementPrimitive.Alias}s",
+            ElementExtraArguments: extraArguments,
             IntExtensionClass: intExtensionClass,
             IntWriteMethod: GetPrimitiveMethodName(prefixHandler, BitStreamPrimitiveRole.Write),
             IntPeekMethod: GetPrimitiveMethodName(prefixHandler, BitStreamPrimitiveRole.Peek),
             IntSize: prefixHandler.FixedSize ?? 0,
-            LeafSizeExpression: leafSizeExpression,
-            LeafFixedSize: leafFixedSize
+            ElementSizeExpression: elementSizeExpression,
+            ElementFixedSize: elementFixedSize
         );
 
         resolvedMember = new ResolvedStructMember(
@@ -347,9 +347,9 @@ internal sealed class StructResolver {
         return true;
     }
 
-    private bool TryResolveCollectionLeaf(
+    private bool TryResolveCollectionElement(
         in StructMemberDefinition member,
-        string leafType,
+        string elementType,
         SettingsDefinition effectiveSettings,
         string settingsLabel,
         out PrimitiveDefinition primitive,
@@ -363,8 +363,8 @@ internal sealed class StructResolver {
         }
 
         if (member.Quantized is QuantizedDefinition quantized) {
-            if (!TryFindPrimitiveByTargetType(effectiveSettings, leafType, PrimitiveSerializationMode.Quantized, out primitive)) {
-                _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.QuantizedPrimitiveNotInSettings, member.Location ?? quantized.Location, member.MemberName, leafType));
+            if (!TryFindPrimitiveByTargetType(effectiveSettings, elementType, PrimitiveSerializationMode.Quantized, out primitive)) {
+                _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.QuantizedPrimitiveNotInSettings, member.Location ?? quantized.Location, member.MemberName, elementType));
                 return false;
             }
 
@@ -372,10 +372,10 @@ internal sealed class StructResolver {
             return true;
         }
 
-        if (effectiveSettings.Structs.TryGetValue(leafType, out StructDefinition nestedStruct)) {
+        if (effectiveSettings.Structs.TryGetValue(elementType, out StructDefinition nestedStruct)) {
             ResolvedStructDefinition? nestedResolved = Resolve(nestedStruct);
             if (nestedResolved is not ResolvedStructDefinition nested) {
-                _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.CollectionElementNotSerializable, member.Location, member.MemberName, leafType, settingsLabel));
+                _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.CollectionElementNotSerializable, member.Location, member.MemberName, elementType, settingsLabel));
                 primitive = default;
                 return false;
             }
@@ -384,13 +384,13 @@ internal sealed class StructResolver {
             return true;
         }
 
-        if (effectiveSettings.ExternalStructs.TryGetValue(leafType, out ExternalStructDefinition externalStruct)) {
+        if (effectiveSettings.ExternalStructs.TryGetValue(elementType, out ExternalStructDefinition externalStruct)) {
             PrimitiveSerializationMode mode = externalStruct.IsVariableLength ? PrimitiveSerializationMode.VariableLength : PrimitiveSerializationMode.FixedSize;
             primitive = new PrimitiveDefinition(
                 ExtensionClassFullyQualifiedName: GetStructPrimitiveExtensionClassFqn(externalStruct.Alias, externalStruct.ExtensionNamespace),
-                TargetTypeFullyQualifiedName: leafType,
-                TargetTypeNamespace: GeneratedSourceSyntax.GetNamespaceFromFullyQualifiedName(leafType),
-                TargetTypeEmitName: StructPrimitiveDefinitionFactory.GetEmitTypeName(leafType),
+                TargetTypeFullyQualifiedName: elementType,
+                TargetTypeNamespace: GeneratedSourceSyntax.GetNamespaceFromFullyQualifiedName(elementType),
+                TargetTypeEmitName: StructPrimitiveDefinitionFactory.GetEmitTypeName(elementType),
                 Alias: externalStruct.Alias,
                 Namespace: externalStruct.ExtensionNamespace,
                 Mode: mode,
@@ -405,10 +405,10 @@ internal sealed class StructResolver {
         }
 
         PrimitiveSerializationMode primitiveMode = member.IsVariableLength ? PrimitiveSerializationMode.VariableLength : PrimitiveSerializationMode.FixedSize;
-        if (TryFindPrimitiveByTargetType(effectiveSettings, leafType, primitiveMode, out primitive)) { return true; }
-        if (!member.IsVariableLength && TryFindPrimitiveByTargetType(effectiveSettings, leafType, PrimitiveSerializationMode.VariableLength, out primitive)) { return true; }
+        if (TryFindPrimitiveByTargetType(effectiveSettings, elementType, primitiveMode, out primitive)) { return true; }
+        if (!member.IsVariableLength && TryFindPrimitiveByTargetType(effectiveSettings, elementType, PrimitiveSerializationMode.VariableLength, out primitive)) { return true; }
 
-        _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.CollectionElementNotSerializable, member.Location, member.MemberName, leafType, settingsLabel));
+        _reportDiagnostic(new DiagnosticValueType(DiagnosticDescriptors.CollectionElementNotSerializable, member.Location, member.MemberName, elementType, settingsLabel));
         return false;
     }
 

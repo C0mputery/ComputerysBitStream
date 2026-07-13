@@ -107,7 +107,7 @@ For members without a per-member `[BitStreamSerializer]` attribute:
 
 ## Array members
 
-Every serialized array member needs `[BitStreamStructCollectionMaxEntries(...)]` with one limit per array dimension or jagged level, outermost first. Missing the attribute is `CBS047`. Wrong arity is `CBS048`. Putting it on a non-array is `CBS051`. Negative limits are `CBS052`. Limits whose product exceeds `int.MaxValue` leaf entries are `CBS053`.
+Every serialized array member needs `[BitStreamStructCollectionMaxEntries(...)]` with one limit per array dimension or jagged level, outermost first. Missing the attribute is `CBS047`. Wrong arity is `CBS048`. Putting it on a non-array is `CBS051`. Negative limits are `CBS052`. Limits whose product exceeds `int.MaxValue` elements are `CBS053`.
 
 ```csharp
 [BitStreamStruct]
@@ -127,7 +127,7 @@ public partial struct Inventory {
 
 Null arrays write as empty and read back as empty. Null jagged children do the same.
 
-Leaf serialization follows the same rules as scalar members. `[BitStreamStructVariableLength]`, `[BitStreamStructQuantized(...)]`, and `[BitStreamSerializer(...)]` apply to the element type. Nested `[BitStreamStruct]` or proxy element types still need settings registration; an unresolvable leaf is `CBS049`.
+Element serialization follows the same rules as scalar members. `[BitStreamStructVariableLength]`, `[BitStreamStructQuantized(...)]`, and `[BitStreamSerializer(...)]` apply to the element type. Nested `[BitStreamStruct]` or proxy element types still need settings registration; an unresolvable element type is `CBS049`.
 
 ## Nested structs
 

@@ -90,9 +90,9 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
     }
 
     private static string BuildCollectionValidatorBody(in CollectionLevelContext context) {
-        string nestedValidation = context.IsLeaf
+        string nestedValidation = context.IsElementLevel
             ? string.Empty
-            : $"foreach ({context.ElementType} item in value) {{ ValidateCollection{context.MemberIndex}Level{context.Level + 1}(item); }}";
+            : $"foreach ({context.LevelElementType} item in value) {{ ValidateCollection{context.MemberIndex}Level{context.Level + 1}(item); }}";
 
         return $$"""
                  if (value is null) { return; }
@@ -103,17 +103,17 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
     }
 
     private static string BuildCollectionWriterBody(in CollectionLevelContext context) {
-        if (context.IsVectorLeaf) {
+        if (context.IsElementVector) {
             return $$"""
                      value ??= {{context.CreateEmptyArray()}};
                      {{BuildZeroLowerBoundGuard(context.Rank)}}
-                     {{context.Collection.LeafWriteContextClass}}.{{context.Collection.LeafWriteWithMaxCountMethod}}(ref context, value, {{context.Limits[context.LimitOffset]}}{{context.Collection.LeafExtraArguments}});
+                     {{context.Collection.ElementWriteContextClass}}.{{context.Collection.ElementWriteWithMaxCountMethod}}(ref context, value, {{context.Limits[context.LimitOffset]}}{{context.Collection.ElementExtraArguments}});
                      """;
         }
 
-        string writeBody = context.IsLeaf
-            ? BuildFlattenedLeafWrite(context)
-            : $"foreach ({context.ElementType} item in value) {{ WriteCollection{context.MemberIndex}Level{context.Level + 1}(ref context, item); }}";
+        string writeBody = context.IsElementLevel
+            ? BuildFlattenedElementWrite(context)
+            : $"foreach ({context.LevelElementType} item in value) {{ WriteCollection{context.MemberIndex}Level{context.Level + 1}(ref context, item); }}";
 
         return $$"""
                  value ??= {{context.CreateEmptyArray()}};
@@ -125,19 +125,19 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
     }
 
     private static string BuildCollectionReaderBody(in CollectionLevelContext context) {
-        if (context.IsVectorLeaf) {
-            return $"return {context.Collection.LeafReadContextClass}.{context.Collection.LeafTryReadMethod}(ref context, {context.Limits[context.LimitOffset]}{context.Collection.LeafExtraArguments}, out value);";
+        if (context.IsElementVector) {
+            return $"return {context.Collection.ElementReadContextClass}.{context.Collection.ElementTryReadMethod}(ref context, {context.Limits[context.LimitOffset]}{context.Collection.ElementExtraArguments}, out value);";
         }
 
-        if (context.IsLeaf) {
+        if (context.IsElementLevel) {
             return $$"""
                      {{BuildLengthReads(context)}}
-                     {{BuildMultidimensionalLeafRead(context)}}
+                     {{BuildMultidimensionalElementRead(context)}}
                      """;
         }
 
         string readChild = $$"""
-                             if (!TryReadCollection{{context.MemberIndex}}Level{{context.Level + 1}}(ref context, out {{context.ElementType}} item)) { return false; }
+                             if (!TryReadCollection{{context.MemberIndex}}Level{{context.Level + 1}}(ref context, out {{context.LevelElementType}} item)) { return false; }
                              value[{{BuildIndexList(context.Rank)}}] = item;
                              """;
 
@@ -150,10 +150,10 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
     }
 
     private static string BuildCollectionSizerBody(in CollectionLevelContext context) {
-        int prefixCount = context.IsVectorLeaf ? 1 : context.Rank;
-        string accumulation = context.IsLeaf
-            ? BuildLeafSizeAccumulation(context)
-            : $"foreach ({context.ElementType} item in value) {{ bits += GetCollection{context.MemberIndex}Level{context.Level + 1}Size(item); }}";
+        int prefixCount = context.IsElementVector ? 1 : context.Rank;
+        string accumulation = context.IsElementLevel
+            ? BuildElementSizeAccumulation(context)
+            : $"foreach ({context.LevelElementType} item in value) {{ bits += GetCollection{context.MemberIndex}Level{context.Level + 1}Size(item); }}";
 
         return $$"""
                  value ??= {{context.CreateEmptyArray()}};
@@ -182,13 +182,13 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
         return string.Join("\n", lines);
     }
 
-    private static string BuildFlattenedLeafWrite(in CollectionLevelContext context) {
-        string leafType = context.Collection.LeafTypeEmitName;
+    private static string BuildFlattenedElementWrite(in CollectionLevelContext context) {
+        string elementType = context.Collection.ElementTypeEmitName;
         return $$"""
-                 {{leafType}}[] flattened = new {{leafType}}[value.Length];
+                 {{elementType}}[] flattened = new {{elementType}}[value.Length];
                  int flattenedIndex = 0;
-                 foreach ({{leafType}} item in value) { flattened[flattenedIndex++] = item; }
-                 {{context.Collection.LeafWriteContextClass}}.{{context.Collection.LeafWriteWithoutLengthMethod}}(ref context, flattened{{context.Collection.LeafExtraArguments}});
+                 foreach ({{elementType}} item in value) { flattened[flattenedIndex++] = item; }
+                 {{context.Collection.ElementWriteContextClass}}.{{context.Collection.ElementWriteWithoutLengthMethod}}(ref context, flattened{{context.Collection.ElementExtraArguments}});
                  """;
     }
 
@@ -200,17 +200,17 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
         return string.Join("\n", lines);
     }
 
-    private static string BuildMultidimensionalLeafRead(in CollectionLevelContext context) {
+    private static string BuildMultidimensionalElementRead(in CollectionLevelContext context) {
         List<string> totalLengthLines = [];
         for (int dimension = 0; dimension < context.Rank; dimension++) {
             totalLengthLines.Add($"totalLength *= length{dimension};");
         }
 
-        string leafType = context.Collection.LeafTypeEmitName;
+        string elementType = context.Collection.ElementTypeEmitName;
         return $$"""
                  long totalLength = 1;
                  {{string.Join("\n", totalLengthLines)}}
-                 if (totalLength > int.MaxValue || !{{context.Collection.LeafReadContextClass}}.{{context.Collection.LeafTryReadWithCountMethod}}(ref context, (int)totalLength{{context.Collection.LeafExtraArguments}}, out {{leafType}}[] flattened)) { value = {{context.CreateEmptyArray()}}; return false; }
+                 if (totalLength > int.MaxValue || !{{context.Collection.ElementReadContextClass}}.{{context.Collection.ElementTryReadWithCountMethod}}(ref context, (int)totalLength{{context.Collection.ElementExtraArguments}}, out {{elementType}}[] flattened)) { value = {{context.CreateEmptyArray()}}; return false; }
                  value = {{context.CreateSizedArray("length")}};
                  int flattenedIndex = 0;
                  {{BuildNestedLoops(context.Rank, $"value[{BuildIndexList(context.Rank)}] = flattened[flattenedIndex++];")}}
@@ -218,14 +218,14 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
                  """;
     }
 
-    private static string BuildLeafSizeAccumulation(in CollectionLevelContext context) {
-        if (context.Collection.LeafFixedSize is int fixedSize) {
+    private static string BuildElementSizeAccumulation(in CollectionLevelContext context) {
+        if (context.Collection.ElementFixedSize is int fixedSize) {
             return $"bits += value.Length * {fixedSize};";
         }
 
-        if (context.Collection.LeafSizeExpression is string sizeExpression) {
+        if (context.Collection.ElementSizeExpression is string sizeExpression) {
             string itemSize = sizeExpression.Replace("{0}", "item");
-            return $"foreach ({context.Collection.LeafTypeEmitName} item in value) {{ bits += {itemSize}; }}";
+            return $"foreach ({context.Collection.ElementTypeEmitName} item in value) {{ bits += {itemSize}; }}";
         }
 
         return string.Empty;
@@ -259,8 +259,8 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
         public ImmutableArray<int> Ranks => Collection.Source.Ranks;
         public ImmutableArray<int> Limits => Collection.Source.MaxEntries;
         public int Rank => Ranks[Level];
-        public bool IsLeaf => Level == Ranks.Length - 1;
-        public bool IsVectorLeaf => IsLeaf && Rank == 1;
+        public bool IsElementLevel => Level == Ranks.Length - 1;
+        public bool IsElementVector => IsElementLevel && Rank == 1;
 
         public int LimitOffset {
             get {
@@ -277,16 +277,16 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
             }
         }
 
-        public string ElementType {
+        public string LevelElementType {
             get {
-                if (IsLeaf) { return Collection.LeafTypeEmitName; }
+                if (IsElementLevel) { return Collection.ElementTypeEmitName; }
                 ImmutableArray<string> arrayTypes = Collection.Source.ArrayTypeEmitFormats;
                 return arrayTypes[Level + 1];
             }
         }
 
-        public string CreateEmptyArray() => FormatArrayCreateExpression(ArrayType, ElementType, Rank, null);
-        public string CreateSizedArray(string lengthPrefix) => FormatArrayCreateExpression(ArrayType, ElementType, Rank, lengthPrefix);
+        public string CreateEmptyArray() => FormatArrayCreateExpression(ArrayType, LevelElementType, Rank, null);
+        public string CreateSizedArray(string lengthPrefix) => FormatArrayCreateExpression(ArrayType, LevelElementType, Rank, lengthPrefix);
     }
 
     private static string FormatArrayCreateExpression(string arrayType, string elementType, int rank, string? lengthPrefix) {

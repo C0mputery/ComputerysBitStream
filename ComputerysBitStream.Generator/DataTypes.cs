@@ -56,8 +56,8 @@ internal record struct QuantizedDefinition(
 );
 
 internal record struct StructCollectionDefinition(
-    string LeafTypeFullyQualifiedFormat,
-    string LeafTypeEmitFormat,
+    string ElementTypeFullyQualifiedFormat,
+    string ElementTypeEmitFormat,
     EquatableImmutableArray<string> ArrayTypeFullyQualifiedFormats,
     EquatableImmutableArray<string> ArrayTypeEmitFormats,
     EquatableImmutableArray<int> Ranks,
@@ -134,20 +134,20 @@ internal record struct ResolvedStructMember(
 
 internal record struct ResolvedStructCollection(
     StructCollectionDefinition Source,
-    string LeafTypeEmitName,
-    string LeafWriteContextClass,
-    string LeafReadContextClass,
-    string LeafWriteWithMaxCountMethod,
-    string LeafWriteWithoutLengthMethod,
-    string LeafTryReadMethod,
-    string LeafTryReadWithCountMethod,
-    string LeafExtraArguments,
+    string ElementTypeEmitName,
+    string ElementWriteContextClass,
+    string ElementReadContextClass,
+    string ElementWriteWithMaxCountMethod,
+    string ElementWriteWithoutLengthMethod,
+    string ElementTryReadMethod,
+    string ElementTryReadWithCountMethod,
+    string ElementExtraArguments,
     string IntExtensionClass,
     string IntWriteMethod,
     string IntPeekMethod,
     int IntSize,
-    string? LeafSizeExpression,
-    int? LeafFixedSize
+    string? ElementSizeExpression,
+    int? ElementFixedSize
 );
 
 internal record struct ResolvedStructDefinition(

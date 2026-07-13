@@ -330,7 +330,7 @@ public class ArrayMemberStructTests {
     }
 
     [Fact]
-    public void TryRead_TruncatedLeafPayloadDoesNotAdvance() {
+    public void TryRead_TruncatedElementPayloadDoesNotAdvance() {
         ulong[] buffer = new ulong[2];
         WriteContext write = new(buffer);
         write.WriteInt(2);

@@ -548,12 +548,12 @@ internal static class StructCollector {
         ImmutableArray<int>.Builder ranks = ImmutableArray.CreateBuilder<int>();
         ImmutableArray<string>.Builder arrayTypes = ImmutableArray.CreateBuilder<string>();
         ImmutableArray<string>.Builder arrayEmitTypes = ImmutableArray.CreateBuilder<string>();
-        ITypeSymbol leafType = arrayType;
-        while (leafType is IArrayTypeSymbol currentArray) {
+        ITypeSymbol elementType = arrayType;
+        while (elementType is IArrayTypeSymbol currentArray) {
             arrayTypes.Add(currentArray.GetFullyQualifiedName());
             arrayEmitTypes.Add(currentArray.GetEmitTypeName());
             ranks.Add(currentArray.Rank);
-            leafType = currentArray.ElementType;
+            elementType = currentArray.ElementType;
         }
 
         ImmutableDictionary<string, TypedConstant> arguments = attribute.GetConstructorArgumentsByName();
@@ -582,7 +582,7 @@ internal static class StructCollector {
             return false;
         }
 
-        long maximumLeafCount = 1;
+        long maximumElementCount = 1;
         foreach (int limit in limits) {
             if (limit < 0) {
                 diagnostics.Add(new DiagnosticValueType(
@@ -593,7 +593,7 @@ internal static class StructCollector {
                 return false;
             }
 
-            if (limit != 0 && maximumLeafCount > int.MaxValue / limit) {
+            if (limit != 0 && maximumElementCount > int.MaxValue / limit) {
                 diagnostics.Add(new DiagnosticValueType(
                     DiagnosticDescriptors.CollectionMaxEntriesProductOverflow,
                     attribute.GetLocation(),
@@ -603,12 +603,12 @@ internal static class StructCollector {
                 return false;
             }
 
-            maximumLeafCount *= limit;
+            maximumElementCount *= limit;
         }
 
         collection = new StructCollectionDefinition(
-            LeafTypeFullyQualifiedFormat: leafType.GetFullyQualifiedName(),
-            LeafTypeEmitFormat: leafType.GetEmitTypeName(),
+            ElementTypeFullyQualifiedFormat: elementType.GetFullyQualifiedName(),
+            ElementTypeEmitFormat: elementType.GetEmitTypeName(),
             ArrayTypeFullyQualifiedFormats: arrayTypes.ToImmutable(),
             ArrayTypeEmitFormats: arrayEmitTypes.ToImmutable(),
             Ranks: ranks.ToImmutable(),
