@@ -43,7 +43,7 @@ var write2 = new WriteContext(MemoryMarshal.Cast<byte, ulong>(bytes));
 
 `Peek*` methods read without advancing position. `Try*` and `TryPeek*` variants return `false` when the buffer does not hold enough data.
 
-Array helpers come in two forms: with a length prefix (`WriteInts`, `ReadInts`) and without (`WriteIntsWithoutLength`, `ReadInts(count)`). The same pattern applies to structs.
+Array helpers on the contexts come in two forms: with a length prefix (`WriteInts`, `ReadInts`) and without (`WriteIntsWithoutLength`, `ReadInts(count)`). Generated struct types get the same pair. Array properties and fields inside a `[BitStreamStruct]` are different; see Array members.
 
 ## Built-in primitives
 
@@ -105,6 +105,29 @@ For members without a per-member `[BitStreamSerializer]` attribute:
 - otherwise the generator looks for a fixed-size serializer; if none is registered but a variable-length serializer is (`string`, or a custom primitive with only that mode), it uses variable-length without an attribute
 - if neither fixed-size nor variable-length resolves, `CBS043` (or `CBS044` when only a quantized serializer is registered)
 
+## Array members
+
+Every serialized array member needs `[BitStreamStructCollectionMaxEntries(...)]` with one limit per array dimension or jagged level, outermost first. Missing the attribute is `CBS047`. Wrong arity is `CBS048`. Putting it on a non-array is `CBS051`. Negative limits are `CBS052`. Limits whose product exceeds `int.MaxValue` leaf entries are `CBS053`.
+
+```csharp
+[BitStreamStruct]
+public partial struct Inventory {
+    [BitStreamStructCollectionMaxEntries(16)]
+    public int[] ItemIds { get; set; }
+
+    [BitStreamStructCollectionMaxEntries(8, 8)]
+    public int[,] Grid { get; set; }
+
+    [BitStreamStructCollectionMaxEntries(8, 8)]
+    public int[][] Rows { get; set; }
+}
+```
+
+`int[]` takes one limit. `int[,]` and `int[][]` each take two. `int[][,]`, `int[,,]`, and `int[][][]` each take three. The values are compile-time caps on what may be read: a length prefix above the limit makes `TryRead*` return `false`. Writing an array larger than its limit throws `ArgumentException`.
+
+Null arrays write as empty and read back as empty. Null jagged children do the same.
+
+Leaf serialization follows the same rules as scalar members. `[BitStreamStructVariableLength]`, `[BitStreamStructQuantized(...)]`, and `[BitStreamSerializer(...)]` apply to the element type. Nested `[BitStreamStruct]` or proxy element types still need settings registration; an unresolvable leaf is `CBS049`.
 
 ## Nested structs
 
