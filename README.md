@@ -57,7 +57,7 @@ A settings interface can register fixed-size, variable-length, and quantized ser
 
 Mark a `partial struct` with `[BitStreamStruct]`. The generator emits `Write{StructName}` and `Read{StructName}` as extension methods on the contexts. Extension methods can only access public members.
 
-Member inclusion matches `System.Text.Json` on public surface area: public properties serialize by default, fields stay out unless opted in, and `[BitStreamStructIgnore]` / `[BitStreamStructInclude]` mirror `[JsonIgnore]` / `[JsonInclude]`. Unlike STJ, `[BitStreamStructInclude]` cannot pull in `private`, `internal`, or `protected` members; the build reports `CBS041`.
+Member inclusion matches `System.Text.Json` on public surface area: public properties serialize by default, fields stay out unless opted in, and `[BitStreamStructIgnore]` / `[BitStreamStructInclude]` mirror `[JsonIgnore]` / `[JsonInclude]`. Unlike STJ, `[BitStreamStructInclude]` cannot pull in `private`, `internal`, or `protected` members; the build fails if you try.
 
 Member rules for `[BitStreamStruct]`:
 - Public properties with a public getter and setter are serialized by default.
@@ -100,14 +100,14 @@ public partial struct SimpleStruct {
 
 For members without a per-member `[BitStreamSerializer]` attribute:
 
-- `[BitStreamStructQuantized(...)]` uses the quantized serializer (`CBS038`; `CBS045` with `[BitStreamStructVariableLength]`)
-- `[BitStreamStructVariableLength]` uses the variable-length serializer (`CBS042`)
+- `[BitStreamStructQuantized(...)]` uses the quantized serializer; combining it with `[BitStreamStructVariableLength]` is an error
+- `[BitStreamStructVariableLength]` uses the variable-length serializer
 - otherwise the generator looks for a fixed-size serializer; if none is registered but a variable-length serializer is (`string`, or a custom primitive with only that mode), it uses variable-length without an attribute
-- if neither fixed-size nor variable-length resolves, `CBS043` (or `CBS044` when only a quantized serializer is registered)
+- if neither fixed-size nor variable-length resolves, the build fails (including when only a quantized serializer is registered and you did not mark the member quantized)
 
 ## Array members
 
-Every serialized array member needs `[BitStreamStructCollectionMaxEntries(...)]` with one limit per array dimension or jagged level, outermost first. Missing the attribute is `CBS047`. Wrong arity is `CBS048`. Putting it on a non-array is `CBS051`. Negative limits are `CBS052`. Limits whose product exceeds `int.MaxValue` elements are `CBS053`.
+Every serialized array member needs `[BitStreamStructCollectionMaxEntries(...)]` with one limit per array dimension or jagged level, outermost first. The build fails if the attribute is missing, the number of limits does not match the array shape, it sits on a non-array, a limit is negative, or the product of the limits exceeds `int.MaxValue` elements.
 
 ```csharp
 [BitStreamStruct]
@@ -127,7 +127,7 @@ public partial struct Inventory {
 
 Null arrays write as empty and read back as empty. Null jagged children do the same.
 
-Element serialization follows the same rules as scalar members. `[BitStreamStructVariableLength]`, `[BitStreamStructQuantized(...)]`, and `[BitStreamSerializer(...)]` apply to the element type. Nested `[BitStreamStruct]` or proxy element types still need settings registration; an unresolvable element type is `CBS049`.
+Element serialization follows the same rules as scalar members. `[BitStreamStructVariableLength]`, `[BitStreamStructQuantized(...)]`, and `[BitStreamSerializer(...)]` apply to the element type. Nested `[BitStreamStruct]` or proxy element types still need settings registration; an unresolvable element type fails the build.
 
 ## Nested structs
 
@@ -135,7 +135,7 @@ Element serialization follows the same rules as scalar members. `[BitStreamStruc
 
 Add `[BitStreamSerializer(typeof(NestedStruct))]` to a `[BitStreamSettings]` interface, using the struct type rather than the generated extension class. That line can live on the interface passed to the parent's `[BitStreamStruct(typeof(...))]`, on a base interface in that settings chain, or in assembly-wide `[DefaultBitStreamSettings(...)]`. The generator merges global settings, inherited interfaces, and per-struct settings into one effective set.
 
-An unregistered nested struct produces `CBS043`. `CBS036` is reported when the nested type is registered on a settings interface but its own resolution fails, for example because a member inside the nested struct cannot be serialized. If any member fails to resolve, the parent struct is not generated. Cyclic nesting (for example, A holds B and B holds A) produces error `CBS035`.
+An unregistered nested struct fails the build. So does a nested type that is registered on a settings interface but cannot resolve its own members. If any member fails to resolve, the parent struct is not generated. Cyclic nesting (for example, A holds B and B holds A) is also an error.
 
 Each nesting level needs its own registration. If `Container` holds `Inner` and `Inner` holds `Core`, settings for `Container` must list `Inner`, and settings for `Inner` must list `Core`.
 
