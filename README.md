@@ -1,4 +1,4 @@
-ComputerysBitStream is a C# library for reading and writing values at bit granularity. `WriteContext` and `ReadContext` take a `Span<ulong>` / `ReadOnlySpan<ulong>` over the backing memory, track the current bit position, and expose extension methods for primitives and user-defined structs.
+ComputerysBitStream is a C# library for reading and writing values at bit granularity. Ordinary .NET I/O (`System.IO.Stream`, `BinaryWriter`, byte-indexed buffers) advances in whole bytes: `BinaryWriter.Write(bool)` stores one byte per flag, and a value that needs five bits still costs eight unless you pack by hand. A bitstream keeps its cursor in bits. Consecutive writes share the same byte or `ulong` when they do not fill it; this library encodes a `bool` as 1 bit (eight flags fill one byte with no padding), and a quantized `float` can use any width from 1 through 32 bits instead of the fixed 32-bit layout. `WriteContext` and `ReadContext` take a `Span<ulong>` / `ReadOnlySpan<ulong>` over the backing memory, track the current bit position, and expose extension methods for primitives and user-defined structs.
 
 ## Solution layout
 
@@ -24,7 +24,7 @@ Add `ComputerysBitStream.Extras` only if you need `System.Numerics` types (`Vect
 
 ## Buffer and contexts
 
-Contexts only need a `Span<ulong>` (write) or `ReadOnlySpan<ulong>` (read). The underlying memory can be a `ulong[]`, a `byte[]`, a pinned struct, native memory, or anything else you can view as ulongs (typically via `MemoryMarshal.Cast<T, ulong>`). Position and capacity are measured in **bits**, not bytes. You can start at a non-zero bit offset when packing multiple values into one stream.
+Contexts only need a `Span<ulong>` (write) or `ReadOnlySpan<ulong>` (read). The underlying memory can be a `ulong[]`, a `byte[]`, a pinned struct, native memory, or anything else you can view as ulongs (typically via `MemoryMarshal.Cast<T, ulong>`). You can start at a non-zero bit offset when packing multiple values into one stream.
 
 ```csharp
 Span<ulong> storage = stackalloc ulong[16];
