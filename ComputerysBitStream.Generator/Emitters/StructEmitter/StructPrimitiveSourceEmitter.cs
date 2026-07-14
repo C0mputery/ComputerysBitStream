@@ -47,6 +47,7 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
 
         _writer.WriteLine($"namespace {_generatedNamespace} {{");
         _writer.Indent++;
+        _writer.WriteLine(GeneratedDocumentationSyntax.StructPrimitiveExtensionsClass);
         _writer.WriteLine($"public static class {_alias}StructPrimitiveExtensions {{");
         _writer.Indent++;
 

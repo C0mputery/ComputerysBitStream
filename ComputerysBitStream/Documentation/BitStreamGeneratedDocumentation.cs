@@ -4,6 +4,18 @@ namespace ComputerysBitStream {
     /// <summary>Shared XML documentation for source-generated read and write extension methods.</summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class BitStreamGeneratedDocumentation {
+        /// <summary>Generated write extensions for a bit-stream primitive.</summary>
+        public static void WriteContextExtensionsClass() { }
+
+        /// <summary>Generated read and peek extensions for a bit-stream primitive.</summary>
+        public static void ReadContextExtensionsClass() { }
+
+        /// <summary>Generated size helpers for a bit-stream primitive.</summary>
+        public static void SizeExtensionsClass() { }
+
+        /// <summary>Generated read and write extensions for a bit-stream struct.</summary>
+        public static void StructPrimitiveExtensionsClass() { }
+
         /// <summary>Writes one value after checking <see cref="WriteContext.GetRemainingCapacity"/>.</summary>
         /// <remarks>
         /// <para>Throws <see cref="InsufficientWriteCapacityException"/> when the buffer is too short.</para>

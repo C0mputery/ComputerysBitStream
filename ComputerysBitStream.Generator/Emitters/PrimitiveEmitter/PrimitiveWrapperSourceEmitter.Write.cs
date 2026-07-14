@@ -10,6 +10,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         bool hasWriteSpan = Has(BitStreamPrimitiveRole.WriteSpan);
         if (!hasWrite && !hasWriteSpan) { return; }
 
+        _writer.WriteLine(GeneratedDocumentationSyntax.WriteContextExtensionsClass);
         _writer.WriteLine($"public static class {_alias}WriteContextExtensions {{");
         _writer.Indent++;
 

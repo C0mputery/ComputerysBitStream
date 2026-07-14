@@ -16,6 +16,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
 
         if (_mode == PrimitiveSerializationMode.VariableLength && !Has(BitStreamPrimitiveRole.TryRead)) { return; }
 
+        _writer.WriteLine(GeneratedDocumentationSyntax.ReadContextExtensionsClass);
         _writer.WriteLine($"public static class {_alias}ReadContextExtensions {{");
         _writer.Indent++;
 

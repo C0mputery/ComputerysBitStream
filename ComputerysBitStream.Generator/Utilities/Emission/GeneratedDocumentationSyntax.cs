@@ -1,6 +1,11 @@
 namespace ComputerysBitStream.Generator.Emission;
 
 internal static class GeneratedDocumentationSyntax {
+    internal const string WriteContextExtensionsClass = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.WriteContextExtensionsClass\"/>";
+    internal const string ReadContextExtensionsClass = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.ReadContextExtensionsClass\"/>";
+    internal const string SizeExtensionsClass = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.SizeExtensionsClass\"/>";
+    internal const string StructPrimitiveExtensionsClass = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.StructPrimitiveExtensionsClass\"/>";
+
     internal const string WriteValue = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.WriteValue\"/>";
     internal const string WriteValuesWithLength = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.WriteValuesWithLength\"/>";
     internal const string WriteValuesWithMaxCount = "/// <inheritdoc cref=\"BitStreamGeneratedDocumentation.WriteValuesWithMaxCount\"/>";
