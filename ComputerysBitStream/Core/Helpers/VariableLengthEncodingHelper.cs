@@ -30,8 +30,15 @@ namespace ComputerysBitStream.Helpers {
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint ReadUInt32(ref ReadContext context) {
-            if (!TryReadUInt32(ref context, out uint value)) {
-                context.ThrowIfReadFailed("variable-length uint32");
+            uint value = 0;
+            int shift = 0;
+
+            for (int i = 0; i < MaxUInt32Chunks; i++) {
+                uint chunk = (uint)context.ReadBitsPrimitive(ChunkBits);
+                value |= (chunk & PayloadMask) << shift;
+                if ((chunk & ContinuationBit) == 0) { return value; }
+
+                shift += PayloadBits;
             }
 
             return value;
@@ -78,8 +85,15 @@ namespace ComputerysBitStream.Helpers {
         [BitStreamRestrictedPrimitiveMethod]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong ReadUInt64(ref ReadContext context) {
-            if (!TryReadUInt64(ref context, out ulong value)) {
-                context.ThrowIfReadFailed("variable-length uint64");
+            ulong value = 0;
+            int shift = 0;
+
+            for (int i = 0; i < MaxUInt64Chunks; i++) {
+                ulong chunk = context.ReadBitsPrimitive(ChunkBits);
+                value |= (chunk & PayloadMask) << shift;
+                if ((chunk & ContinuationBit) == 0) { return value; }
+
+                shift += PayloadBits;
             }
 
             return value;
