@@ -325,8 +325,9 @@ internal sealed class StructResolver {
             ElementExtraArguments: extraArguments,
             IntExtensionClass: intExtensionClass,
             IntWriteMethod: GetPrimitiveMethodName(prefixHandler, BitStreamPrimitiveRole.Write),
-            IntPeekMethod: GetPrimitiveMethodName(prefixHandler, BitStreamPrimitiveRole.Peek),
-            IntSize: prefixHandler.FixedSize ?? 0,
+            IntTryReadMethod: GetPrimitiveMethodName(prefixHandler, BitStreamPrimitiveRole.TryRead),
+            IntSizeMethod: GetPrimitiveMethodName(prefixHandler, BitStreamPrimitiveRole.Size),
+            IntTargetTypeEmitName: prefixHandler.TargetTypeEmitName,
             ElementSizeExpression: elementSizeExpression,
             ElementFixedSize: elementFixedSize
         );

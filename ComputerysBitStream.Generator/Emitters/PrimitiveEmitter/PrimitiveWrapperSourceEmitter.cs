@@ -23,11 +23,12 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private readonly string _extraArgs;
     private readonly string _extraArgsPrefix;
     private readonly bool _hasIntWrite;
-    private readonly bool _hasIntPeek;
+    private readonly bool _hasIntTryRead;
     private readonly string _intExtensionClass;
     private readonly string _intWriteMethodName;
-    private readonly string _intPeekMethodName;
-    private readonly int _intSize;
+    private readonly string _intTryReadMethodName;
+    private readonly string _intSizeMethodName;
+    private readonly string _intTargetType;
 
     private PrimitiveWrapperSourceEmitter(in PrimitiveDefinition definition, PrimitiveDefinition? intHandler) {
         _definition = definition;
@@ -42,31 +43,36 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         _extensionClass = GeneratedSourceSyntax.QualifyTypeReference(generatedNamespaceName, definition.ExtensionClassFullyQualifiedName, additionalUsings);
         string intExtensionClass = "";
         string intWriteMethodName = "";
-        string intPeekMethodName = "";
-        int intSize = 0;
+        string intTryReadMethodName = "";
+        string intSizeMethodName = "";
+        string intTargetType = "";
         bool hasIntWrite = false;
-        bool hasIntPeek = false;
+        bool hasIntTryRead = false;
         if (intHandler is PrimitiveDefinition handler) {
             GeneratedSourceSyntax.CollectAdditionalUsings(additionalUsings, handler.Namespace, generatedNamespaceName);
             intExtensionClass = GeneratedSourceSyntax.QualifyTypeReference(generatedNamespaceName, handler.ExtensionClassFullyQualifiedName, additionalUsings);
-            intSize = handler.FixedSize ?? 0;
+            intTargetType = handler.TargetTypeEmitName;
             if (HasValidMethod(handler, BitStreamPrimitiveRole.Write)) {
                 hasIntWrite = true;
                 intWriteMethodName = handler.Methods[BitStreamPrimitiveRole.Write].MethodName;
             }
-            if (HasValidMethod(handler, BitStreamPrimitiveRole.Peek)) {
-                hasIntPeek = true;
-                intPeekMethodName = handler.Methods[BitStreamPrimitiveRole.Peek].MethodName;
+            if (HasValidMethod(handler, BitStreamPrimitiveRole.TryRead)) {
+                hasIntTryRead = true;
+                intTryReadMethodName = handler.Methods[BitStreamPrimitiveRole.TryRead].MethodName;
+            }
+            if (HasValidMethod(handler, BitStreamPrimitiveRole.Size)) {
+                intSizeMethodName = handler.Methods[BitStreamPrimitiveRole.Size].MethodName;
             }
         }
 
         _additionalUsings = additionalUsings.ToArray();
         _intExtensionClass = intExtensionClass;
         _intWriteMethodName = intWriteMethodName;
-        _intPeekMethodName = intPeekMethodName;
-        _intSize = intSize;
+        _intTryReadMethodName = intTryReadMethodName;
+        _intSizeMethodName = intSizeMethodName;
+        _intTargetType = intTargetType;
         _hasIntWrite = hasIntWrite;
-        _hasIntPeek = hasIntPeek;
+        _hasIntTryRead = hasIntTryRead;
 
         bool isQuantized = _mode == PrimitiveSerializationMode.Quantized;
         _extraParams = isQuantized ? $", {_targetType} min, {_targetType} max, int bitCount" : "";
@@ -128,6 +134,10 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     };
 
     private string TargetTypeArray => _targetType + "[]";
+
+    private string LengthPrefixSizeExpression(string lengthExpression) => $"{_intExtensionClass}.{_intSizeMethodName}(({_intTargetType}){lengthExpression})";
+
+    private string WriteLengthPrefix(string lengthExpression) => $"{_intExtensionClass}.{_intWriteMethodName}(ref context, ({_intTargetType}){lengthExpression});";
 
     private string TryPeekScalarCall() => $"context.TryPeek{_alias}({_extraArgsPrefix}out {_targetType} value)";
 

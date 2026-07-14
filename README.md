@@ -219,7 +219,7 @@ Pass compile-time flags through the MSBuild property `BitStreamDefineConstants`:
 Example: `-p:BitStreamDefineConstants=BITSTREAM_HOST_BIG_ENDIAN`
 
 # TODO/WIP:
-- Allow you to select what integer primitive you want to use for length prefixes.
+- Length prefixes currently always use a variable-length `uint`; you cannot pick another integer primitive yet. Versus a fixed 32-bit int the encoding is smaller for counts below 2,097,152 (1-3 bytes vs 4), the same size for counts up through 268,435,455 (4 bytes), and larger once a count needs a fifth byte (counts >= 268,435,456). I wanna allow selecting the length-prefix primitive type.
 - DocFX
 - Nuget Package
 - UPM Package

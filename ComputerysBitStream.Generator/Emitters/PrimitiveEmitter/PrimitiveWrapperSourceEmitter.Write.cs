@@ -59,7 +59,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  public static void Write{{_pluralAlias}}(this ref WriteContext context, ReadOnlySpan<{{_targetType}}> values{{_extraParams}}) {
                      {{SourceWriter.MaintainRelativeIndent(guard, 1)}}
 
-                     {{_intExtensionClass}}.{{_intWriteMethodName}}(ref context, values.Length);
+                     {{WriteLengthPrefix("values.Length")}}
                      {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.WriteSpan)}}(ref context, values{{_extraArgs}});
                  }
                  """;
@@ -76,7 +76,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                      if (values.Length > maxCount) { throw new ArgumentException("The number of values exceeds maxCount.", nameof(values)); }
                      {{SourceWriter.MaintainRelativeIndent(guard, 1)}}
 
-                     {{_intExtensionClass}}.{{_intWriteMethodName}}(ref context, values.Length);
+                     {{WriteLengthPrefix("values.Length")}}
                      {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.WriteSpan)}}(ref context, values{{_extraArgs}});
                  }
                  """;
@@ -97,14 +97,18 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     }
 
     private string SpanWriteGuard(bool includeLengthPrefix, string operation) {
-        string prefixBits = includeLengthPrefix ? _intSize.ToString() : "0";
         string bitsNeededDeclaration = _mode switch {
-            PrimitiveSerializationMode.VariableLength => $$"""
-                                                           long bitsNeeded = {{prefixBits}};
-                                                           for (int i = 0; i < values.Length; i++) { bitsNeeded += {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.Size)}}(values[i]); }
-                                                           """,
+            PrimitiveSerializationMode.VariableLength => includeLengthPrefix
+                ? $$"""
+                    long bitsNeeded = {{LengthPrefixSizeExpression("values.Length")}};
+                    for (int i = 0; i < values.Length; i++) { bitsNeeded += {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.Size)}}(values[i]); }
+                    """
+                : $$"""
+                    long bitsNeeded = 0;
+                    for (int i = 0; i < values.Length; i++) { bitsNeeded += {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.Size)}}(values[i]); }
+                    """,
             _ => includeLengthPrefix
-                ? $"long bitsNeeded = {PerElementBits("values.Length")} + {_intSize};"
+                ? $"long bitsNeeded = {PerElementBits("values.Length")} + {LengthPrefixSizeExpression("values.Length")};"
                 : $"long bitsNeeded = {PerElementBits("values.Length")};"
         };
 

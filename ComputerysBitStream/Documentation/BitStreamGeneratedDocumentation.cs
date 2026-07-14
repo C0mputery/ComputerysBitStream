@@ -11,10 +11,10 @@ namespace ComputerysBitStream {
         /// </remarks>
         public static void WriteValue() { }
 
-        /// <summary>Writes a length-prefixed sequence: a fixed-size <c>int</c> count, then each element.</summary>
+        /// <summary>Writes a length-prefixed sequence: a variable-length <c>uint</c> count, then each element.</summary>
         /// <remarks>
         /// <para>Throws <see cref="InsufficientWriteCapacityException"/> when the buffer cannot hold the count plus all elements.</para>
-        /// <para>Length-prefixed overloads are emitted only when effective settings include a fixed-size <c>int</c> serializer. Otherwise the generator reports <c>CBS032</c> and omits them.</para>
+        /// <para>Length-prefixed overloads are emitted only when effective settings include a variable-length <c>uint</c> serializer. Otherwise the generator reports <c>CBS032</c> and omits them.</para>
         /// </remarks>
         public static void WriteValuesWithLength() { }
 
@@ -45,10 +45,10 @@ namespace ComputerysBitStream {
         /// <remarks>Does not throw for short buffers. Leaves <see cref="ReadContext.Position"/> unchanged on both success and failure.</remarks>
         public static void TryPeekValue() { }
 
-        /// <summary>Reads a length-prefixed array: reads a fixed-size <c>int</c> count from the stream, then that many elements.</summary>
+        /// <summary>Reads a length-prefixed array: reads a variable-length <c>uint</c> count from the stream, then that many elements.</summary>
         /// <remarks>
         /// <para>Throws <see cref="BitStreamReadException"/> when the length prefix or any element cannot be read.</para>
-        /// <para>Length-prefixed overloads are emitted only when effective settings include a fixed-size <c>int</c> serializer. Otherwise the generator reports <c>CBS032</c> and omits them.</para>
+        /// <para>Length-prefixed overloads are emitted only when effective settings include a variable-length <c>uint</c> serializer. Otherwise the generator reports <c>CBS032</c> and omits them.</para>
         /// </remarks>
         public static void ReadValuesWithLength() { }
 
@@ -66,7 +66,7 @@ namespace ComputerysBitStream {
         /// <summary>Reads a length-prefixed array, failing when the encoded count exceeds <c>maxCount</c>.</summary>
         /// <remarks>
         /// <para>Throws <see cref="BitStreamReadException"/> when the length prefix or any element cannot be read, when <c>maxCount</c> is negative, or when the encoded count exceeds <c>maxCount</c>.</para>
-        /// <para>Length-prefixed overloads are emitted only when effective settings include a fixed-size <c>int</c> serializer. Otherwise the generator reports <c>CBS032</c> and omits them.</para>
+        /// <para>Length-prefixed overloads are emitted only when effective settings include a variable-length <c>uint</c> serializer. Otherwise the generator reports <c>CBS032</c> and omits them.</para>
         /// </remarks>
         public static void ReadValuesWithMaxCount() { }
 

@@ -58,7 +58,9 @@ internal readonly ref partial struct ExecutionContext {
 
     private static bool NeedsLengthPrefixWriteHandler(in PrimitiveDefinition primitive, PrimitiveDefinition? intHandler) {
         if (!PrimitiveWrapperSourceEmitter.HasValidMethod(primitive, BitStreamPrimitiveRole.WriteSpan)) { return false; }
-        return intHandler is not PrimitiveDefinition handler || !PrimitiveWrapperSourceEmitter.HasValidMethod(handler, BitStreamPrimitiveRole.Write);
+        return intHandler is not PrimitiveDefinition handler
+               || !PrimitiveWrapperSourceEmitter.HasValidMethod(handler, BitStreamPrimitiveRole.Write)
+               || !PrimitiveWrapperSourceEmitter.HasValidMethod(handler, BitStreamPrimitiveRole.Size);
     }
 
     private static bool NeedsLengthPrefixReadHandler(in PrimitiveDefinition primitive, PrimitiveDefinition? intHandler) {
@@ -67,6 +69,6 @@ internal readonly ref partial struct ExecutionContext {
                            || PrimitiveWrapperSourceEmitter.HasValidMethod(primitive, BitStreamPrimitiveRole.PeekSpan)
                            || PrimitiveWrapperSourceEmitter.HasValidMethod(primitive, BitStreamPrimitiveRole.ReadSpan);
         if (!needsPrefix) { return false; }
-        return intHandler is not PrimitiveDefinition handler || !PrimitiveWrapperSourceEmitter.HasValidMethod(handler, BitStreamPrimitiveRole.Peek);
+        return intHandler is not PrimitiveDefinition handler || !PrimitiveWrapperSourceEmitter.HasValidMethod(handler, BitStreamPrimitiveRole.TryRead);
     }
 }

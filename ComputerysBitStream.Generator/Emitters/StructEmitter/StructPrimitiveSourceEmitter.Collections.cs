@@ -31,16 +31,25 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
         return $$"""
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  private static bool TryReadCollection{{memberIndex}}Length(ref ReadContext context, int maxRead, out int length) {
-                     if (maxRead < 0 || context.IsInsufficientSpace({{collection.IntSize}})) {
+                     if (maxRead < 0) {
                          length = 0;
                          return false;
                      }
-                     length = {{collection.IntExtensionClass}}.{{collection.IntPeekMethod}}(ref context);
-                     if (length < 0 || length > maxRead) {
+
+                     long startPosition = context.Position;
+                     if (!{{collection.IntExtensionClass}}.{{collection.IntTryReadMethod}}(ref context, out {{collection.IntTargetTypeEmitName}} encodedLength) || encodedLength > int.MaxValue) {
+                         context.Position = startPosition;
                          length = 0;
                          return false;
                      }
-                     context.Position += {{collection.IntSize}};
+
+                     length = (int)encodedLength;
+                     if (length > maxRead) {
+                         context.Position = startPosition;
+                         length = 0;
+                         return false;
+                     }
+
                      return true;
                  }
                  """;
@@ -150,7 +159,7 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
     }
 
     private static string BuildCollectionSizerBody(in CollectionLevelContext context) {
-        int prefixCount = context.IsElementVector ? 1 : context.Rank;
+        string prefixBits = BuildLengthPrefixSizeAccumulation(context);
         string accumulation = context.IsElementLevel
             ? BuildElementSizeAccumulation(context)
             : $"foreach ({context.LevelElementType} item in value) {{ bits += GetCollection{context.MemberIndex}Level{context.Level + 1}Size(item); }}";
@@ -158,7 +167,7 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
         return $$"""
                  value ??= {{context.CreateEmptyArray()}};
                  {{BuildZeroLowerBoundGuard(context.Rank)}}
-                 int bits = {{prefixCount * context.Collection.IntSize}};
+                 int bits = {{prefixBits}};
                  checked {
                      {{SourceWriter.MaintainRelativeIndent(accumulation, 1)}}
                  }
@@ -177,9 +186,21 @@ internal readonly ref partial struct StructPrimitiveSourceEmitter {
     private static string BuildLengthPrefixWrites(in CollectionLevelContext context) {
         List<string> lines = [];
         for (int dimension = 0; dimension < context.Rank; dimension++) {
-            lines.Add($"{context.Collection.IntExtensionClass}.{context.Collection.IntWriteMethod}(ref context, value.GetLength({dimension}));");
+            lines.Add($"{context.Collection.IntExtensionClass}.{context.Collection.IntWriteMethod}(ref context, ({context.Collection.IntTargetTypeEmitName})value.GetLength({dimension}));");
         }
         return string.Join("\n", lines);
+    }
+
+    private static string BuildLengthPrefixSizeAccumulation(in CollectionLevelContext context) {
+        if (context.IsElementVector) {
+            return $"{context.Collection.IntExtensionClass}.{context.Collection.IntSizeMethod}(({context.Collection.IntTargetTypeEmitName})value.Length)";
+        }
+
+        List<string> parts = [];
+        for (int dimension = 0; dimension < context.Rank; dimension++) {
+            parts.Add($"{context.Collection.IntExtensionClass}.{context.Collection.IntSizeMethod}(({context.Collection.IntTargetTypeEmitName})value.GetLength({dimension}))");
+        }
+        return string.Join(" + ", parts);
     }
 
     private static string BuildFlattenedElementWrite(in CollectionLevelContext context) {

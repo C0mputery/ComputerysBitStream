@@ -78,8 +78,7 @@ public class ArrayMemberStructTests {
                 {
                     { 1, 2 },
                     { 3, 4 }
-                },
-                {
+                }, {
                     { 5, 6 },
                     { 7, 8 }
                 }
@@ -255,8 +254,7 @@ public class ArrayMemberStructTests {
                 {
                     { new NestedStruct { Value = 1 }, new NestedStruct { Value = 2 } },
                     { new NestedStruct { Value = 3 }, new NestedStruct { Value = 4 } }
-                },
-                {
+                }, {
                     { new NestedStruct { Value = 5 }, new NestedStruct { Value = 6 } },
                     { new NestedStruct { Value = 7 }, new NestedStruct { Value = 8 } }
                 }
@@ -294,7 +292,7 @@ public class ArrayMemberStructTests {
     public void TryRead_RejectsLengthAboveMaxWithoutAdvancing() {
         ulong[] buffer = new ulong[16];
         WriteContext write = new(buffer);
-        write.WriteInt(17);
+        write.WriteVariableLengthUInt(17);
         ReadContext read = new(buffer);
         long originalPosition = read.Position;
 
@@ -306,8 +304,8 @@ public class ArrayMemberStructTests {
     public void TryRead_RejectsNestedLengthAboveMaxWithoutAdvancing() {
         ulong[] buffer = new ulong[16];
         WriteContext write = new(buffer);
-        write.WriteInt(1);
-        write.WriteInt(9);
+        write.WriteVariableLengthUInt(1);
+        write.WriteVariableLengthUInt(9);
         ReadContext read = new(buffer);
         long originalPosition = read.Position;
 
@@ -319,8 +317,8 @@ public class ArrayMemberStructTests {
     public void TryRead_RejectsRectangularPayloadCountMismatchWithoutAdvancing() {
         ulong[] buffer = new ulong[32];
         WriteContext write = new(buffer);
-        write.WriteInt(2);
-        write.WriteInt(2);
+        write.WriteVariableLengthUInt(2);
+        write.WriteVariableLengthUInt(2);
         write.WriteIntsWithoutLength([1, 2, 3]);
         ReadContext read = new(buffer, 0, write.Position);
         long originalPosition = read.Position;
@@ -333,7 +331,7 @@ public class ArrayMemberStructTests {
     public void TryRead_TruncatedElementPayloadDoesNotAdvance() {
         ulong[] buffer = new ulong[2];
         WriteContext write = new(buffer);
-        write.WriteInt(2);
+        write.WriteVariableLengthUInt(2);
         write.WriteInt(123);
         ReadContext read = new(buffer, 0, 64);
         long originalPosition = read.Position;

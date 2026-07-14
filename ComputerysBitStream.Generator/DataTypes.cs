@@ -144,8 +144,9 @@ internal record struct ResolvedStructCollection(
     string ElementExtraArguments,
     string IntExtensionClass,
     string IntWriteMethod,
-    string IntPeekMethod,
-    int IntSize,
+    string IntTryReadMethod,
+    string IntSizeMethod,
+    string IntTargetTypeEmitName,
     string? ElementSizeExpression,
     int? ElementFixedSize
 );

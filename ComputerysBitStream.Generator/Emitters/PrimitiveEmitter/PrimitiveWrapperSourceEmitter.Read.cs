@@ -29,7 +29,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
             methods.Add(EmitReadValue());
         }
         if (hasPeekArray) {
-            if (_hasIntPeek) {
+            if (_hasIntTryRead) {
                 methods.Add(EmitTryPeekValuesWithLength());
                 methods.Add(EmitPeekValuesWithLength());
                 methods.Add(EmitTryPeekValuesWithMaxCount());
@@ -39,7 +39,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
             methods.Add(EmitPeekValuesWithCount());
         }
         if (hasReadArray) {
-            if (_hasIntPeek) {
+            if (_hasIntTryRead) {
                 methods.Add(EmitTryReadValuesWithLength());
                 methods.Add(EmitReadValuesWithLength());
                 methods.Add(EmitTryReadValuesWithMaxCount());
@@ -49,7 +49,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
             methods.Add(EmitReadValuesWithCount());
         }
         if (hasPeekSpan) {
-            if (_hasIntPeek) {
+            if (_hasIntTryRead) {
                 methods.Add(EmitTryPeekValuesIntoSpanWithLength());
                 methods.Add(EmitPeekValuesIntoSpanWithLength());
                 methods.Add(EmitTryPeekValuesIntoSpanWithMaxCount());
@@ -59,7 +59,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
             methods.Add(EmitPeekValuesIntoSpanWithCount());
         }
         if (hasReadSpan) {
-            if (_hasIntPeek) {
+            if (_hasIntTryRead) {
                 methods.Add(EmitTryReadValuesIntoSpanWithLength());
                 methods.Add(EmitReadValuesIntoSpanWithLength());
                 methods.Add(EmitTryReadValuesIntoSpanWithMaxCount());
@@ -172,17 +172,8 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  {{GeneratedDocumentationSyntax.TryPeekValuesWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryPeek{{_pluralAlias}}(this ref ReadContext context{{_extraParams}}, out {{_targetType}}[] values) {
-                     if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) {
-                         values = {{empty}};
-                         return false;
-                     }
-
-                     int count = {{_intExtensionClass}}.{{_intPeekMethodName}}(ref context);
-                     if (count < 0) {
-                         values = {{empty}};
-                         return false;
-                     }
-
+                     long startPosition = context.Position;
+                     {{SourceWriter.MaintainRelativeIndent(EmitLengthPrefixRead(ArrayReadFailStatement(empty)), 1)}}
                      {{SourceWriter.MaintainRelativeIndent(PeekValuesWithLengthBody(empty), 1)}}
                  }
                  """;
@@ -206,17 +197,8 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  {{GeneratedDocumentationSyntax.TryReadValuesWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryRead{{_pluralAlias}}(this ref ReadContext context{{_extraParams}}, out {{_targetType}}[] values) {
-                     if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) {
-                         values = {{empty}};
-                         return false;
-                     }
-
-                     int count = {{_intExtensionClass}}.{{_intPeekMethodName}}(ref context);
-                     if (count < 0) {
-                         values = {{empty}};
-                         return false;
-                     }
-
+                     long startPosition = context.Position;
+                     {{SourceWriter.MaintainRelativeIndent(EmitLengthPrefixRead(ArrayReadFailStatement(empty)), 1)}}
                      {{SourceWriter.MaintainRelativeIndent(ReadValuesWithLengthBody(empty), 1)}}
                  }
                  """;
@@ -294,11 +276,8 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  {{GeneratedDocumentationSyntax.TryPeekValuesIntoSpanWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryPeek{{_pluralAlias}}(this ref ReadContext context, Span<{{_targetType}}> destination{{_extraParams}}) {
-                     if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) { return false; }
-
-                     int count = {{_intExtensionClass}}.{{_intPeekMethodName}}(ref context);
-                     if (count < 0 || count > destination.Length) { return false; }
-
+                     long startPosition = context.Position;
+                     {{SourceWriter.MaintainRelativeIndent(EmitLengthPrefixRead("return false;", "count > destination.Length"), 1)}}
                      {{SourceWriter.MaintainRelativeIndent(PeekValuesIntoSpanWithLengthBody(), 1)}}
                  }
                  """;
@@ -320,11 +299,8 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  {{GeneratedDocumentationSyntax.TryReadValuesIntoSpanWithLength}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryRead{{_pluralAlias}}(this ref ReadContext context, Span<{{_targetType}}> destination{{_extraParams}}) {
-                     if ({{QuantizedFailPrefix}}context.IsInsufficientSpace({{_intSize}})) { return false; }
-
-                     int count = {{_intExtensionClass}}.{{_intPeekMethodName}}(ref context);
-                     if (count < 0 || count > destination.Length) { return false; }
-
+                     long startPosition = context.Position;
+                     {{SourceWriter.MaintainRelativeIndent(EmitLengthPrefixRead("return false;", "count > destination.Length"), 1)}}
                      {{SourceWriter.MaintainRelativeIndent(ReadValuesIntoSpanWithLengthBody(), 1)}}
                  }
                  """;
@@ -394,17 +370,13 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  {{GeneratedDocumentationSyntax.TryPeekValuesWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryPeek{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount{{_extraParams}}, out {{_targetType}}[] values) {
-                     if ({{QuantizedFailPrefix}}maxCount < 0 || context.IsInsufficientSpace({{_intSize}})) {
+                     if ({{QuantizedFailPrefix}}maxCount < 0) {
                          values = {{empty}};
                          return false;
                      }
 
-                     int count = {{_intExtensionClass}}.{{_intPeekMethodName}}(ref context);
-                     if (count < 0 || count > maxCount) {
-                         values = {{empty}};
-                         return false;
-                     }
-
+                     long startPosition = context.Position;
+                     {{SourceWriter.MaintainRelativeIndent(EmitLengthPrefixRead(ArrayReadFailStatement(empty), "count > maxCount"), 1)}}
                      {{SourceWriter.MaintainRelativeIndent(PeekValuesWithLengthBody(empty), 1)}}
                  }
                  """;
@@ -428,17 +400,13 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  {{GeneratedDocumentationSyntax.TryReadValuesWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryRead{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount{{_extraParams}}, out {{_targetType}}[] values) {
-                     if ({{QuantizedFailPrefix}}maxCount < 0 || context.IsInsufficientSpace({{_intSize}})) {
+                     if ({{QuantizedFailPrefix}}maxCount < 0) {
                          values = {{empty}};
                          return false;
                      }
 
-                     int count = {{_intExtensionClass}}.{{_intPeekMethodName}}(ref context);
-                     if (count < 0 || count > maxCount) {
-                         values = {{empty}};
-                         return false;
-                     }
-
+                     long startPosition = context.Position;
+                     {{SourceWriter.MaintainRelativeIndent(EmitLengthPrefixRead(ArrayReadFailStatement(empty), "count > maxCount"), 1)}}
                      {{SourceWriter.MaintainRelativeIndent(ReadValuesWithLengthBody(empty), 1)}}
                  }
                  """;
@@ -460,11 +428,10 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  {{GeneratedDocumentationSyntax.TryPeekValuesIntoSpanWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryPeek{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount, Span<{{_targetType}}> destination{{_extraParams}}) {
-                     if ({{QuantizedFailPrefix}}maxCount < 0 || context.IsInsufficientSpace({{_intSize}})) { return false; }
+                     if ({{QuantizedFailPrefix}}maxCount < 0) { return false; }
 
-                     int count = {{_intExtensionClass}}.{{_intPeekMethodName}}(ref context);
-                     if (count < 0 || count > maxCount || count > destination.Length) { return false; }
-
+                     long startPosition = context.Position;
+                     {{SourceWriter.MaintainRelativeIndent(EmitLengthPrefixRead("return false;", "count > maxCount || count > destination.Length"), 1)}}
                      {{SourceWriter.MaintainRelativeIndent(PeekValuesIntoSpanWithLengthBody(), 1)}}
                  }
                  """;
@@ -486,11 +453,10 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  {{GeneratedDocumentationSyntax.TryReadValuesIntoSpanWithMaxCount}}
                  [MethodImpl(MethodImplOptions.AggressiveInlining)]
                  public static bool TryRead{{_pluralAlias}}WithMaxCount(this ref ReadContext context, int maxCount, Span<{{_targetType}}> destination{{_extraParams}}) {
-                     if ({{QuantizedFailPrefix}}maxCount < 0 || context.IsInsufficientSpace({{_intSize}})) { return false; }
+                     if ({{QuantizedFailPrefix}}maxCount < 0) { return false; }
 
-                     int count = {{_intExtensionClass}}.{{_intPeekMethodName}}(ref context);
-                     if (count < 0 || count > maxCount || count > destination.Length) { return false; }
-
+                     long startPosition = context.Position;
+                     {{SourceWriter.MaintainRelativeIndent(EmitLengthPrefixRead("return false;", "count > maxCount || count > destination.Length"), 1)}}
                      {{SourceWriter.MaintainRelativeIndent(ReadValuesIntoSpanWithLengthBody(), 1)}}
                  }
                  """;
@@ -546,11 +512,30 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  """;
     }
 
+    private string EmitLengthPrefixRead(string failStatement, string? countConstraint = null) {
+        string constraintBlock = string.IsNullOrEmpty(countConstraint)
+            ? string.Empty
+            : $$"""
+                if ({{countConstraint}}) {
+                    context.Position = startPosition;
+                    {{SourceWriter.MaintainRelativeIndent(failStatement, 1)}}
+                }
+                """;
+
+        return $$"""
+                 if ({{QuantizedFailPrefix}}!{{_intExtensionClass}}.{{_intTryReadMethodName}}(ref context, out {{_intTargetType}} encodedCount) || encodedCount > int.MaxValue) {
+                     context.Position = startPosition;
+                     {{SourceWriter.MaintainRelativeIndent(failStatement, 1)}}
+                 }
+
+                 int count = (int)encodedCount;
+                 {{constraintBlock}}
+                 """;
+    }
+
     private string PeekValuesWithLengthBody(string empty) {
         if (_mode == PrimitiveSerializationMode.VariableLength) {
             return $$"""
-                     long startPosition = context.Position;
-                     context.Position += {{_intSize}};
                      {{TryReadArrayLoop(empty)}}
                      context.Position = startPosition;
                      return true;
@@ -558,10 +543,9 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         }
 
         return $$"""
-                 {{ReadBitsNeededGuard("count", includeIntSize: true, ArrayReadFailStatement(empty))}}
-                 context.Position += {{_intSize}};
+                 {{ReadBitsNeededGuard("count", ArrayReadFailStatement(empty), restorePositionOnFail: true)}}
                  values = {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.PeekArray)}}(ref context, count{{_extraArgs}});
-                 context.Position -= {{_intSize}};
+                 context.Position = startPosition;
 
                  return true;
                  """;
@@ -570,16 +554,13 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string ReadValuesWithLengthBody(string empty) {
         if (_mode == PrimitiveSerializationMode.VariableLength) {
             return $$"""
-                     long startPosition = context.Position;
-                     context.Position += {{_intSize}};
                      {{TryReadArrayLoop(empty)}}
                      return true;
                      """;
         }
 
         return $$"""
-                 {{ReadBitsNeededGuard("count", includeIntSize: true, ArrayReadFailStatement(empty))}}
-                 context.Position += {{_intSize}};
+                 {{ReadBitsNeededGuard("count", ArrayReadFailStatement(empty), restorePositionOnFail: true)}}
                  values = {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.ReadArray)}}(ref context, count{{_extraArgs}});
                  return true;
                  """;
@@ -596,7 +577,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         }
 
         return $$"""
-                 {{ReadBitsNeededGuard("count", includeIntSize: false, ArrayReadFailStatement(empty))}}
+                 {{ReadBitsNeededGuard("count", ArrayReadFailStatement(empty), restorePositionOnFail: false)}}
                  values = {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.PeekArray)}}(ref context, count{{_extraArgs}});
                  return true;
                  """;
@@ -612,7 +593,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         }
 
         return $$"""
-                 {{ReadBitsNeededGuard("count", includeIntSize: false, ArrayReadFailStatement(empty))}}
+                 {{ReadBitsNeededGuard("count", ArrayReadFailStatement(empty), restorePositionOnFail: false)}}
                  values = {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.ReadArray)}}(ref context, count{{_extraArgs}});
                  return true;
                  """;
@@ -621,8 +602,6 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string PeekValuesIntoSpanWithLengthBody() {
         if (_mode == PrimitiveSerializationMode.VariableLength) {
             return $$"""
-                     long startPosition = context.Position;
-                     context.Position += {{_intSize}};
                      {{TryReadSpanLoop()}}
                      context.Position = startPosition;
                      return true;
@@ -630,10 +609,9 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         }
 
         return $$"""
-                 {{ReadBitsNeededGuard("count", includeIntSize: true, "return false;")}}
-                 context.Position += {{_intSize}};
+                 {{ReadBitsNeededGuard("count", "return false;", restorePositionOnFail: true)}}
                  {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.PeekSpan)}}(ref context, count, destination{{_extraArgs}});
-                 context.Position -= {{_intSize}};
+                 context.Position = startPosition;
 
                  return true;
                  """;
@@ -642,16 +620,13 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
     private string ReadValuesIntoSpanWithLengthBody() {
         if (_mode == PrimitiveSerializationMode.VariableLength) {
             return $$"""
-                     long startPosition = context.Position;
-                     context.Position += {{_intSize}};
                      {{TryReadSpanLoop()}}
                      return true;
                      """;
         }
 
         return $$"""
-                 {{ReadBitsNeededGuard("count", includeIntSize: true, "return false;")}}
-                 context.Position += {{_intSize}};
+                 {{ReadBitsNeededGuard("count", "return false;", restorePositionOnFail: true)}}
                  {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.ReadSpan)}}(ref context, count, destination{{_extraArgs}});
                  return true;
                  """;
@@ -668,7 +643,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         }
 
         return $$"""
-                 {{ReadBitsNeededGuard("count", includeIntSize: false, "return false;")}}
+                 {{ReadBitsNeededGuard("count", "return false;", restorePositionOnFail: false)}}
                  {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.PeekSpan)}}(ref context, count, destination{{_extraArgs}});
                  return true;
                  """;
@@ -684,7 +659,7 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
         }
 
         return $$"""
-                 {{ReadBitsNeededGuard("count", includeIntSize: false, "return false;")}}
+                 {{ReadBitsNeededGuard("count", "return false;", restorePositionOnFail: false)}}
                  {{_extensionClass}}.{{Method(BitStreamPrimitiveRole.ReadSpan)}}(ref context, count, destination{{_extraArgs}});
                  return true;
                  """;
@@ -727,17 +702,14 @@ internal readonly ref partial struct PrimitiveWrapperSourceEmitter {
                  """;
     }
 
-    private string ReadBitsNeededGuard(string countExpression, bool includeIntSize, string failStatement) {
+    private string ReadBitsNeededGuard(string countExpression, string failStatement, bool restorePositionOnFail) {
         if (_mode == PrimitiveSerializationMode.VariableLength) { return ""; }
 
-        string bitsExpression = includeIntSize
-            ? $"{PerElementBits(countExpression)} + {_intSize}"
-            : PerElementBits(countExpression);
-
+        string restore = restorePositionOnFail ? "context.Position = startPosition;\n" : "";
         return $$"""
-                 long bitsNeeded = {{bitsExpression}};
+                 long bitsNeeded = {{PerElementBits(countExpression)}};
                  if (context.GetRemainingCapacity() < bitsNeeded) {
-                     {{SourceWriter.MaintainRelativeIndent(failStatement, 1)}}
+                     {{restore}}{{SourceWriter.MaintainRelativeIndent(failStatement, 1)}}
                  }
                  """;
     }

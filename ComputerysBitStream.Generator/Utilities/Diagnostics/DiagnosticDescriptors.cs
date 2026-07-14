@@ -298,8 +298,8 @@ internal static class DiagnosticDescriptors {
 
     public static readonly DiagnosticDescriptor MissingLengthPrefixHandler = new(
         id: "CBS032",
-        title: "Missing int length-prefix handler for primitive",
-        messageFormat: "Primitive '{0}' for '{1}' declares length-prefixed span/array methods but no fixed-size int length-prefix handler was found in settings. Length-prefixed methods were not generated.",
+        title: "Missing variable-length uint length-prefix handler for primitive",
+        messageFormat: "Primitive '{0}' for '{1}' declares length-prefixed span/array methods but no variable-length uint length-prefix handler was found in settings. Length-prefixed methods were not generated.",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true
@@ -466,7 +466,7 @@ internal static class DiagnosticDescriptors {
     public static readonly DiagnosticDescriptor CollectionMissingLengthPrefixSupport = new(
         id: "CBS050",
         title: "Array element serializer lacks length-prefixed support",
-        messageFormat: "Array member '{0}' uses serializer '{1}', which must support span writes and array or span reads with a fixed-size int length prefix",
+        messageFormat: "Array member '{0}' uses serializer '{1}', which must support span writes and array or span reads with a variable-length uint length prefix",
         category: "BitStream",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
