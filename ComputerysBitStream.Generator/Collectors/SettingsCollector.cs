@@ -9,6 +9,18 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace ComputerysBitStream.Generator.Collectors;
 
 internal static class SettingsCollector {
+    public static IncrementalValuesProvider<Collected<SettingsDefinition>> GetSettingsData(IncrementalGeneratorInitializationContext context) {
+        return context.SyntaxProvider.ForAttributeWithMetadataName(
+            fullyQualifiedMetadataName: BitStreamTypeNames.Settings,
+            predicate: (SyntaxNode node, CancellationToken _) => node is InterfaceDeclarationSyntax,
+            transform: SettingsAttributeDataTransform
+        );
+    }
+
+    private static Collected<SettingsDefinition> SettingsAttributeDataTransform(GeneratorAttributeSyntaxContext context, CancellationToken cancel) {
+        return SettingsCollectionSession.CollectSettingsData(context.SemanticModel.Compilation, (ITypeSymbol)context.TargetSymbol, context.TargetSymbol.Locations.FirstOrDefault());
+    }
+
     public static IncrementalValuesProvider<Collected<SettingsDefinition>> GetGlobalSettingsData(IncrementalGeneratorInitializationContext context) {
         IncrementalValuesProvider<ImmutableArray<Collected<SettingsDefinition>>> globalSettings = context.SyntaxProvider.ForAttributeWithMetadataName(
             fullyQualifiedMetadataName: BitStreamTypeNames.DefaultSettings,
@@ -58,17 +70,5 @@ internal static class SettingsCollector {
             ExternalStructs: ImmutableDictionary<string, ExternalStructDefinition>.Empty,
             Location: null
         );
-    }
-
-    public static IncrementalValuesProvider<Collected<SettingsDefinition>> GetSettingsData(IncrementalGeneratorInitializationContext context) {
-        return context.SyntaxProvider.ForAttributeWithMetadataName(
-            fullyQualifiedMetadataName: BitStreamTypeNames.Settings,
-            predicate: (SyntaxNode node, CancellationToken _) => node is InterfaceDeclarationSyntax,
-            transform: SettingsAttributeDataTransform
-        );
-    }
-
-    private static Collected<SettingsDefinition> SettingsAttributeDataTransform(GeneratorAttributeSyntaxContext context, CancellationToken cancel) {
-        return SettingsCollectionSession.CollectSettingsData(context.SemanticModel.Compilation, (ITypeSymbol)context.TargetSymbol, context.TargetSymbol.Locations.FirstOrDefault());
     }
 }

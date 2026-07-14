@@ -59,3 +59,4 @@ CBS051 | BitStream | Error | Diagnostics
 CBS052 | BitStream | Error | Diagnostics
 CBS053 | BitStream | Error | Diagnostics
 CBS054 | BitStream | Error | Diagnostics
+CBS055 | BitStream | Error | Diagnostics

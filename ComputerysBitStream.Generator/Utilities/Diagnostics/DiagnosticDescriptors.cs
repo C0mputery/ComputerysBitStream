@@ -507,4 +507,13 @@ internal static class DiagnosticDescriptors {
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
     );
+
+    public static readonly DiagnosticDescriptor DuplicatePrimitiveTargetAndMode = new(
+        id: "CBS055",
+        title: "Multiple included primitives for the same type and mode",
+        messageFormat: "Settings interface lists more than one '{1}' serializer for type '{0}'",
+        category: "BitStream",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
 }
