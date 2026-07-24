@@ -34,7 +34,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="..\ComputerysBitStream\Core\Helpers\BitHelper.cs" Link="BitSizes.cs"/>
+        <Compile Include="..\ComputerysBitStream\Core\Helpers\BitHelper.cs" Link="Utilities\BitSizes.cs"/>
     </ItemGroup>
 
 </Project>

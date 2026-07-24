@@ -1,3 +1,6 @@
+using ComputerysBitStream.Tests.Structs.Types;
+using ComputerysBitStream.Tests.Utilities;
+
 namespace ComputerysBitStream.Tests.Structs;
 
 public class MixedIntStructTests {

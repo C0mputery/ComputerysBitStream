@@ -1,3 +1,6 @@
+using ComputerysBitStream.Tests.Structs.Types;
+using ComputerysBitStream.Tests.Utilities;
+
 namespace ComputerysBitStream.Tests.Structs;
 
 public class ContainerStructTests : StructTestSuite<ContainerStruct> {
@@ -10,78 +13,6 @@ public class ContainerStructTests : StructTestSuite<ContainerStruct> {
     ];
 
     protected override int? ExpectedFixedSizeBits => 64;
-    protected override void Write(ref WriteContext context, ContainerStruct value) => context.WriteContainerStruct(value);
-    protected override ContainerStruct Peek(ReadContext context) => context.PeekContainerStruct();
-    protected override ContainerStruct Read(ReadContext context) => context.ReadContainerStruct();
-
-    protected override ContainerStruct TryPeek(ReadContext context) {
-        Assert.True(context.TryPeekContainerStruct(out ContainerStruct v));
-        return v;
-    }
-
-    protected override ContainerStruct TryRead(ReadContext context) {
-        Assert.True(context.TryReadContainerStruct(out ContainerStruct v));
-        return v;
-    }
-
-    protected override void WriteArray(ref WriteContext context, ContainerStruct[] values) => context.WriteContainerStructs(values);
-    protected override ContainerStruct[] PeekArrayWithLength(ReadContext context) => context.PeekContainerStructs();
-    protected override ContainerStruct[] ReadArrayWithLength(ReadContext context) => context.ReadContainerStructs();
-
-    protected override ContainerStruct[] TryPeekArrayWithLength(ReadContext context) {
-        Assert.True(context.TryPeekContainerStructs(out ContainerStruct[] v));
-        return v;
-    }
-
-    protected override ContainerStruct[] TryReadArrayWithLength(ReadContext context) {
-        Assert.True(context.TryReadContainerStructs(out ContainerStruct[] v));
-        return v;
-    }
-
-    protected override ContainerStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekContainerStructsWithMaxCount(maxCount);
-    protected override ContainerStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadContainerStructsWithMaxCount(maxCount);
-
-    protected override ContainerStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
-        Assert.True(context.TryPeekContainerStructsWithMaxCount(maxCount, out ContainerStruct[] values));
-        return values;
-    }
-
-    protected override ContainerStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
-        Assert.True(context.TryReadContainerStructsWithMaxCount(maxCount, out ContainerStruct[] values));
-        return values;
-    }
-
-    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<ContainerStruct> destination) => context.PeekContainerStructsWithMaxCount(maxCount, destination);
-    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<ContainerStruct> destination) => context.ReadContainerStructsWithMaxCount(maxCount, destination);
-    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<ContainerStruct> destination) { Assert.True(context.TryPeekContainerStructsWithMaxCount(maxCount, destination)); }
-    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<ContainerStruct> destination) { Assert.True(context.TryReadContainerStructsWithMaxCount(maxCount, destination)); }
-
-    protected override void WriteArrayWithoutLength(ref WriteContext context, ContainerStruct[] values) => context.WriteContainerStructsWithoutLength(values);
-    protected override ContainerStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekContainerStructs(count);
-    protected override ContainerStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadContainerStructs(count);
-
-    protected override ContainerStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) {
-        Assert.True(context.TryPeekContainerStructs(count, out ContainerStruct[] v));
-        return v;
-    }
-
-    protected override ContainerStruct[] TryReadArrayWithoutLength(ReadContext context, int count) {
-        Assert.True(context.TryReadContainerStructs(count, out ContainerStruct[] v));
-        return v;
-    }
-
-    protected override void WriteSpan(ref WriteContext context, Span<ContainerStruct> values) => context.WriteContainerStructs(values);
-    protected override void PeekSpanWithLength(ReadContext context, Span<ContainerStruct> destination) => context.PeekContainerStructs(destination);
-    protected override void ReadSpanWithLength(ReadContext context, Span<ContainerStruct> destination) => context.ReadContainerStructs(destination);
-    protected override void TryPeekSpanWithLength(ReadContext context, Span<ContainerStruct> destination) { Assert.True(context.TryPeekContainerStructs(destination)); }
-    protected override void TryReadSpanWithLength(ReadContext context, Span<ContainerStruct> destination) { Assert.True(context.TryReadContainerStructs(destination)); }
-
-    protected override void WriteSpanWithoutLength(ref WriteContext context, Span<ContainerStruct> values) => context.WriteContainerStructsWithoutLength(values);
-    protected override void PeekSpanWithoutLength(ReadContext context, int count, Span<ContainerStruct> destination) => context.PeekContainerStructs(count, destination);
-    protected override void ReadSpanWithoutLength(ReadContext context, int count, Span<ContainerStruct> destination) => context.ReadContainerStructs(count, destination);
-    protected override void TryPeekSpanWithoutLength(ReadContext context, int count, Span<ContainerStruct> destination) { Assert.True(context.TryPeekContainerStructs(count, destination)); }
-    protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<ContainerStruct> destination) { Assert.True(context.TryReadContainerStructs(count, destination)); }
-
     protected override Type StructType => typeof(ContainerStruct);
 
     [Fact]
@@ -90,20 +21,39 @@ public class ContainerStructTests : StructTestSuite<ContainerStruct> {
         Assert.True(StructMetadataAssertions.IsFixedSize(typeof(NestedStruct)));
     }
 
-    protected override TryReadOperationSet<ContainerStruct> TryOperations => new() {
-        TryPeekValue = (ReadContext c, out ContainerStruct v) => c.TryPeekContainerStruct(out v),
-        TryReadValue = (ReadContext c, out ContainerStruct v) => c.TryReadContainerStruct(out v),
-        TryPeekArrayWithLength = (ReadContext c, out ContainerStruct[] v) => c.TryPeekContainerStructs(out v),
-        TryReadArrayWithLength = (ReadContext c, out ContainerStruct[] v) => c.TryReadContainerStructs(out v),
-        TryPeekArrayWithoutLength = (ReadContext c, int count, out ContainerStruct[] v) => c.TryPeekContainerStructs(count, out v),
-        TryReadArrayWithoutLength = (ReadContext c, int count, out ContainerStruct[] v) => c.TryReadContainerStructs(count, out v),
-        TryPeekSpanWithLength = (ReadContext c, Span<ContainerStruct> d) => c.TryPeekContainerStructs(d),
-        TryReadSpanWithLength = (ReadContext c, Span<ContainerStruct> d) => c.TryReadContainerStructs(d),
-        TryPeekSpanWithoutLength = (ReadContext c, int count, Span<ContainerStruct> d) => c.TryPeekContainerStructs(count, d),
-        TryReadSpanWithoutLength = (ReadContext c, int count, Span<ContainerStruct> d) => c.TryReadContainerStructs(count, d),
-        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out ContainerStruct[] v) => c.TryPeekContainerStructsWithMaxCount(maxCount, out v),
-        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out ContainerStruct[] v) => c.TryReadContainerStructsWithMaxCount(maxCount, out v),
-        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<ContainerStruct> d) => c.TryPeekContainerStructsWithMaxCount(maxCount, d),
-        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<ContainerStruct> d) => c.TryReadContainerStructsWithMaxCount(maxCount, d),
+    protected override SerializationOperations<ContainerStruct> Operations { get; } = new() {
+        Write = (ref WriteContext context, ContainerStruct value) => context.WriteContainerStruct(value),
+        Peek = (ReadContext context) => context.PeekContainerStruct(),
+        Read = (ReadContext context) => context.ReadContainerStruct(),
+        TryPeek = (ReadContext context, out ContainerStruct value) => context.TryPeekContainerStruct(out value),
+        TryRead = (ReadContext context, out ContainerStruct value) => context.TryReadContainerStruct(out value),
+        WriteSpan = (ref WriteContext context, Span<ContainerStruct> values) => context.WriteContainerStructs(values),
+        PeekSpan = (ReadContext context, Span<ContainerStruct> destination) => context.PeekContainerStructs(destination),
+        ReadSpan = (ReadContext context, Span<ContainerStruct> destination) => context.ReadContainerStructs(destination),
+        TryPeekSpan = (ReadContext context, Span<ContainerStruct> destination) => context.TryPeekContainerStructs(destination),
+        TryReadSpan = (ReadContext context, Span<ContainerStruct> destination) => context.TryReadContainerStructs(destination),
+        WriteSpanWithoutLength = (ref WriteContext context, Span<ContainerStruct> values) => context.WriteContainerStructsWithoutLength(values),
+        PeekSpanWithoutLength = (ReadContext context, int count, Span<ContainerStruct> destination) => context.PeekContainerStructs(count, destination),
+        ReadSpanWithoutLength = (ReadContext context, int count, Span<ContainerStruct> destination) => context.ReadContainerStructs(count, destination),
+        TryPeekSpanWithoutLength = (ReadContext context, int count, Span<ContainerStruct> destination) => context.TryPeekContainerStructs(count, destination),
+        TryReadSpanWithoutLength = (ReadContext context, int count, Span<ContainerStruct> destination) => context.TryReadContainerStructs(count, destination),
+        PeekSpanWithMaxCount = (ReadContext context, int maxCount, Span<ContainerStruct> destination) => context.PeekContainerStructsWithMaxCount(maxCount, destination),
+        ReadSpanWithMaxCount = (ReadContext context, int maxCount, Span<ContainerStruct> destination) => context.ReadContainerStructsWithMaxCount(maxCount, destination),
+        TryPeekSpanWithMaxCount = (ReadContext context, int maxCount, Span<ContainerStruct> destination) => context.TryPeekContainerStructsWithMaxCount(maxCount, destination),
+        TryReadSpanWithMaxCount = (ReadContext context, int maxCount, Span<ContainerStruct> destination) => context.TryReadContainerStructsWithMaxCount(maxCount, destination),
+        WriteArray = (ref WriteContext context, ContainerStruct[] values) => context.WriteContainerStructs(values),
+        PeekArray = (ReadContext context) => context.PeekContainerStructs(),
+        ReadArray = (ReadContext context) => context.ReadContainerStructs(),
+        TryPeekArray = (ReadContext context, out ContainerStruct[] values) => context.TryPeekContainerStructs(out values),
+        TryReadArray = (ReadContext context, out ContainerStruct[] values) => context.TryReadContainerStructs(out values),
+        WriteArrayWithoutLength = (ref WriteContext context, ContainerStruct[] values) => context.WriteContainerStructsWithoutLength(values),
+        PeekArrayWithoutLength = (ReadContext context, int count) => context.PeekContainerStructs(count),
+        ReadArrayWithoutLength = (ReadContext context, int count) => context.ReadContainerStructs(count),
+        TryPeekArrayWithoutLength = (ReadContext context, int count, out ContainerStruct[] values) => context.TryPeekContainerStructs(count, out values),
+        TryReadArrayWithoutLength = (ReadContext context, int count, out ContainerStruct[] values) => context.TryReadContainerStructs(count, out values),
+        PeekArrayWithMaxCount = (ReadContext context, int maxCount) => context.PeekContainerStructsWithMaxCount(maxCount),
+        ReadArrayWithMaxCount = (ReadContext context, int maxCount) => context.ReadContainerStructsWithMaxCount(maxCount),
+        TryPeekArrayWithMaxCount = (ReadContext context, int maxCount, out ContainerStruct[] values) => context.TryPeekContainerStructsWithMaxCount(maxCount, out values),
+        TryReadArrayWithMaxCount = (ReadContext context, int maxCount, out ContainerStruct[] values) => context.TryReadContainerStructsWithMaxCount(maxCount, out values),
     };
 }

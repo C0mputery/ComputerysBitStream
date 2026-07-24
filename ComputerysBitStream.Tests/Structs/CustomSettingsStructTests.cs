@@ -1,3 +1,6 @@
+using ComputerysBitStream.Tests.Structs.Types;
+using ComputerysBitStream.Tests.Utilities;
+
 namespace ComputerysBitStream.Tests.Structs;
 
 public class CustomSettingsStructTests : StructTestSuite<CustomSettingsStruct> {
@@ -10,94 +13,41 @@ public class CustomSettingsStructTests : StructTestSuite<CustomSettingsStruct> {
     ];
 
     protected override int? ExpectedFixedSizeBits => 32;
-    protected override void Write(ref WriteContext context, CustomSettingsStruct value) => context.WriteCustomSettingsStruct(value);
-    protected override CustomSettingsStruct Peek(ReadContext context) => context.PeekCustomSettingsStruct();
-    protected override CustomSettingsStruct Read(ReadContext context) => context.ReadCustomSettingsStruct();
-
-    protected override CustomSettingsStruct TryPeek(ReadContext context) {
-        Assert.True(context.TryPeekCustomSettingsStruct(out CustomSettingsStruct v));
-        return v;
-    }
-
-    protected override CustomSettingsStruct TryRead(ReadContext context) {
-        Assert.True(context.TryReadCustomSettingsStruct(out CustomSettingsStruct v));
-        return v;
-    }
-
-    protected override void WriteArray(ref WriteContext context, CustomSettingsStruct[] values) => context.WriteCustomSettingsStructs(values);
-    protected override CustomSettingsStruct[] PeekArrayWithLength(ReadContext context) => context.PeekCustomSettingsStructs();
-    protected override CustomSettingsStruct[] ReadArrayWithLength(ReadContext context) => context.ReadCustomSettingsStructs();
-
-    protected override CustomSettingsStruct[] TryPeekArrayWithLength(ReadContext context) {
-        Assert.True(context.TryPeekCustomSettingsStructs(out CustomSettingsStruct[] v));
-        return v;
-    }
-
-    protected override CustomSettingsStruct[] TryReadArrayWithLength(ReadContext context) {
-        Assert.True(context.TryReadCustomSettingsStructs(out CustomSettingsStruct[] v));
-        return v;
-    }
-
-    protected override CustomSettingsStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekCustomSettingsStructsWithMaxCount(maxCount);
-    protected override CustomSettingsStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadCustomSettingsStructsWithMaxCount(maxCount);
-
-    protected override CustomSettingsStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
-        Assert.True(context.TryPeekCustomSettingsStructsWithMaxCount(maxCount, out CustomSettingsStruct[] values));
-        return values;
-    }
-
-    protected override CustomSettingsStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
-        Assert.True(context.TryReadCustomSettingsStructsWithMaxCount(maxCount, out CustomSettingsStruct[] values));
-        return values;
-    }
-
-    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<CustomSettingsStruct> destination) => context.PeekCustomSettingsStructsWithMaxCount(maxCount, destination);
-    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<CustomSettingsStruct> destination) => context.ReadCustomSettingsStructsWithMaxCount(maxCount, destination);
-    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<CustomSettingsStruct> destination) { Assert.True(context.TryPeekCustomSettingsStructsWithMaxCount(maxCount, destination)); }
-    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<CustomSettingsStruct> destination) { Assert.True(context.TryReadCustomSettingsStructsWithMaxCount(maxCount, destination)); }
-
-    protected override void WriteArrayWithoutLength(ref WriteContext context, CustomSettingsStruct[] values) => context.WriteCustomSettingsStructsWithoutLength(values);
-    protected override CustomSettingsStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekCustomSettingsStructs(count);
-    protected override CustomSettingsStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadCustomSettingsStructs(count);
-
-    protected override CustomSettingsStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) {
-        Assert.True(context.TryPeekCustomSettingsStructs(count, out CustomSettingsStruct[] v));
-        return v;
-    }
-
-    protected override CustomSettingsStruct[] TryReadArrayWithoutLength(ReadContext context, int count) {
-        Assert.True(context.TryReadCustomSettingsStructs(count, out CustomSettingsStruct[] v));
-        return v;
-    }
-
-    protected override void WriteSpan(ref WriteContext context, Span<CustomSettingsStruct> values) => context.WriteCustomSettingsStructs(values);
-    protected override void PeekSpanWithLength(ReadContext context, Span<CustomSettingsStruct> destination) => context.PeekCustomSettingsStructs(destination);
-    protected override void ReadSpanWithLength(ReadContext context, Span<CustomSettingsStruct> destination) => context.ReadCustomSettingsStructs(destination);
-    protected override void TryPeekSpanWithLength(ReadContext context, Span<CustomSettingsStruct> destination) { Assert.True(context.TryPeekCustomSettingsStructs(destination)); }
-    protected override void TryReadSpanWithLength(ReadContext context, Span<CustomSettingsStruct> destination) { Assert.True(context.TryReadCustomSettingsStructs(destination)); }
-
-    protected override void WriteSpanWithoutLength(ref WriteContext context, Span<CustomSettingsStruct> values) => context.WriteCustomSettingsStructsWithoutLength(values);
-    protected override void PeekSpanWithoutLength(ReadContext context, int count, Span<CustomSettingsStruct> destination) => context.PeekCustomSettingsStructs(count, destination);
-    protected override void ReadSpanWithoutLength(ReadContext context, int count, Span<CustomSettingsStruct> destination) => context.ReadCustomSettingsStructs(count, destination);
-    protected override void TryPeekSpanWithoutLength(ReadContext context, int count, Span<CustomSettingsStruct> destination) { Assert.True(context.TryPeekCustomSettingsStructs(count, destination)); }
-    protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<CustomSettingsStruct> destination) { Assert.True(context.TryReadCustomSettingsStructs(count, destination)); }
-
     protected override Type StructType => typeof(CustomSettingsStruct);
 
-    protected override TryReadOperationSet<CustomSettingsStruct> TryOperations => new() {
-        TryPeekValue = (ReadContext c, out CustomSettingsStruct v) => c.TryPeekCustomSettingsStruct(out v),
-        TryReadValue = (ReadContext c, out CustomSettingsStruct v) => c.TryReadCustomSettingsStruct(out v),
-        TryPeekArrayWithLength = (ReadContext c, out CustomSettingsStruct[] v) => c.TryPeekCustomSettingsStructs(out v),
-        TryReadArrayWithLength = (ReadContext c, out CustomSettingsStruct[] v) => c.TryReadCustomSettingsStructs(out v),
-        TryPeekArrayWithoutLength = (ReadContext c, int count, out CustomSettingsStruct[] v) => c.TryPeekCustomSettingsStructs(count, out v),
-        TryReadArrayWithoutLength = (ReadContext c, int count, out CustomSettingsStruct[] v) => c.TryReadCustomSettingsStructs(count, out v),
-        TryPeekSpanWithLength = (ReadContext c, Span<CustomSettingsStruct> d) => c.TryPeekCustomSettingsStructs(d),
-        TryReadSpanWithLength = (ReadContext c, Span<CustomSettingsStruct> d) => c.TryReadCustomSettingsStructs(d),
-        TryPeekSpanWithoutLength = (ReadContext c, int count, Span<CustomSettingsStruct> d) => c.TryPeekCustomSettingsStructs(count, d),
-        TryReadSpanWithoutLength = (ReadContext c, int count, Span<CustomSettingsStruct> d) => c.TryReadCustomSettingsStructs(count, d),
-        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out CustomSettingsStruct[] v) => c.TryPeekCustomSettingsStructsWithMaxCount(maxCount, out v),
-        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out CustomSettingsStruct[] v) => c.TryReadCustomSettingsStructsWithMaxCount(maxCount, out v),
-        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<CustomSettingsStruct> d) => c.TryPeekCustomSettingsStructsWithMaxCount(maxCount, d),
-        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<CustomSettingsStruct> d) => c.TryReadCustomSettingsStructsWithMaxCount(maxCount, d),
+    protected override SerializationOperations<CustomSettingsStruct> Operations { get; } = new() {
+        Write = (ref WriteContext context, CustomSettingsStruct value) => context.WriteCustomSettingsStruct(value),
+        Peek = (ReadContext context) => context.PeekCustomSettingsStruct(),
+        Read = (ReadContext context) => context.ReadCustomSettingsStruct(),
+        TryPeek = (ReadContext context, out CustomSettingsStruct value) => context.TryPeekCustomSettingsStruct(out value),
+        TryRead = (ReadContext context, out CustomSettingsStruct value) => context.TryReadCustomSettingsStruct(out value),
+        WriteSpan = (ref WriteContext context, Span<CustomSettingsStruct> values) => context.WriteCustomSettingsStructs(values),
+        PeekSpan = (ReadContext context, Span<CustomSettingsStruct> destination) => context.PeekCustomSettingsStructs(destination),
+        ReadSpan = (ReadContext context, Span<CustomSettingsStruct> destination) => context.ReadCustomSettingsStructs(destination),
+        TryPeekSpan = (ReadContext context, Span<CustomSettingsStruct> destination) => context.TryPeekCustomSettingsStructs(destination),
+        TryReadSpan = (ReadContext context, Span<CustomSettingsStruct> destination) => context.TryReadCustomSettingsStructs(destination),
+        WriteSpanWithoutLength = (ref WriteContext context, Span<CustomSettingsStruct> values) => context.WriteCustomSettingsStructsWithoutLength(values),
+        PeekSpanWithoutLength = (ReadContext context, int count, Span<CustomSettingsStruct> destination) => context.PeekCustomSettingsStructs(count, destination),
+        ReadSpanWithoutLength = (ReadContext context, int count, Span<CustomSettingsStruct> destination) => context.ReadCustomSettingsStructs(count, destination),
+        TryPeekSpanWithoutLength = (ReadContext context, int count, Span<CustomSettingsStruct> destination) => context.TryPeekCustomSettingsStructs(count, destination),
+        TryReadSpanWithoutLength = (ReadContext context, int count, Span<CustomSettingsStruct> destination) => context.TryReadCustomSettingsStructs(count, destination),
+        PeekSpanWithMaxCount = (ReadContext context, int maxCount, Span<CustomSettingsStruct> destination) => context.PeekCustomSettingsStructsWithMaxCount(maxCount, destination),
+        ReadSpanWithMaxCount = (ReadContext context, int maxCount, Span<CustomSettingsStruct> destination) => context.ReadCustomSettingsStructsWithMaxCount(maxCount, destination),
+        TryPeekSpanWithMaxCount = (ReadContext context, int maxCount, Span<CustomSettingsStruct> destination) => context.TryPeekCustomSettingsStructsWithMaxCount(maxCount, destination),
+        TryReadSpanWithMaxCount = (ReadContext context, int maxCount, Span<CustomSettingsStruct> destination) => context.TryReadCustomSettingsStructsWithMaxCount(maxCount, destination),
+        WriteArray = (ref WriteContext context, CustomSettingsStruct[] values) => context.WriteCustomSettingsStructs(values),
+        PeekArray = (ReadContext context) => context.PeekCustomSettingsStructs(),
+        ReadArray = (ReadContext context) => context.ReadCustomSettingsStructs(),
+        TryPeekArray = (ReadContext context, out CustomSettingsStruct[] values) => context.TryPeekCustomSettingsStructs(out values),
+        TryReadArray = (ReadContext context, out CustomSettingsStruct[] values) => context.TryReadCustomSettingsStructs(out values),
+        WriteArrayWithoutLength = (ref WriteContext context, CustomSettingsStruct[] values) => context.WriteCustomSettingsStructsWithoutLength(values),
+        PeekArrayWithoutLength = (ReadContext context, int count) => context.PeekCustomSettingsStructs(count),
+        ReadArrayWithoutLength = (ReadContext context, int count) => context.ReadCustomSettingsStructs(count),
+        TryPeekArrayWithoutLength = (ReadContext context, int count, out CustomSettingsStruct[] values) => context.TryPeekCustomSettingsStructs(count, out values),
+        TryReadArrayWithoutLength = (ReadContext context, int count, out CustomSettingsStruct[] values) => context.TryReadCustomSettingsStructs(count, out values),
+        PeekArrayWithMaxCount = (ReadContext context, int maxCount) => context.PeekCustomSettingsStructsWithMaxCount(maxCount),
+        ReadArrayWithMaxCount = (ReadContext context, int maxCount) => context.ReadCustomSettingsStructsWithMaxCount(maxCount),
+        TryPeekArrayWithMaxCount = (ReadContext context, int maxCount, out CustomSettingsStruct[] values) => context.TryPeekCustomSettingsStructsWithMaxCount(maxCount, out values),
+        TryReadArrayWithMaxCount = (ReadContext context, int maxCount, out CustomSettingsStruct[] values) => context.TryReadCustomSettingsStructsWithMaxCount(maxCount, out values),
     };
 }

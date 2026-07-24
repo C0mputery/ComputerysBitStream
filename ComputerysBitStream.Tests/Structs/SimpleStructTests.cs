@@ -1,3 +1,6 @@
+using ComputerysBitStream.Tests.Structs.Types;
+using ComputerysBitStream.Tests.Utilities;
+
 namespace ComputerysBitStream.Tests.Structs;
 
 public class SimpleStructTests : StructTestSuite<SimpleStruct> {
@@ -9,94 +12,41 @@ public class SimpleStructTests : StructTestSuite<SimpleStruct> {
         new() { X = 3, Y = 3.0f, Z = true }
     ];
 
-    protected override void Write(ref WriteContext context, SimpleStruct value) => context.WriteSimpleStruct(value);
-    protected override SimpleStruct Peek(ReadContext context) => context.PeekSimpleStruct();
-    protected override SimpleStruct Read(ReadContext context) => context.ReadSimpleStruct();
-
-    protected override SimpleStruct TryPeek(ReadContext context) {
-        Assert.True(context.TryPeekSimpleStruct(out SimpleStruct v));
-        return v;
-    }
-
-    protected override SimpleStruct TryRead(ReadContext context) {
-        Assert.True(context.TryReadSimpleStruct(out SimpleStruct v));
-        return v;
-    }
-
-    protected override void WriteArray(ref WriteContext context, SimpleStruct[] values) => context.WriteSimpleStructs(values);
-    protected override SimpleStruct[] PeekArrayWithLength(ReadContext context) => context.PeekSimpleStructs();
-    protected override SimpleStruct[] ReadArrayWithLength(ReadContext context) => context.ReadSimpleStructs();
-
-    protected override SimpleStruct[] TryPeekArrayWithLength(ReadContext context) {
-        Assert.True(context.TryPeekSimpleStructs(out SimpleStruct[] v));
-        return v;
-    }
-
-    protected override SimpleStruct[] TryReadArrayWithLength(ReadContext context) {
-        Assert.True(context.TryReadSimpleStructs(out SimpleStruct[] v));
-        return v;
-    }
-
-    protected override SimpleStruct[] PeekArrayWithMaxCount(ReadContext context, int maxCount) => context.PeekSimpleStructsWithMaxCount(maxCount);
-    protected override SimpleStruct[] ReadArrayWithMaxCount(ReadContext context, int maxCount) => context.ReadSimpleStructsWithMaxCount(maxCount);
-
-    protected override SimpleStruct[] TryPeekArrayWithMaxCount(ReadContext context, int maxCount) {
-        Assert.True(context.TryPeekSimpleStructsWithMaxCount(maxCount, out SimpleStruct[] values));
-        return values;
-    }
-
-    protected override SimpleStruct[] TryReadArrayWithMaxCount(ReadContext context, int maxCount) {
-        Assert.True(context.TryReadSimpleStructsWithMaxCount(maxCount, out SimpleStruct[] values));
-        return values;
-    }
-
-    protected override void PeekSpanWithMaxCount(ReadContext context, int maxCount, Span<SimpleStruct> destination) => context.PeekSimpleStructsWithMaxCount(maxCount, destination);
-    protected override void ReadSpanWithMaxCount(ReadContext context, int maxCount, Span<SimpleStruct> destination) => context.ReadSimpleStructsWithMaxCount(maxCount, destination);
-    protected override void TryPeekSpanWithMaxCount(ReadContext context, int maxCount, Span<SimpleStruct> destination) { Assert.True(context.TryPeekSimpleStructsWithMaxCount(maxCount, destination)); }
-    protected override void TryReadSpanWithMaxCount(ReadContext context, int maxCount, Span<SimpleStruct> destination) { Assert.True(context.TryReadSimpleStructsWithMaxCount(maxCount, destination)); }
-
-    protected override void WriteArrayWithoutLength(ref WriteContext context, SimpleStruct[] values) => context.WriteSimpleStructsWithoutLength(values);
-    protected override SimpleStruct[] PeekArrayWithoutLength(ReadContext context, int count) => context.PeekSimpleStructs(count);
-    protected override SimpleStruct[] ReadArrayWithoutLength(ReadContext context, int count) => context.ReadSimpleStructs(count);
-
-    protected override SimpleStruct[] TryPeekArrayWithoutLength(ReadContext context, int count) {
-        Assert.True(context.TryPeekSimpleStructs(count, out SimpleStruct[] v));
-        return v;
-    }
-
-    protected override SimpleStruct[] TryReadArrayWithoutLength(ReadContext context, int count) {
-        Assert.True(context.TryReadSimpleStructs(count, out SimpleStruct[] v));
-        return v;
-    }
-
-    protected override void WriteSpan(ref WriteContext context, Span<SimpleStruct> values) => context.WriteSimpleStructs(values);
-    protected override void PeekSpanWithLength(ReadContext context, Span<SimpleStruct> destination) => context.PeekSimpleStructs(destination);
-    protected override void ReadSpanWithLength(ReadContext context, Span<SimpleStruct> destination) => context.ReadSimpleStructs(destination);
-    protected override void TryPeekSpanWithLength(ReadContext context, Span<SimpleStruct> destination) { Assert.True(context.TryPeekSimpleStructs(destination)); }
-    protected override void TryReadSpanWithLength(ReadContext context, Span<SimpleStruct> destination) { Assert.True(context.TryReadSimpleStructs(destination)); }
-
-    protected override void WriteSpanWithoutLength(ref WriteContext context, Span<SimpleStruct> values) => context.WriteSimpleStructsWithoutLength(values);
-    protected override void PeekSpanWithoutLength(ReadContext context, int count, Span<SimpleStruct> destination) => context.PeekSimpleStructs(count, destination);
-    protected override void ReadSpanWithoutLength(ReadContext context, int count, Span<SimpleStruct> destination) => context.ReadSimpleStructs(count, destination);
-    protected override void TryPeekSpanWithoutLength(ReadContext context, int count, Span<SimpleStruct> destination) { Assert.True(context.TryPeekSimpleStructs(count, destination)); }
-    protected override void TryReadSpanWithoutLength(ReadContext context, int count, Span<SimpleStruct> destination) { Assert.True(context.TryReadSimpleStructs(count, destination)); }
-
     protected override Type StructType => typeof(SimpleStruct);
 
-    protected override TryReadOperationSet<SimpleStruct> TryOperations => new() {
-        TryPeekValue = (ReadContext c, out SimpleStruct v) => c.TryPeekSimpleStruct(out v),
-        TryReadValue = (ReadContext c, out SimpleStruct v) => c.TryReadSimpleStruct(out v),
-        TryPeekArrayWithLength = (ReadContext c, out SimpleStruct[] v) => c.TryPeekSimpleStructs(out v),
-        TryReadArrayWithLength = (ReadContext c, out SimpleStruct[] v) => c.TryReadSimpleStructs(out v),
-        TryPeekArrayWithoutLength = (ReadContext c, int count, out SimpleStruct[] v) => c.TryPeekSimpleStructs(count, out v),
-        TryReadArrayWithoutLength = (ReadContext c, int count, out SimpleStruct[] v) => c.TryReadSimpleStructs(count, out v),
-        TryPeekSpanWithLength = (ReadContext c, Span<SimpleStruct> d) => c.TryPeekSimpleStructs(d),
-        TryReadSpanWithLength = (ReadContext c, Span<SimpleStruct> d) => c.TryReadSimpleStructs(d),
-        TryPeekSpanWithoutLength = (ReadContext c, int count, Span<SimpleStruct> d) => c.TryPeekSimpleStructs(count, d),
-        TryReadSpanWithoutLength = (ReadContext c, int count, Span<SimpleStruct> d) => c.TryReadSimpleStructs(count, d),
-        TryPeekArrayWithMaxCount = (ReadContext c, int maxCount, out SimpleStruct[] v) => c.TryPeekSimpleStructsWithMaxCount(maxCount, out v),
-        TryReadArrayWithMaxCount = (ReadContext c, int maxCount, out SimpleStruct[] v) => c.TryReadSimpleStructsWithMaxCount(maxCount, out v),
-        TryPeekSpanWithMaxCount = (ReadContext c, int maxCount, Span<SimpleStruct> d) => c.TryPeekSimpleStructsWithMaxCount(maxCount, d),
-        TryReadSpanWithMaxCount = (ReadContext c, int maxCount, Span<SimpleStruct> d) => c.TryReadSimpleStructsWithMaxCount(maxCount, d),
+    protected override SerializationOperations<SimpleStruct> Operations { get; } = new() {
+        Write = (ref WriteContext context, SimpleStruct value) => context.WriteSimpleStruct(value),
+        Peek = (ReadContext context) => context.PeekSimpleStruct(),
+        Read = (ReadContext context) => context.ReadSimpleStruct(),
+        TryPeek = (ReadContext context, out SimpleStruct value) => context.TryPeekSimpleStruct(out value),
+        TryRead = (ReadContext context, out SimpleStruct value) => context.TryReadSimpleStruct(out value),
+        WriteSpan = (ref WriteContext context, Span<SimpleStruct> values) => context.WriteSimpleStructs(values),
+        PeekSpan = (ReadContext context, Span<SimpleStruct> destination) => context.PeekSimpleStructs(destination),
+        ReadSpan = (ReadContext context, Span<SimpleStruct> destination) => context.ReadSimpleStructs(destination),
+        TryPeekSpan = (ReadContext context, Span<SimpleStruct> destination) => context.TryPeekSimpleStructs(destination),
+        TryReadSpan = (ReadContext context, Span<SimpleStruct> destination) => context.TryReadSimpleStructs(destination),
+        WriteSpanWithoutLength = (ref WriteContext context, Span<SimpleStruct> values) => context.WriteSimpleStructsWithoutLength(values),
+        PeekSpanWithoutLength = (ReadContext context, int count, Span<SimpleStruct> destination) => context.PeekSimpleStructs(count, destination),
+        ReadSpanWithoutLength = (ReadContext context, int count, Span<SimpleStruct> destination) => context.ReadSimpleStructs(count, destination),
+        TryPeekSpanWithoutLength = (ReadContext context, int count, Span<SimpleStruct> destination) => context.TryPeekSimpleStructs(count, destination),
+        TryReadSpanWithoutLength = (ReadContext context, int count, Span<SimpleStruct> destination) => context.TryReadSimpleStructs(count, destination),
+        PeekSpanWithMaxCount = (ReadContext context, int maxCount, Span<SimpleStruct> destination) => context.PeekSimpleStructsWithMaxCount(maxCount, destination),
+        ReadSpanWithMaxCount = (ReadContext context, int maxCount, Span<SimpleStruct> destination) => context.ReadSimpleStructsWithMaxCount(maxCount, destination),
+        TryPeekSpanWithMaxCount = (ReadContext context, int maxCount, Span<SimpleStruct> destination) => context.TryPeekSimpleStructsWithMaxCount(maxCount, destination),
+        TryReadSpanWithMaxCount = (ReadContext context, int maxCount, Span<SimpleStruct> destination) => context.TryReadSimpleStructsWithMaxCount(maxCount, destination),
+        WriteArray = (ref WriteContext context, SimpleStruct[] values) => context.WriteSimpleStructs(values),
+        PeekArray = (ReadContext context) => context.PeekSimpleStructs(),
+        ReadArray = (ReadContext context) => context.ReadSimpleStructs(),
+        TryPeekArray = (ReadContext context, out SimpleStruct[] values) => context.TryPeekSimpleStructs(out values),
+        TryReadArray = (ReadContext context, out SimpleStruct[] values) => context.TryReadSimpleStructs(out values),
+        WriteArrayWithoutLength = (ref WriteContext context, SimpleStruct[] values) => context.WriteSimpleStructsWithoutLength(values),
+        PeekArrayWithoutLength = (ReadContext context, int count) => context.PeekSimpleStructs(count),
+        ReadArrayWithoutLength = (ReadContext context, int count) => context.ReadSimpleStructs(count),
+        TryPeekArrayWithoutLength = (ReadContext context, int count, out SimpleStruct[] values) => context.TryPeekSimpleStructs(count, out values),
+        TryReadArrayWithoutLength = (ReadContext context, int count, out SimpleStruct[] values) => context.TryReadSimpleStructs(count, out values),
+        PeekArrayWithMaxCount = (ReadContext context, int maxCount) => context.PeekSimpleStructsWithMaxCount(maxCount),
+        ReadArrayWithMaxCount = (ReadContext context, int maxCount) => context.ReadSimpleStructsWithMaxCount(maxCount),
+        TryPeekArrayWithMaxCount = (ReadContext context, int maxCount, out SimpleStruct[] values) => context.TryPeekSimpleStructsWithMaxCount(maxCount, out values),
+        TryReadArrayWithMaxCount = (ReadContext context, int maxCount, out SimpleStruct[] values) => context.TryReadSimpleStructsWithMaxCount(maxCount, out values),
     };
 }

@@ -1,3 +1,7 @@
+using ComputerysBitStream.Primitives.FixedSize;
+using ComputerysBitStream.Primitives.VariableLength;
+using ComputerysBitStream.Tests.Structs.Types;
+
 namespace ComputerysBitStream.Tests.Structs;
 
 public class ArrayMemberStructTests {
@@ -277,7 +281,7 @@ public class ArrayMemberStructTests {
     [Fact]
     public void CrossNamespaceStructLeaves_RoundTrip() {
         CrossNamespaceArrayMemberStruct expected = new() {
-            Values = [new ArrayElements.CrossNamespaceArrayElement { Value = 42 }]
+            Values = [new CrossNamespaceArrayElement { Value = 42 }]
         };
         ulong[] buffer = new ulong[16];
         WriteContext write = new(buffer);
