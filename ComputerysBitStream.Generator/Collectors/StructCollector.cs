@@ -47,15 +47,15 @@ internal static class StructCollector {
     }
 
     public static Collected<StructDefinition> CollectStandaloneStruct(AttributeData attributeData, INamedTypeSymbol structSymbol, Compilation compilation) {
-        Collected<StructDefinition> collected = CollectStructCore(attributeData, structSymbol, compilation);
+        Collected<StructDefinition> collected = CollectStructCore(attributeData, structSymbol);
         return AttachStructSettings(collected, attributeData, compilation);
     }
 
     public static Collected<StructDefinition> CollectIncludedStruct(AttributeData attributeData, INamedTypeSymbol structSymbol, Compilation compilation) {
-        return CollectStructCore(attributeData, structSymbol, compilation);
+        return CollectStructCore(attributeData, structSymbol);
     }
 
-    private static Collected<StructDefinition> CollectStructCore(AttributeData attributeData, INamedTypeSymbol structSymbol, Compilation compilation) {
+    private static Collected<StructDefinition> CollectStructCore(AttributeData attributeData, INamedTypeSymbol structSymbol) {
         ImmutableArray<DiagnosticValueType>.Builder diagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
         Location? attributeLocation = attributeData.GetLocation();
 
@@ -115,15 +115,15 @@ internal static class StructCollector {
     }
 
     public static Collected<StructDefinition> CollectStandaloneProxyStruct(AttributeData attributeData, INamedTypeSymbol proxyClassSymbol, Compilation compilation) {
-        Collected<StructDefinition> collected = CollectProxyStructCore(attributeData, proxyClassSymbol, compilation);
+        Collected<StructDefinition> collected = CollectProxyStructCore(attributeData, proxyClassSymbol);
         return AttachStructSettings(collected, attributeData, compilation);
     }
 
     public static Collected<StructDefinition> CollectIncludedProxyStruct(AttributeData attributeData, INamedTypeSymbol proxyClassSymbol, Compilation compilation) {
-        return CollectProxyStructCore(attributeData, proxyClassSymbol, compilation);
+        return CollectProxyStructCore(attributeData, proxyClassSymbol);
     }
 
-    private static Collected<StructDefinition> CollectProxyStructCore(AttributeData attributeData, INamedTypeSymbol proxyClassSymbol, Compilation compilation) {
+    private static Collected<StructDefinition> CollectProxyStructCore(AttributeData attributeData, INamedTypeSymbol proxyClassSymbol) {
         ImmutableArray<DiagnosticValueType>.Builder diagnostics = ImmutableArray.CreateBuilder<DiagnosticValueType>();
         Location? attributeLocation = attributeData.GetLocation();
         string proxyClassFullyQualifiedName = proxyClassSymbol.GetFullyQualifiedName();
