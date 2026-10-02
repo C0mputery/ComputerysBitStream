@@ -30,7 +30,6 @@
     <ItemGroup>
         <ProjectReference Include="..\ComputerysBitStream\ComputerysBitStream.csproj"/>
         <ProjectReference Include="..\ComputerysBitStream.Generator\ComputerysBitStream.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
-        <ProjectReference Include="..\ComputerysBitStream.Extras\ComputerysBitStream.Extras.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
