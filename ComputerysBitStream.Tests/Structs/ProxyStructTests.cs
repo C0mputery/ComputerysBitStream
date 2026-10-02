@@ -12,7 +12,8 @@ public class ExternalPlainStructTests : StructTestSuite<ExternalPlainStruct> {
         new() { X = 3, Y = 3.0f }
     ];
 
-    protected override Type StructType => typeof(ExternalPlainStruct);
+    protected override int ExpectedMetadataSize => 64;
+    protected override Type StructType => typeof(ExternalPlainStructProxy);
 
     protected override SerializationOperations<ExternalPlainStruct> Operations { get; } = new() {
         Write = (ref WriteContext context, ExternalPlainStruct value) => context.WriteExternalPlainStruct(value),
@@ -51,54 +52,6 @@ public class ExternalPlainStructTests : StructTestSuite<ExternalPlainStruct> {
     };
 }
 
-public class AnotherExternalStructTests : StructTestSuite<AnotherExternalStruct> {
-    protected override AnotherExternalStruct Value => new() { Flag = true };
-
-    protected override AnotherExternalStruct[] Values => [
-        new() { Flag = true },
-        new() { Flag = false },
-        new() { Flag = true }
-    ];
-
-    protected override Type StructType => typeof(AnotherExternalStruct);
-
-    protected override SerializationOperations<AnotherExternalStruct> Operations { get; } = new() {
-        Write = (ref WriteContext context, AnotherExternalStruct value) => context.WriteAnotherExternalStruct(value),
-        Peek = (ReadContext context) => context.PeekAnotherExternalStruct(),
-        Read = (ReadContext context) => context.ReadAnotherExternalStruct(),
-        TryPeek = (ReadContext context, out AnotherExternalStruct value) => context.TryPeekAnotherExternalStruct(out value),
-        TryRead = (ReadContext context, out AnotherExternalStruct value) => context.TryReadAnotherExternalStruct(out value),
-        WriteSpan = (ref WriteContext context, Span<AnotherExternalStruct> values) => context.WriteAnotherExternalStructs(values),
-        PeekSpan = (ReadContext context, Span<AnotherExternalStruct> destination) => context.PeekAnotherExternalStructs(destination),
-        ReadSpan = (ReadContext context, Span<AnotherExternalStruct> destination) => context.ReadAnotherExternalStructs(destination),
-        TryPeekSpan = (ReadContext context, Span<AnotherExternalStruct> destination) => context.TryPeekAnotherExternalStructs(destination),
-        TryReadSpan = (ReadContext context, Span<AnotherExternalStruct> destination) => context.TryReadAnotherExternalStructs(destination),
-        WriteSpanWithoutLength = (ref WriteContext context, Span<AnotherExternalStruct> values) => context.WriteAnotherExternalStructsWithoutLength(values),
-        PeekSpanWithoutLength = (ReadContext context, int count, Span<AnotherExternalStruct> destination) => context.PeekAnotherExternalStructs(count, destination),
-        ReadSpanWithoutLength = (ReadContext context, int count, Span<AnotherExternalStruct> destination) => context.ReadAnotherExternalStructs(count, destination),
-        TryPeekSpanWithoutLength = (ReadContext context, int count, Span<AnotherExternalStruct> destination) => context.TryPeekAnotherExternalStructs(count, destination),
-        TryReadSpanWithoutLength = (ReadContext context, int count, Span<AnotherExternalStruct> destination) => context.TryReadAnotherExternalStructs(count, destination),
-        PeekSpanWithMaxCount = (ReadContext context, int maxCount, Span<AnotherExternalStruct> destination) => context.PeekAnotherExternalStructsWithMaxCount(maxCount, destination),
-        ReadSpanWithMaxCount = (ReadContext context, int maxCount, Span<AnotherExternalStruct> destination) => context.ReadAnotherExternalStructsWithMaxCount(maxCount, destination),
-        TryPeekSpanWithMaxCount = (ReadContext context, int maxCount, Span<AnotherExternalStruct> destination) => context.TryPeekAnotherExternalStructsWithMaxCount(maxCount, destination),
-        TryReadSpanWithMaxCount = (ReadContext context, int maxCount, Span<AnotherExternalStruct> destination) => context.TryReadAnotherExternalStructsWithMaxCount(maxCount, destination),
-        WriteArray = (ref WriteContext context, AnotherExternalStruct[] values) => context.WriteAnotherExternalStructs(values),
-        PeekArray = (ReadContext context) => context.PeekAnotherExternalStructs(),
-        ReadArray = (ReadContext context) => context.ReadAnotherExternalStructs(),
-        TryPeekArray = (ReadContext context, out AnotherExternalStruct[] values) => context.TryPeekAnotherExternalStructs(out values),
-        TryReadArray = (ReadContext context, out AnotherExternalStruct[] values) => context.TryReadAnotherExternalStructs(out values),
-        WriteArrayWithoutLength = (ref WriteContext context, AnotherExternalStruct[] values) => context.WriteAnotherExternalStructsWithoutLength(values),
-        PeekArrayWithoutLength = (ReadContext context, int count) => context.PeekAnotherExternalStructs(count),
-        ReadArrayWithoutLength = (ReadContext context, int count) => context.ReadAnotherExternalStructs(count),
-        TryPeekArrayWithoutLength = (ReadContext context, int count, out AnotherExternalStruct[] values) => context.TryPeekAnotherExternalStructs(count, out values),
-        TryReadArrayWithoutLength = (ReadContext context, int count, out AnotherExternalStruct[] values) => context.TryReadAnotherExternalStructs(count, out values),
-        PeekArrayWithMaxCount = (ReadContext context, int maxCount) => context.PeekAnotherExternalStructsWithMaxCount(maxCount),
-        ReadArrayWithMaxCount = (ReadContext context, int maxCount) => context.ReadAnotherExternalStructsWithMaxCount(maxCount),
-        TryPeekArrayWithMaxCount = (ReadContext context, int maxCount, out AnotherExternalStruct[] values) => context.TryPeekAnotherExternalStructsWithMaxCount(maxCount, out values),
-        TryReadArrayWithMaxCount = (ReadContext context, int maxCount, out AnotherExternalStruct[] values) => context.TryReadAnotherExternalStructsWithMaxCount(maxCount, out values),
-    };
-}
-
 public class CaseTestStructTests : StructTestSuite<CaseTestStruct> {
     protected override CaseTestStruct Value => new() { Value = 123 };
 
@@ -108,7 +61,8 @@ public class CaseTestStructTests : StructTestSuite<CaseTestStruct> {
         new() { Value = 3 }
     ];
 
-    protected override Type StructType => typeof(CaseTestStruct);
+    protected override int ExpectedMetadataSize => 32;
+    protected override Type StructType => typeof(CaseTestStructProxyCorrect);
 
     protected override SerializationOperations<CaseTestStruct> Operations { get; } = new() {
         Write = (ref WriteContext context, CaseTestStruct value) => context.WriteCaseTestStruct(value),

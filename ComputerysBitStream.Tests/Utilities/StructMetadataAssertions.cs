@@ -4,6 +4,8 @@ using ComputerysBitStream.Attributes;
 namespace ComputerysBitStream.Tests.Utilities;
 
 public static class StructMetadataAssertions {
+    public const int VariableLengthSize = -1;
+
     public static int GetMetadataSize(Type type) {
         CustomAttributeData? data = type.GetCustomAttributesData()
             .FirstOrDefault(attribute => attribute.AttributeType == typeof(BitStreamStructMetadataAttribute));

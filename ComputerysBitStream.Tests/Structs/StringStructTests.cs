@@ -12,6 +12,7 @@ public class StringStructTests : StructTestSuite<StringStruct> {
         new() { Id = 3, Name = "cafÃ©" },
     ];
 
+    protected override int ExpectedMetadataSize => StructMetadataAssertions.VariableLengthSize;
     protected override Type StructType => typeof(StringStruct);
 
     protected override SerializationOperations<StringStruct> Operations { get; } = new() {

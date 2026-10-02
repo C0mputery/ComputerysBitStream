@@ -12,6 +12,7 @@ public class SimpleStructTests : StructTestSuite<SimpleStruct> {
         new() { X = 3, Y = 3.0f, Z = true }
     ];
 
+    protected override int ExpectedMetadataSize => 65;
     protected override Type StructType => typeof(SimpleStruct);
 
     protected override SerializationOperations<SimpleStruct> Operations { get; } = new() {

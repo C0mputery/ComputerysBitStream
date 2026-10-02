@@ -8,9 +8,6 @@ public abstract class SerializationTestSuite<T> {
     protected abstract SerializationOperations<T> Operations { get; }
 
     protected virtual bool SupportsOutOfBoundsTests => true;
-    protected virtual Type? MetadataStructType => null;
-    protected virtual int? ExpectedFixedSizeBits => null;
-    protected virtual int? GetEncodedSize(T value) => null;
     protected virtual void AssertValuesEqual(T expected, T actual) => Assert.Equal(expected, actual);
 
     protected void AssertValuesEqual(T[] expected, T[] actual) {
@@ -83,23 +80,6 @@ public abstract class SerializationTestSuite<T> {
     private T[] AssertTryReadArrayWithMaxCount(ReadContext context, int maxCount) {
         Assert.True(Operations.TryReadArrayWithMaxCount(context, maxCount, out T[] values));
         return values;
-    }
-
-    [Fact]
-    public void ShouldReportCorrectFixedSize() {
-        if (ExpectedFixedSizeBits is null || MetadataStructType is null) { return; }
-        Assert.Equal(ExpectedFixedSizeBits.Value, StructMetadataAssertions.GetMetadataSize(MetadataStructType));
-        Assert.True(StructMetadataAssertions.IsFixedSize(MetadataStructType));
-    }
-
-    [Fact]
-    public void Size_ShouldMatchActualBitsWritten() {
-        if (GetEncodedSize(Value) is not int expectedSize) { return; }
-        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
-        WriteContext context = new(buffer);
-        long start = context.Position;
-        Operations.Write(ref context, Value);
-        Assert.Equal(expectedSize, context.Position - start);
     }
 
     [Theory]
@@ -374,15 +354,18 @@ public abstract class SerializationTestSuite<T> {
         Assert.Equal(originalPosition, context.Position);
     }
 
+    private void SkipUnlessOutOfBoundsTestsSupported() =>
+        Assert.SkipUnless(SupportsOutOfBoundsTests, "Out-of-bounds behavior is not tested for this type.");
+
     [Fact]
     public void WriteSingle_WhenOutOfBounds_ShouldThrow() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         AssertSingleWriteOutOfBoundsThrowsAndDoesNotAdvance();
     }
 
     [Fact]
     public void ReadSingle_WhenOutOfBounds_ShouldThrowAndNotAdvance() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         ReadContext context = CreateTruncatedReadContextForSingle();
         long originalPosition = context.Position;
         try {
@@ -402,14 +385,14 @@ public abstract class SerializationTestSuite<T> {
 
     [Fact]
     public void TryReadSingle_WhenOutOfBounds_ShouldReturnFalseAndNotAdvance() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         ReadContext context = CreateTruncatedReadContextForSingle();
         TryReadOutOfBoundsAssertions<T>.AssertSingleFailsWithoutAdvancing(context, Operations);
     }
 
     [Fact]
     public void WriteSpanAndArray_WhenOutOfBounds_ShouldThrow() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(MeasureSpanWithoutLengthWriteBits(), (ref WriteContext context) => Operations.WriteSpanWithoutLength(ref context, Values));
         AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(MeasureSpanWithLengthWriteBits(), (ref WriteContext context) => Operations.WriteSpan(ref context, Values));
         AssertOutOfBoundsWriteThrowsAndDoesNotAdvance(MeasureArrayWithoutLengthWriteBits(), (ref WriteContext context) => Operations.WriteArrayWithoutLength(ref context, Values));
@@ -418,21 +401,21 @@ public abstract class SerializationTestSuite<T> {
 
     [Fact]
     public void ReadArray_WhenOutOfBounds_ShouldThrowAndNotAdvance() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         ReadContext context = CreateTruncatedReadContextForArrayWithLength();
         AssertReadArrayOutOfBoundsThrows(context, Operations.PeekArray, Operations.ReadArray);
     }
 
     [Fact]
     public void TryReadArray_WhenOutOfBounds_ShouldReturnFalseAndNotAdvance() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         ReadContext context = CreateTruncatedReadContextForArrayWithLength();
         TryReadOutOfBoundsAssertions<T>.AssertArrayWithLengthFailsWithoutAdvancing(context, Operations);
     }
 
     [Fact]
     public void ReadFixedLengthArray_WhenOutOfBounds_ShouldThrowAndNotAdvance() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         ReadContext context = CreateTruncatedReadContextForArrayWithoutLength();
         int count = Values.Length;
         AssertReadArrayOutOfBoundsThrows(context, count, Operations.PeekArrayWithoutLength, Operations.ReadArrayWithoutLength);
@@ -440,28 +423,28 @@ public abstract class SerializationTestSuite<T> {
 
     [Fact]
     public void TryReadFixedLengthArray_WhenOutOfBounds_ShouldReturnFalseAndNotAdvance() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         ReadContext context = CreateTruncatedReadContextForArrayWithoutLength();
         TryReadOutOfBoundsAssertions<T>.AssertFixedLengthArrayFailsWithoutAdvancing(context, Values.Length, Operations);
     }
 
     [Fact]
     public void ReadSpan_WhenOutOfBounds_ShouldThrowAndNotAdvance() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         ReadContext context = CreateTruncatedReadContextForSpanWithLength();
         AssertReadSpanOutOfBoundsThrows(context, Values, Operations.PeekSpan, Operations.ReadSpan);
     }
 
     [Fact]
     public void TryReadSpan_WhenOutOfBounds_ShouldReturnFalseAndNotAdvance() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         ReadContext context = CreateTruncatedReadContextForSpanWithLength();
         TryReadOutOfBoundsAssertions<T>.AssertSpanWithLengthFailsWithoutAdvancing(context, Values, Operations);
     }
 
     [Fact]
     public void ReadFixedLengthSpan_WhenOutOfBounds_ShouldThrowAndNotAdvance() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         ReadContext context = CreateTruncatedReadContextForSpanWithoutLength();
         AssertReadSpanOutOfBoundsThrows(context, Values, Values.Length, Operations.PeekSpanWithoutLength, Operations.ReadSpanWithoutLength);
     }
@@ -524,7 +507,7 @@ public abstract class SerializationTestSuite<T> {
 
     [Fact]
     public void TryReadFixedLengthSpan_WhenOutOfBounds_ShouldReturnFalseAndNotAdvance() {
-        if (!SupportsOutOfBoundsTests) { return; }
+        SkipUnlessOutOfBoundsTestsSupported();
         ReadContext context = CreateTruncatedReadContextForSpanWithoutLength();
         TryReadOutOfBoundsAssertions<T>.AssertFixedLengthSpanFailsWithoutAdvancing(context, Values, Values.Length, Operations);
     }

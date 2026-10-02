@@ -45,15 +45,6 @@ public partial struct LocalWithExternal {
     public int LocalValue { get; set; }
 }
 
-public struct AnotherExternalStruct {
-    public bool Flag { get; set; }
-}
-
-[BitStreamProxyStruct(typeof(AnotherExternalStruct))]
-public static partial class AnotherExternalStructProxy {
-    public static bool Flag;
-}
-
 [BitStreamSettings]
 [BitStreamSerializer(typeof(PrimitiveIntExtensions))]
 [BitStreamSerializer(typeof(NestedStruct))]

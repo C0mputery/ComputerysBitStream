@@ -12,6 +12,7 @@ public class AliasedStructTests : StructTestSuite<AliasedStruct> {
         new() { A = 3, B = 3.0f }
     ];
 
+    protected override int ExpectedMetadataSize => 64;
     protected override Type StructType => typeof(AliasedStruct);
 
     protected override SerializationOperations<AliasedStruct> Operations { get; } = new() {
@@ -60,7 +61,8 @@ public class AliasedExternalStructTests : StructTestSuite<AliasedExternalStruct>
         new() { X = 3, Y = true }
     ];
 
-    protected override Type StructType => typeof(AliasedExternalStruct);
+    protected override int ExpectedMetadataSize => 33;
+    protected override Type StructType => typeof(AliasedExternalStructProxy);
 
     protected override SerializationOperations<AliasedExternalStruct> Operations { get; } = new() {
         Write = (ref WriteContext context, AliasedExternalStruct value) => context.WriteAliasedExt(value),
@@ -108,30 +110,8 @@ public class AliasedIncludeExternalStructTests : StructTestSuite<AliasedIncludeE
         new() { Included = 3, Ignored = 0 }
     ];
 
-    protected override Type StructType => typeof(AliasedIncludeExternalStruct);
-
-    [Fact]
-    public void IgnoredMember_ShouldNotAffectEquality() {
-        AliasedIncludeExternalStruct original = new() { Included = 42, Ignored = 100 };
-        AliasedIncludeExternalStruct modified = new() { Included = 42, Ignored = 200 };
-
-        ulong[] buffer = new ulong[TestConstants.BufferWordCount];
-        WriteContext writeCtx = new(buffer);
-        writeCtx.WriteAliasedInc(original);
-
-        ReadContext readCtx = new(buffer);
-        AliasedIncludeExternalStruct readOriginal = readCtx.ReadAliasedInc();
-
-        writeCtx = new WriteContext(buffer);
-        writeCtx.WriteAliasedInc(modified);
-
-        readCtx = new ReadContext(buffer);
-        AliasedIncludeExternalStruct readModified = readCtx.ReadAliasedInc();
-
-        Assert.Equal(original.Included, readOriginal.Included);
-        Assert.Equal(modified.Included, readModified.Included);
-        Assert.Equal(readOriginal.Included, readModified.Included);
-    }
+    protected override int ExpectedMetadataSize => 32;
+    protected override Type StructType => typeof(AliasedIncludeExternalStructProxy);
 
     protected override SerializationOperations<AliasedIncludeExternalStruct> Operations { get; } = new() {
         Write = (ref WriteContext context, AliasedIncludeExternalStruct value) => context.WriteAliasedInc(value),

@@ -12,7 +12,7 @@ public class CustomSettingsStructTests : StructTestSuite<CustomSettingsStruct> {
         new() { B = 3 }
     ];
 
-    protected override int? ExpectedFixedSizeBits => 32;
+    protected override int ExpectedMetadataSize => 32;
     protected override Type StructType => typeof(CustomSettingsStruct);
 
     protected override SerializationOperations<CustomSettingsStruct> Operations { get; } = new() {

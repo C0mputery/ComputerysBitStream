@@ -13,7 +13,7 @@ public class Vector2Tests : StructTestSuite<Vector2> {
         new(5.0f, 6.0f)
     ];
 
-    protected override int? ExpectedFixedSizeBits => 64;
+    protected override int ExpectedMetadataSize => 64;
 
     protected override Type StructType => typeof(Vector2Proxy);
 
@@ -63,7 +63,7 @@ public class Vector3Tests : StructTestSuite<Vector3> {
         new(7.0f, 8.0f, 9.0f)
     ];
 
-    protected override int? ExpectedFixedSizeBits => 96;
+    protected override int ExpectedMetadataSize => 96;
 
     protected override Type StructType => typeof(Vector3Proxy);
 
@@ -113,7 +113,7 @@ public class Vector4Tests : StructTestSuite<Vector4> {
         new(9.0f, 10.0f, 11.0f, 12.0f)
     ];
 
-    protected override int? ExpectedFixedSizeBits => 128;
+    protected override int ExpectedMetadataSize => 128;
 
     protected override Type StructType => typeof(Vector4Proxy);
 
@@ -163,7 +163,7 @@ public class QuaternionTests : StructTestSuite<Quaternion> {
         new(9.0f, 10.0f, 11.0f, 12.0f)
     ];
 
-    protected override int? ExpectedFixedSizeBits => 128;
+    protected override int ExpectedMetadataSize => 128;
 
     protected override Type StructType => typeof(QuaternionProxy);
 
@@ -222,7 +222,7 @@ public class Matrix4x4Tests : StructTestSuite<Matrix4x4> {
         )
     ];
 
-    protected override int? ExpectedFixedSizeBits => 512;
+    protected override int ExpectedMetadataSize => 512;
 
     protected override Type StructType => typeof(Matrix4x4Proxy);
 
@@ -272,7 +272,7 @@ public class PlaneTests : StructTestSuite<Plane> {
         new(new Vector3(0.0f, 0.0f, 1.0f), 3.0f)
     ];
 
-    protected override int? ExpectedFixedSizeBits => 128;
+    protected override int ExpectedMetadataSize => 128;
 
     protected override Type StructType => typeof(PlaneProxy);
 

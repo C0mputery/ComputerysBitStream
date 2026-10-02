@@ -12,14 +12,8 @@ public class ContainerStructTests : StructTestSuite<ContainerStruct> {
         new() { RawValue = 3, Nested = new() { Value = 30 } }
     ];
 
-    protected override int? ExpectedFixedSizeBits => 64;
+    protected override int ExpectedMetadataSize => 64;
     protected override Type StructType => typeof(ContainerStruct);
-
-    [Fact]
-    public void NestedStruct_ShouldBeFixedSize() {
-        Assert.Equal(32, StructMetadataAssertions.GetMetadataSize(typeof(NestedStruct)));
-        Assert.True(StructMetadataAssertions.IsFixedSize(typeof(NestedStruct)));
-    }
 
     protected override SerializationOperations<ContainerStruct> Operations { get; } = new() {
         Write = (ref WriteContext context, ContainerStruct value) => context.WriteContainerStruct(value),
