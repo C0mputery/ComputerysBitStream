@@ -1,0 +1,10 @@
+{
+  "name": "com.computery.bitstream",
+  "version": "1.0.0",
+  "displayName": "Computerys BitStream",
+  "description": "Bit-level serialization for Unity and .NET, with a Roslyn source generator for structs.",
+  "unity": "6000.0",
+  "author": {
+    "name": "Computery"
+  }
+}
